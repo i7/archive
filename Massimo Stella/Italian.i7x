@@ -1,4 +1,4 @@
-Version 3 of Italian by Massimo Stella begins here.
+Version 3/110105 of Italian by Massimo Stella begins here.
 
 "Lavoro basato sull'espansione Custom Library Messages di David Fisher. Modifica i messaggi del parser, ora tradotti in italiano." 
 
@@ -246,7 +246,7 @@ Section 2.11 - Carrying Capacity
 Table of library messages (continued)
 Message Id						Message Text
 LibMsg <cannot exceed carrying capacity>		"Stai portando già troppe cose."
-LibMsg <use holdall to avoid exceeding carrying capacity>	"(metti [the % dobj] [inp] [the player's holdall] per fare posto)"
+LibMsg <use holdall to avoid exceeding carrying capacity>	"(metti [the % dobj] dentro [the player's holdall] per fare posto)"
 LibMsg <cannot insert if this exceeds carrying capacity>	"Non vi è più spazio dentro [the % dobj]."
 LibMsg <cannot put if this exceeds carrying capacity>	"Non vi è più spazio sopra [the % dobj]."
 
@@ -489,17 +489,17 @@ Message Id						Message Text
 LibMsg <cannot go that way>				"Non puoi andare da quella parte."
 LibMsg <cannot travel in something not a vehicle>	"Dovrai prima [=> %][dap] [the % dobj]."
 LibMsg <cannot go through concealed doors>		"Non puoi andare da quella parte. Una porta sbarrata ti impedisce il passaggio."
-LibMsg <cannot go up through closed doors>		"Non sei mai riuscito a [']scalare['] una porta chiusa."
-LibMsg <cannot go down through closed doors>		"Non sei mai riuscito a [']strisciare['] sotto una porta chiusa."
+LibMsg <cannot go up through closed doors>		"Non ti è mai stato facile [']scalare['] una porta chiusa."
+LibMsg <cannot go down through closed doors>		"Non ti è mai stato facile [']strisciare['] sotto una porta chiusa."
 LibMsg <cannot go through closed doors>		"Niente da fare. Un accesso sbarrato ti impedisce il passaggio."
 LibMsg <nothing through door>				"Non puoi, visto che [the %] non porta da alcuna parte."
 LibMsg <block vaguely going>				"Il movimento è regolato da alcune precise direzioni da seguire.[/r]"
-LibMsg <say npc goes>					"[The actor] va [%]"
-LibMsg <say npc arrives>					"[The actor] arriva [dap] [the main object]"
+LibMsg <say npc goes>					"[The actor] va a [%]"
+LibMsg <say npc arrives>					"[The actor] arriva [dap the main object]"
 LibMsg <say npc arrives from unknown direction>		"[The actor] arriva."
-LibMsg <say npc arrives at>				"[The actor] arriva [ap] [the %] [dap] [the secondary object]"
+LibMsg <say npc arrives at>				"[The actor] arriva [ap] [the %] [dap the secondary object]"
 LibMsg <say npc goes through>				"[The actor] va attraverso [the %]"
-LibMsg <say npc arrives from>				"[The actor] arriva [dap] [%]"
+LibMsg <say npc arrives from>				"[The actor] arriva da [%]"
 LibMsg <say npc vehicle>					"[sup] [the %]"
 LibMsg <say npc pushing in front with player>		", spingendo [the %] di fronte, e anche te"
 LibMsg <say npc pushing in front>				", spingendo [the %] di fronte"
@@ -529,9 +529,9 @@ LibMsg <report npc looking>	"[The actor] si guarda intorno."
 LibMsg <top line what on>		" ([sup] [the % dobj])"
 LibMsg <top line what in>		" ([sup] [the % dobj])"
 LibMsg <top line what as>		" (come [inform 6 short name of %])"
-LibMsg <say things within>		"[what's inside % part 1] [what's inside % part 2]"
+LibMsg <say things within>		"Dentro [the main object] noti [what's inside % part 2]"
 LibMsg <say things also within>		"[what's inside % part 1] anche [what's inside % part 2]"
-LibMsg <say things on>			"Riguardo [the main object][what's on %]."
+LibMsg <say things on>			"Sopra [the main object] noti [what's on %]."
 
 To say what's on %:
    list the contents of the main object, as a sentence,
@@ -540,14 +540,12 @@ To say what's on %:
 
 To say what's inside % part 1:
    if main object is the location, say "[You]";
-   otherwise say "[Inp] [the main object] [you]";
+   otherwise say "Dentro [the main object] [you]";
    say " [can]"
 
 To say what's inside % part 2:
-   say "osservi ";
-   list the contents of the main object, as a sentence, including contents,
-     listing marked items only, giving brief inventory information,
-	tersely, not listing concealed items;
+  list the contents of the main object, as a sentence,
+     including contents, tersely, not listing concealed items;
    if the main object is the location, say " [here]";
    say "."
 
@@ -2404,7 +2402,7 @@ Search:
        4: id = (+LibMsg <cannot search unless container or supporter>+);
        5: id = (+LibMsg <cannot search closed opaque containers>+);
        6: id = (+LibMsg <nothing found within container>+);
-     ! 7 prints the contents of a container; use I6 default behaviour
+       7: id = (+LibMsg <say things within>+);
        8: id = (+LibMsg <report npc searching>+);
        default: jump not_handled; }
     jump handled;
@@ -2951,13 +2949,13 @@ For printing a locale paragraph about a thing (called the item)(this is the desc
 			say ".[paragraph break]";
 	continue the activity.
 
+
 [E' necessario definire una seconda regola per i generi presenti nelle descrizioni delle camere poiché attualmente non riesco a cambiare i soggetti di IF7 grazie alle regole di cui sopra]
 To say gendu for (ogg - a thing):
 	if ogg is singular-named: 
 		say "[if ogg is male]o[otherwise]a[end if]";
 	otherwise if ogg is plural-named: 
 		say "[if ogg is male]i[otherwise]e[end if]".
-
 
 Section 5.6 - Dettagli della list-miscellany
 
@@ -2998,13 +2996,15 @@ Constant LanguageInanimateGender = male;
 Constant LanguageContractionForms = 3;
 
 [ LanguageContraction text;
+  if (text->0 == 'p' or 'P')
+  	if (text->1 == 's' or 'S') return 1;
+  	else if (text->1 == 'r' or 'R') return 2;
+  if (text->0 == 't' or 'T') return 2;
   if (text->0 == 'a' or 'e' or 'i' or 'o' or 'u' or 'A' or 'E' or 'I' or 'O' or 'U') return 0;
   if (text->0 == 'z' or 'Z' or 'x' or 'X') return 1;
   if (text->0 ~= 's' or 'S') 
 	if (text->1 == 'a' or 'e' or 'i' or 'o' or 'u' or 'A' or 'E' or 'I' or 'O' or 'U') return 2;
 	else return 1;
-  if (text->0 == 'p' or 'P')
-  	if (text->1 == 's' or 'S') return 1;
   return 2;
 ];
 
@@ -3102,27 +3102,25 @@ Global YOURSELF__TX   = "te stesso";
 Constant YOU__TX        = "Tu";
 Constant DARKNESS__TX   = "Buio";
 
-Constant THOSET__TX     = "quelle cose";
-Constant THAT__TX       = "quello";
-Constant OR__TX         = " o ";
-Constant NOTHING__TX    = "niente";
-Global IS__TX         = " è";
-Global ARE__TX        = " sono";
-Global IS2__TX        = "è ";
-Global ARE2__TX       = "sono ";
-Global IS3__TX        = "è";
-Global ARE3__TX       = "sono";
-Constant AND__TX        = " e ";
-#ifdef I7_SERIAL_COMMA;
-Constant LISTAND__TX   = ", e ";
-Constant LISTAND2__TX  = " e ";
-#ifnot;
-Constant LISTAND__TX   = " e ";
-Constant LISTAND2__TX  = " e ";
-#endif; ! I7_SERIAL_COMMA
-Constant WHOM__TX       = "che ";
-Constant WHICH__TX      = "che ";
-Constant COMMA__TX      = ", ";
+Constant THOSET__TX = " tutto quanto";
+Constant THAT__TX = " quel";
+Constant OR__TX = " o";
+Constant NOTHING__TX = "nulla";
+Constant NOTHING2__TX = "Niente";
+Constant IS__TX = " è";
+Constant ARE__TX = " sono";
+Constant IS2__TX = "è ";
+Constant ARE2__TX = "sono ";
+Global IS3__TX = "è";
+Global ARE3__TX = "sono";
+Constant AND__TX = " e ";
+
+Constant LISTAND__TX = " e ";
+Constant LISTAND2__TX = " e ";
+
+Constant WHOM__TX = "";
+Constant WHICH__TX = "";
+Constant COMMA__TX = ", ";
 -) instead of "Short Texts" in "Language.i6t".
 
 
@@ -3228,6 +3226,19 @@ Understand "nopunti" or "nopunteggio" or "notifica off" as switching score notif
 Understand "esci" as quitting the game.
 Understand "salva" as saving the game.
 Understand "carica" as restoring the game.
+[Direzioni]
+The printed name of north is "nord". 
+The printed name of  northeast is "nord-est". 
+The printed name of east is "est". 
+The printed name of southeast is "sud-est". 
+The printed name of  south is "sud". 
+The printed name of  southwest is "sud-ovest".
+The printed name of  west is "ovest". 
+The printed name of  northwest is "nord-ovest". 
+The printed name of up is "su". 
+The printed name of down is "giù". 
+The printed name of  inside is "dentro". 
+The printed name of  outside is "fuori".  
 
 Italian ends here.
 
@@ -3359,7 +3370,7 @@ Example: * Atto 0 - Una avventura thriller per Inform 7 di Massimo Stella.
 	A person can be medic or detective. A person is usually detective.
 	
 	Portineria is a room. The description is "La portineria dell[']università. E['] piuttosto angusta e spoglia. Puoi notare alcune teche contenenti vecchi strumenti in ottone e in bronzo. C[']è un silenzio spettrale. Nella guardiola non c[']è anima viva, eppure sono le 	[the time of day in italian words] altrimenti dette [the time of day in italian complete words]. Ad ovest si apre l[']accesso alla sala comune."
-	The sedia di velluto is an enterable supporter in the Portineria. The sedia di velluto is a female thing.
+	The sedia di velluto is an enterable supporter in the Portineria. The sedia di velluto is a female thing. 
 	The comodino is a container, closed, openable, male. The comodino is in Portineria.
 
 	Guardiola is scenery in the portineria. The description is "La guardiola è vuota, non c[']è nessuno dentro."

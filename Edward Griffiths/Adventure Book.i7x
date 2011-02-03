@@ -1,4 +1,4 @@
-Version 1/091203 of Adventure Book by Edward Griffiths begins here.
+Version 1/110101 of Adventure Book by Edward Griffiths begins here.
 
 "A system for creating Choose Your Own Adventure style programs, with advanced features."
 
@@ -38,9 +38,9 @@ Following relates one page (called the destination) to various pages.  The verb 
 
 [A page may give or remove certain items or flags whenever it is visited.]
 
-Giving relates various pages to various flags.  The verb to give (it gives, they give, it gave, it is given, it is giving) implies the giving relation.
+Adding relates various pages to various flags.  The verb to give (it gives, they give, it gave, it is given, it is giving) implies the adding relation.
 
-Removing relates various pages to various flags.  The verb to remove (it removes, they remove, it removed, it is removed, it is removing) implies the removing relation.
+Clearing relates various pages to various flags.  The verb to remove (it removes, they remove, it removed, it is removed, it is removing) implies the clearing relation.
 
 [A choice will be unavailable if any flag the choice requires is off or if any of the flags that stop it are on.  A use also has an inventory item that the player must type in to activate the use.]
 
@@ -269,6 +269,8 @@ After deciding the scope of the player while wielding:
 
 Rule for constructing the status line: do nothing.
 
+Use memory economy.
+
 Section 7 -- Debugging - Not for release
 
 [For authors only.  We allow commands to print the names of unwritten pages, to give or remove individual flags or inventory items, to give or remove ALL flags and inventory items, and to turn directly to the page of our choice.]
@@ -284,7 +286,7 @@ topic
 "give [any flag]"
 "give all"
 "remove [any flag]"
-"give all"
+"remove all"
 "page names on/off"
 
 [Printing a report is the most involved activity.]
@@ -418,6 +420,18 @@ This documentation assumes some familiarity with Inform 7, but it's written with
 
 Special thanks to Jon Ingold for his feedback in the development of this extension.  Comments are welcome at cpface@execpc.com.
 
+Section: Version History
+
+Version 1/091203
+
+Original release.
+
+Version 1/110101
+
+Giving and Removing relations renamed to Adding and Clearing, respectively, to avoid a conflict with newer versions of Inform 7.  Code structure described in earlier documentation ("It gives [flagname]." and "It removes [flagname].") should be unaffected, but any user-written code that refers directly to the relations will need to be modified.
+
+"Use memory economy." has been added to the extension to give authors a slightly larger buffer to work with.
+
 Section: Setting Up a Page
 
 A good start to any programming language is creating a program to write "Hello World!".  So let's start with that and see how a page is set up.
@@ -479,7 +493,7 @@ Sometimes we'll want to direct the story to a particular place without requiring
 
 After the game prints the text for The First Page to the player, it will automatically continue on to The Driveway without any input from the player and continue reading from there.  The chain can be as long as you'd like, with any number of "It is followed by..." statements.
 
-One practical use for dividing up the action like this is that it allows us to return to the page called The Driveway and take further action there without reprinting the description of the player's initial arrival; if the player has been exploring the grounds for a while, the directions that brought him there aren't likely to be on his mind anymore.  In more traditional Adventure Books, it may simply be a convenient way to join convergent plotlines together -- forcing paths through the plot to meet at a particular place.
+One practical use for dividing up the action like this is that it allows us to return to the page called The Driveway and take further action there without reprinting the description of the player's initial arrival; if the player has been exploring the grounds for a while, the directions that brought him there aren't likely to be on his mind anymore.  In more traditional Adventure Books, it may simply be a convenient way to join convergent plot lines together -- forcing paths through the plot to meet at a particular place.
 
 Another useful behavior is for a page to return to the page that called it after it is read to allow the player to make a different choice.  This is done by replacing the list of choices with the sentence "It is a dead end."  For example:
 
@@ -610,7 +624,7 @@ But inventory items have a more subtle use.  At any time, the player can type th
 
 There's no descriptive text because this option is never explicitly printed for the player; he will have to take the initiative to try and use his sword without prompting from the system.  Notice "It uses the sword." instead of "It requires the sword."  That means that the player will actually have to type in the sword's name in order to use this option.
 
-One problem with Choose Your Own Adventure style stories is how explictly the player's options are spelled out for him.  Having "hidden" choices available for the player makes the game seem a little less confined.
+One problem with Choose Your Own Adventure style stories is how explicitly the player's options are spelled out for him.  Having "hidden" choices available for the player makes the game seem a little less confined.
 
 Section: Magic Words
 
@@ -728,9 +742,9 @@ Here is a comprehensive list of all of the relationships defined by Adventure Bo
 	
 	Following relates one page (called the destination) to various pages.  The verb to follow (it follows, they follow, it followed, it is followed, it is following) implies the following relation.
 	
-	Giving relates various pages to various flags.  The verb to give (it gives, they give, it gave, it is given, it is giving) implies the giving relation.
+	Adding relates various pages to various flags.  The verb to give (it gives, they give, it gave, it is given, it is giving) implies the adding relation.
 	
-	Removing relates various pages to various flags.  The verb to remove (it removes, they remove, it removed, it is removed, it is removing) implies the removing relation.
+	Clearing relates various pages to various flags.  The verb to remove (it removes, they remove, it removed, it is removed, it is removing) implies the clearing relation.
 	
 	Requiring relates various choices to various flags.  The verb to require (it requires, they require, it required, it is required, it is requiring) implies the requiring relation.
 	
@@ -1567,7 +1581,7 @@ Placebo! is an example of how to make a game that behaves more or less like a tr
 	
 	KnightLicense is a page.
 	"'Yes, new law that's just been passed,' the knight says brightly, eager to
-	pass on any bit of bad news he can.  'Can't have just anyone gallavanting off to
+	pass on any bit of bad news he can.  'Can't have just anyone galavanting off to
 	the Mystic Mountains after all.  Only licensed adventurers are allowed across
 	the bridge.  Take it up with the king, if you like.'".
 	It gives LICENSEFROMKING.  It is a dead end.
@@ -1645,7 +1659,7 @@ Placebo! is an example of how to make a game that behaves more or less like a tr
 	It is a dead end.
 	
 	WizardGoing is a page.
-	"The wizard shrugs non-committally."
+	"The wizard shrugs noncommittally."
 	It is a dead end.
 	
 	WizardHermit is a page.

@@ -767,7 +767,7 @@ match_from=wn;
 
 
 		if (line_ttype-->pcount == ELEMENTARY_TT or ATTR_FILTER_TT or ROUTINE_FILTER_TT)
-{		
+		{		
 
 					SafeSkipDescriptors();
 					! save the current match state
@@ -1206,7 +1206,7 @@ match_from=wn;
 
 
 
-chapter - adjudicate 
+Chapter - Adjudicate 
 
 [
 
@@ -2656,7 +2656,6 @@ Disambiguation Control ends here.
 
 ---- DOCUMENTATION ----
 
-
 Chapter: Problems This Extension Tackles
 
 Inform has a clever parser, capable of making intelligent deductions based on the incomplete and sometimes plain lazy input of its human players. However, its algorithm is not perfect and Inform 6 and 7 authors have frequently struggled with namespace clashes and the problem, not obviously associated, of over-eager parser guesswork. A frequent question on the programming newsgroup is "how do I make the parser ask which object the player means instead of choosing itself?" This extension aims to extend more control to authors over how Inform makes these decisions, and to promote a philosophy of "ask more questions and make fewer guesses".
@@ -3083,9 +3082,7 @@ Version 6 - Updated to compile with 6E59.
 
 Example: * Keys and Locks - A quick example showing how to make keys and locks that the parser prefers to choose
 
-*:
-
-	"Keys and Locks"
+	*: "Keys and Locks"
 
 	Include Disambiguation Control by Jon Ingold.
 
@@ -3137,9 +3134,7 @@ Example: * Keys and Locks - A quick example showing how to make keys and locks t
 
 Example: * Scrumping - An example demonstrating multiple actions, suggestions and defaults
 
-*:	
-	
-	"Scrumping"
+	*: "Scrumping"
 
 	Include Disambiguation Control by Jon Ingold.
 
@@ -3186,9 +3181,7 @@ Example: * Scrumping - An example demonstrating multiple actions, suggestions an
 
 Example: * Pile of Bricks - an example showing a pile of objects from which an individual object can be taken (which is a common cause of namespace clashes). 
 
-*:	
-	
-	"Pile of Bricks"
+	*: "Pile of Bricks"
 
 	Include Disambiguation Control by Jon Ingold.
 

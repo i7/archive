@@ -1,4 +1,4 @@
-Version 4 of Fixed Point Maths (for Glulx only) by Michael Callaghan begins here.
+Version 5 of Fixed Point Maths (for Glulx only) by Michael Callaghan begins here.
 
 Chapter 1 - Basic definitions
 
@@ -458,7 +458,7 @@ To decide what real number is the sine of (N - a real number):
 		otherwise:
 			let result be result real plus temp1;
 			let sign be the reverse of sign;
-		let X be X plus 1;
+		increase x by 1;
 	if adjustsign is true:
 		let result be the reverse of result;
 	decide on result.
@@ -527,6 +527,7 @@ To decide what real number is the arctangent of (N - a real number):
 	if N real equals -1.0000:
 		decide on -45.0000;
 	let temp be the absolute value of N;
+	let result be 1 as a fixed point number;
 	if temp is real greater than 1.0000:
 		let temp1 be N to the power 2;
 		let temp1 be temp1 real plus 0.2809;
@@ -559,7 +560,7 @@ To decide what real number is the natural log of (N - a real number):
 		let temp2 be X as a fixed point number;
 		let temp1 be temp1 real divided by temp2;
 		let result be result real plus temp1;
-		let X be X plus 1;
+		increase x by 1;
 	let result be result real times 2;
 	decide on result.
 
@@ -738,6 +739,8 @@ Section : Credits
 Thanks to Ron Newcomb and Mike Tarbert for their helpful comments that have helped to improve this extension.  Any errors and omissions remain with the author.
 
 Section : Version history
+
+Version 5 - 1 February 2011: Corrected to work with version 6G60.
 
 Version 4 - 16 June 2010: Deprecated features removed from Example B.
 

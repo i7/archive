@@ -1,4 +1,4 @@
-Version 6 of Disambiguation Control by Jon Ingold begins here.
+Version 7 of Disambiguation Control by Jon Ingold begins here.
 
 "Allows finer control over the disambiguation process used by Inform to decide what the player was referring to. Less guesswork, more questions asking for more input. Also removes the multiple-object-rejection in favour of asking for more information."
 
@@ -11,6 +11,11 @@ Version 6 of Disambiguation Control by Jon Ingold begins here.
 		-> current workaround throws out non-animates for giving and showing to.
 			This isn't great (see comments in the appropriate section) - but the problem is the order in which the parser defines the grammar lines
 			and that's impossible to change!
+
+
+	The parser will "auto-guess" if it matches a group of "indistinguishable" items, but the parser doesn't always know when items are indistinguishable. In particular, if you use "[something related by containment]" to refer to a generic container / kind of container, the parser will treats these items as indistinguishable (same grammar) despite the fact the player can - easily - distinguish them.
+		-> Need some way to step in and tell the parser "these are not hte same"
+		-> was possible in I6 "##TheSame" , not sure how to do it now
 
 ]
 
@@ -544,9 +549,10 @@ and
 >TAKE
 
 This extension allows us to separate the two cases by asking if we're "guessing". 
-This is critical on the lower levels to how the parsing is carried out.
 
- We're guessing if a nameless object which is always in scope appears in the possible noun list. 
+This is critical on the lower levels to how the parsing is carried out: it affects whether the parser should be allowed to offer opinions on what's going on.
+
+We're guessing if a nameless object which is always in scope appears in the possible noun list. 
 
  ]
 
@@ -561,6 +567,11 @@ To decide if guessing:
 
 
 section - i6 routines for accessing the match list
+
+[
+	The match list contains the objects the parser is currently considering for the noun it's thinking about
+	We use the following routines for rules that say, "when comparing the x and the y" or "when also considering the k"
+]
 
 Include (-
 
@@ -598,20 +609,32 @@ Chapter - Noun Domain
 
 [ 
 
-Does the work of calling disambiguation and printing out disambiguation questions to the player.
+Does the heavy lifting:
+
+* produces a match list for the current input
+* sets the guessing flag to true or flag
+* runs the adjudicate routine on the match list and input
+* decides whether to fail the line, pass it or ask for additional input
+* if additional input is required, it gathers it and then stitches it back into the original line of input
+* this is done twice - once for stitching text onto the end of the line, once for dropping it in the middle
+
 Extensively rewritten!
+
 Lots of replicated code so this isn't very tidy. I may try to break it up into routines later.
 
 ]
 
 Include (-
 Global look_ahead = 0;
+Global guessed_first_noun = false;
 -) after "Grammar Line Variables" in "Parser.i6t".
 
 
 Include (-
 
 Array  printed_text -> 123;  
+
+
 
 Global guessing;
 [GuessingI6; return guessing; ];
@@ -650,6 +673,9 @@ Global guessing;
 
 
 [ WorthGuessingNoun act;
+
+! Version 7 - I think this routine is no longer used, having been replaced by the I7 rules
+
 	if (act == 
 
 ! list of actions for which guessing the only available non-scenery-type noun is worth doing
@@ -688,17 +714,23 @@ Global guessing;
   }
 #endif;
 
+! initialise variables
+
 match_length=0; 
 number_matched=0; 
 match_from=wn; 
+
+! build the match list
 
   SearchScope(domain1, domain2, context);
 
 #ifdef DEBUG;
   if (parser_trace>=4) print "   [ND made ", number_matched, " matches]^";
-
-
 #endif;
+
+! use the match-list to determine if we were guessing or not
+! seems backwards to use the results of parsing to decide if there's no text, but
+! that's the way it's done.
 
   guessing = MatchListGuessing();
 
@@ -721,12 +753,12 @@ match_from=wn;
   wn=match_from+match_length;
 
 !  If nothing worked at all, leave with the word marker skipped past the
-!  first unmatched word...
+!  first unmatched word, and ditch this line
 
   if (number_matched==0) { wn++; rfalse; }
 
 !  Suppose that there really were some words being parsed (i.e., we did
-!  not just infer).  If so, and if there was only one match, it must be
+!  not just guess).  If so, and if there was only one match, it must be
 !  right and we return it...
 
   if (match_from <= num_words)
@@ -750,70 +782,83 @@ match_from=wn;
           {   if (lookahead==ENDIT_TOKEN) rfalse;
           }
 
-! **************ADD THIS*****************************************
+! DC Improvement
+! We add the ability for the grammar line to check, here and now, if the next word in the input
+! is the preposition the game is expecting for this line. This lets us fail the grammar line quickly
+! if we're matching the wrong line entirely. The standard parser does do this, and can lead to Inform
+! making guesses and disambiguating in contexts when it's no good to even try.
+
 	#ifdef COBJ_DEBUG;
 		print "Next token lookahead: ", line_ttype-->pcount , "!^";
 	#endif;
 
 		if (line_ttype-->pcount == PREPOSITION_TT)
 		{
-      	  	if (~~PrepositionChain(i, pcount) ~= -1) 
+      	  		if (~~PrepositionChain(i, pcount) ~= -1) 
 			{
-!				print "(We've failed to match our preposition. Woohoo!)";
+!				print "(We've failed to match our preposition. Woohoo! Let's move on)";
       		 	rfalse;
 			}
- }
+		}
 
 
+! otherwise, if the next token is another noun, we run the parser to gather results for the second noun, so we
+! can do a ChooseObjects pass - using the I7 rules - using full lines, rather than partially matched ones.
 
 		if (line_ttype-->pcount == ELEMENTARY_TT or ATTR_FILTER_TT or ROUTINE_FILTER_TT)
 		{		
 
-					SafeSkipDescriptors();
-					! save the current match state
-					@push token_filter; @push wn; @push match_length; @push match_from; @push number_matched;
-					! now get all the matches for the second noun
-					match_length = 0; number_matched = 0; match_from = wn;
+			SafeSkipDescriptors();
 
-					if (line_ttype-->pcount == ELEMENTARY_TT)
-					{
-						SearchScope(actor, actors_location, line_tdata-->pcount);
-					}
-					else
-					{
-						if (line_ttype-->pcount == ATTR_FILTER_TT)
-						{	token_filter = 1 + line_tdata-->pcount;
-						}
-						else
-						{	token_filter = line_tdata-->pcount;
-						}
-						SearchScope(actor, actors_location, NOUN_TOKEN);
-					}
+			! save the current match state, since we're experimenting here
+			@push token_filter; @push wn; @push match_length; @push match_from; @push number_matched;
+			
+			! now get all the matches for the second noun
+			match_length = 0; number_matched = 0; match_from = wn;
 
-					#ifdef DEBUG;
-						if (parser_trace >= 4)
-							print number_matched, " possible continuation nouns";
-					#endif;
-					i = number_matched;
-					@pull number_matched; @pull match_from; @pull match_length; @pull wn; @pull token_filter;
-					if (i == 0) 
-					{
-					#ifdef DEBUG;
-						if (parser_trace >= 4)
-							print "(Failed to match follow-on words. Moving to next line.)^";
-					#endif;
-						rfalse;
-					}
+			if (line_ttype-->pcount == ELEMENTARY_TT)
+			{
+				! cheapest way of filling the match list
+				SearchScope(actor, actors_location, line_tdata-->pcount);
+			}
+			else
+			{
+				! more complex tokens need a bit more work
+
+				if (line_ttype-->pcount == ATTR_FILTER_TT)
+				{	token_filter = 1 + line_tdata-->pcount;
+				}
+				else
+				{	token_filter = line_tdata-->pcount;
+				}
+				SearchScope(actor, actors_location, NOUN_TOKEN);
+			}
+
+			#ifdef DEBUG;
+				if (parser_trace >= 4)
+					print number_matched, " possible continuation nouns";
+			#endif;
+
+			i = number_matched;
+
+			! reset the position of the parser from before this pass
+			@pull number_matched; @pull match_from; @pull match_length; @pull wn; @pull token_filter;
+
+			! Are there no matches for the second noun? If so, we can give up here and now.
+			if (i == 0) 
+			{
+				#ifdef DEBUG;
+					if (parser_trace >= 4)
+						print "(Failed to match follow-on words. Moving to next line.)^";
+				#endif;
+				rfalse;
+			}
 					
-
-! ***************************************************************
-
-
 		}
       }
 }
 
-!  Now look for a good choice, if there's more than one choice...
+!  Now, if there's more than one choice, let's see if we can do better
 
   number_of_classes=0;
 
@@ -821,29 +866,44 @@ match_from=wn;
   {  	
 	(+list-outcomes+) = false; 	! we set the list-writer to false and see if the outcomes can make it true again
 
+	! Now we run Adjudicate, which in turn runs ChooseObjects and the I7 routines
+	! these routines will score the options, and delete inappropriate ones
+
 	i=Adjudicate(context);
 	
+	! Did we fail to get anything from Adjudicate?
 	if (i == -1)
 	{
-		if (guessing) jump Incomplete;		! if we've got all objects in scope, in scope, but deleted them all
+		! If we're guessing, then there was nothing valid. So let's ask the player to explain themselves.
+		if (guessing) 
+		{
+			if (indef_possambig)
+			{
+				if (parser_trace == 5)
+					print "    [Failed to find anything using an ambiguous input.]^";
+				rfalse;
+			}
+			jump Incomplete;		
+		}
 		
-! this means there was nothing sensible to match in the world
-! so we give up on this grammar line
-
+		! otherwise, if we weren't guessing, then what the player typed made no sense after all, so fail the line.
 		rfalse;
 	}
 
-      if (i==1)  ! => multiple object was matched
+      if (i==1)  ! A multiple object was matched. 
       {
 
-	 if (~~MultiContext(context))  print "[BUG in Disambiguation: Multiple object made it out of Adjudicate!]^";
-	rtrue;
+		! If we're not looking for a multiple noun, then we have a fundamental problem
+	 	if (~~MultiContext(context)) 
+			 print "[BUG in Disambiguation: Multiple object made it out of Adjudicate!]^";
+
+		rtrue;
 
       }
 
   }
 
-
+! If i is non-zero, then we're looking at an object
 
 !  If i is non-zero here, one of two things is happening: either
 !  (a) an inference has been successfully made that object i is
@@ -859,12 +919,13 @@ match_from=wn;
   {   
 	if (dont_infer && ~~guessing) 
 	{
+		
 		! we're not guessing. We're always allow to default
 		! when we're not guessing
 		return i;
 	}
 
-	! if we are guessing, we're only allowed to default is list-outcomes made it to true
+	! if we are guessing, we're only allowed to default if list-outcomes made it to true
 
 	if (guessing && (+list-outcomes+) == false)	
 	{
@@ -875,7 +936,22 @@ match_from=wn;
 		jump Incomplete;
 	}
 
-      if (inferfrom==0) inferfrom=pcount;
+! this is where we record that we guessed this one, rather than being told about it
+! we need to record this fact for the insertion of "it" that'll happen later, if there's a parse-line
+! reconstruction. 
+
+! for a first-pass, let's just set a flag.
+
+      if (inferfrom==0) 
+	{
+		inferfrom=pcount;
+		if (guessing)
+		{
+			! this was our first point of guesswork on this line, as the interfrom was still zero
+			if (parser_trace >= 4) print "[Setting guessed first noun to true]^";
+			guessed_first_noun = true;
+		}
+	}
       pattern-->pcount = i;
       return i;
   }
@@ -889,6 +965,7 @@ match_from=wn;
 
 ! if we're not guessing, but at the end of the line, we still want to add
 ! extra text to the end of the input, rather that in the middle somewhere
+! We have to do these two differently, because of the way text is spliced together
 
   if (match_from > num_words && ~~guessing) jump Incomplete;
 
@@ -1105,17 +1182,39 @@ match_from=wn;
             ! An inferred object.  Best we can do is glue in a pronoun.
             ! (This is imperfect, but it's very seldom needed anyway.)
 
-            if (pattern-->j >= 2 && pattern-->j < REPARSE_CODE) {
-                PronounNotice(pattern-->j);
-                for (k=1 : k<=LanguagePronouns-->0 : k=k+3)
-                    if (pattern-->j == LanguagePronouns-->(k+2)) {
-                        parse2-->1 = LanguagePronouns-->k;
-                        #Ifdef DEBUG;
-                        if (parser_trace >= 5)
-                        	print "[Using pronoun '", (address) parse2-->1, "']^";
-                        #Endif; ! DEBUG
-                        break;
+! BUG 24/7/10:
+! The following code provides for cases where the parser has filled in the first word
+! from no input entirely and asked for clarification on the second word.
+! It needs to glue something into the "gap" to cover the missing noun, otherwise the 
+! line will no longer match.
+! Problem is, if the parser had some text here -- which seems to happen in the case
+! of an adjudication between identical copy items -- then it shoves "it" on the end, and 
+! this fails to match.
+! So ideally this block of code will ONLY fire if there was NOTHING in the input line for the first noun.
+! How do we check for this? Can we use one of the guessing-type flags set above??
+
+! First pass: get something to print out which case we're in
+! Tests are : >GIVE ITEM X / >PERSON Y when the player has 2 Xs
+! SNARK / > PERSON Y, when there is a rule for "Suggesting" item X for snarking (no duplicate X required.)
+
+            if (pattern-->j >= 2 && pattern-->j < REPARSE_CODE)
+		{
+			if (guessed_first_noun)
+			{
+	                PronounNotice(pattern-->j);
+       	        for (k=1 : k<=LanguagePronouns-->0 : k=k+3)
+              	      if (pattern-->j == LanguagePronouns-->(k+2)) {
+                     	   parse2-->1 = LanguagePronouns-->k;
+                        		#Ifdef DEBUG;
+                        		if (parser_trace >= 4)
+                        			print "[Using pronoun as guessed_first was true.]^";
+                        		if (parser_trace >= 5)
+                        			print "[Using pronoun '", (address) parse2-->1, "']^";
+                        		#Endif; ! DEBUG
+                       	   break;
                     }
+			else if (parser_trace >=4 ) print "[Not using pronoun as guessed_first was false.]^";
+		}
             }
             else {
                 ! An inferred preposition.
@@ -1206,7 +1305,7 @@ match_from=wn;
 
 
 
-Chapter - Adjudicate 
+chapter - adjudicate 
 
 [
 
@@ -1860,6 +1959,7 @@ Include (-
 	! set flags for choose objects to use
 					look_ahead = true;
 					cobj_flag = 0;
+					
 				
                             l = NounDomain(actors_location, actor, NOUN_TOKEN);
 	
@@ -1930,8 +2030,10 @@ Include (-
 
   .ReParse;
 
+	! added in for the purposes of the bug fix
+	guessed_first_noun = false;
 	cobj_flag = 0;
-    parser_inflection = name;
+    	parser_inflection = name;
 
     ! Initially assume the command is aimed at the player, and the verb
     ! is the first word
@@ -2064,6 +2166,9 @@ Include (-
 
 
 -) instead of "Parser Letter A" in "Parser.i6t".
+
+
+
 
 
 [ ************************************************************************************************************************************************************ ]
@@ -2656,6 +2761,7 @@ Disambiguation Control ends here.
 
 ---- DOCUMENTATION ----
 
+
 Chapter: Problems This Extension Tackles
 
 Inform has a clever parser, capable of making intelligent deductions based on the incomplete and sometimes plain lazy input of its human players. However, its algorithm is not perfect and Inform 6 and 7 authors have frequently struggled with namespace clashes and the problem, not obviously associated, of over-eager parser guesswork. A frequent question on the programming newsgroup is "how do I make the parser ask which object the player means instead of choosing itself?" This extension aims to extend more control to authors over how Inform makes these decisions, and to promote a philosophy of "ask more questions and make fewer guesses".
@@ -2943,7 +3049,7 @@ the order of flow is:
 
 1) 	Is there only one object in scope? If so, pick this.
 2)	Consult the "Should the game suggest" rules. Is there only one object at the best level of suggestion? If so, default? (We never default to "passable" or worse suggestions, however.)
-3)    Are there several possibilties at a good or better level of suggestion? If so, list them and ask the player for more information.
+3)    Are there several possibilities at a good or better level of suggestion? If so, list them and ask the player for more information.
 4)  	If the best objects are passable or worse, ask generically for more information, but don't print a list.
 5)	If all the objects are identical and good or better, pick one 
 
@@ -2963,7 +3069,7 @@ where there are multiple objects to which the player may be referring. The order
 5)	If all the objects are identical and passable or better, pick one 
 
 
-Section: Unusuable Plural Input
+Section: Unusable Plural Input
 
 For input like
 
@@ -3077,12 +3183,19 @@ If you have comments, suggestions, questions or bugs please contact me at jon.in
 
 Section: Changelog
 
+
+
 Version 6 - Updated to compile with 6E59.
 
+Version 7 - Small fix for an error with rebuilding the input line after querying the second noun when the first noun was an object picked from a set of identical objects.
+
+- FIx for failing to parse the word "her": the system was interpreting this as a possessive, missing extra information. It now changes its mind if the "indef_possambig" flag is true, mimicking what the standard parser does.
 
 Example: * Keys and Locks - A quick example showing how to make keys and locks that the parser prefers to choose
 
-	*: "Keys and Locks"
+*:
+
+	"Keys and Locks"
 
 	Include Disambiguation Control by Jon Ingold.
 
@@ -3134,7 +3247,9 @@ Example: * Keys and Locks - A quick example showing how to make keys and locks t
 
 Example: * Scrumping - An example demonstrating multiple actions, suggestions and defaults
 
-	*: "Scrumping"
+*:	
+	
+	"Scrumping"
 
 	Include Disambiguation Control by Jon Ingold.
 
@@ -3181,7 +3296,9 @@ Example: * Scrumping - An example demonstrating multiple actions, suggestions an
 
 Example: * Pile of Bricks - an example showing a pile of objects from which an individual object can be taken (which is a common cause of namespace clashes). 
 
-	*: "Pile of Bricks"
+*:	
+	
+	"Pile of Bricks"
 
 	Include Disambiguation Control by Jon Ingold.
 

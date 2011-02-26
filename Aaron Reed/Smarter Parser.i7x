@@ -1,9 +1,13 @@
-Version 6 of Smarter Parser (for Glulx only) by Aaron Reed begins here.
+Version 10 of Smarter Parser (for Glulx only) by Aaron Reed begins here.
 
 "Understands a broader range of input than the standard parser, and can direct new players towards proper syntax."
 
 [
 CHANGES:
+ -- Version 10: Added two meta-smart parsing activities: converting a blank line to LOOK, and parsing commas more helpfully.
+ -- Version 9: Updated for build 6F95
+ -- Version 8: Some minor tweaks to vocabulary
+ -- Version 7: Added some new punctuation marks to be stripped.
  -- Version 6: Major revision. Altered visual style to be more refined and more flexible; named rulebook outcomes; renamed and clarified several variables; rewrote documentation; added a few new cases from newbie Sand-dancer transcripts; stopped trying to strip single quotes from input (this was a bug that led to problems with recognizing possessives like "grandma's"; Poor Man's Mistype would catch attempts to say "grandmas" anyway.) Marked as glulx only due to issues with z-machine compilation. Cleaned up some formatting issues, including an occasional erroneous first space.
  -- Version 5: Removed deprecated features; added option to ignore all rules; adjusted responses to not have fantasy RPG elements & use more examples taken from the player's current environment.
  -- Version 4: Updated for build 6E59
@@ -41,7 +45,7 @@ After reading a command (this is the Smarter Parser simplify punctuation rule):
 	now tmpcmd is the player's command;
 	if tmpcmd exactly matches the text "?", now tmpcmd is "help";
 	replace the regular expression "<;:!?>" in tmpcmd with ". "; [new players have sometimes tried to seperate commands using these punctuation marks.]
-	replace the regular expression "<\\\/()\{\}[quotation mark][bracket][close bracket]>" in tmpcmd with " ";
+	replace the regular expression "<*\\\/()\{\}[quotation mark][bracket][close bracket]>" in tmpcmd with " ";
 	if the number of characters in tmpcmd is 0, now tmpcmd is "."; [To fix a bug where in certain cases an empty command causes the word/character counts to break]
 	change the text of the player's command to tmpcmd.
 
@@ -139,24 +143,58 @@ To identify error as (why - a rule):
 
 Section - Applicable Examples
 
-[These two say statements are currently neutered because of a bug in nested indexed text handling under Glulx in 6E72.]
+Definition: a thing is sp_alive: if it is yourself, yes; if it is a person, yes; if it is the player, yes; no.
 
-To say get noun example: say "FLOWER, for example".
-	[let noun_example be indexed text;
-	if the number of visible things > 0:
-		now noun_example is "[random visible thing]";
+Definition: a thing is appropriate for taking: if it is sp_alive, no; if it is part of something, no; if it is not touchable, no; if it is scenery, no; if it is fixed in place, no; yes.
+
+To say get noun example:
+	let fake_example be false;
+	let noun_example be indexed text;
+	if the number of visible appropriate for taking not held things > 0:
+		now noun_example is "[random visible appropriate for taking not held things]";
+	otherwise if the number of visible things which are not sp_alive > 0:
+		now noun_example is "[random visible thing which is not sp_alive]";
 	otherwise:
 		now noun_example is "flower";
-	say "[noun_example in upper case]".]
+		now fake_example is true;
+	say "[noun_example in upper case][if fake_example is true] (if one were here)".
 
-To say get direction example: say "NORTH, for example".
-	[let randdir be a random sp_viable direction;
-	let dir_example be indexed text;
-	if randdir is a direction:
-		now dir_example is "[randdir]";
-		say "[dir_example in upper case], for example";
+To say get person example:
+	let subj be a random visible person who is not the player;
+	let person_example be indexed text;
+	if subj is a person:
+		now person_example is "[subj]";
+		let name_length be the number of words in person_example;
+		now person_example is "[word number name_length in person_example]";
 	otherwise:
-		say "NORTH, for example".]
+		now person_example is "John";
+	say "[person_example in upper case]".
+
+The standard directions list is a list of directions variable. The standard directions list is {north, northeast, east, southeast, south, southwest, west, northwest, up, down}.
+
+To decide whether (dir - a direction) is not a standard direction:
+	if dir is listed in the standard directions list, decide no;
+	decide yes.
+
+To get direction example, omitting superfluous details: 
+	let randdir be a random sp_viable direction;
+	if randdir is not a direction or randdir is not a standard direction, now randdir is north; 
+	let dir_example be indexed text;
+	now dir_example is "[randdir]";
+	now dir_example is "[dir_example in upper case]";
+	if omitting superfluous details:
+		say "[dir_example]";
+	otherwise:
+		let dir_shorthand be indexed text;
+		now dir_shorthand is "[character number 1 in dir_example]";
+		if randdir is northeast, now dir_shorthand is "NE";
+		if randdir is northwest, now dir_shorthand is "NW";
+		if randdir is southeast, now dir_shorthand is "SE";
+		if randdir is southwest, now dir_shorthand is "SW";
+		say "(for example) [dir_example] or [dir_shorthand]".
+
+To say get direction example: get direction example.
+To say get direction example omitting superfluous details: get direction example, omitting superfluous details.
 		
 Definition: a direction is sp_viable if the room it from location is a room.
 
@@ -171,6 +209,55 @@ with 1 blank row.
 
 Chapter - Rules
 
+Section - Nothing Entered
+
+[Because blank lines are handled differently than all other kinds of parser errors (see the "Keyboard" routine in Parser.i6t), it's impossible to intervene other than through intercepting the library message (or replacing the whole Keyboard routine, something I'm loathe to do at the risk of reducing compatibility with other extensions). Unfortunately, only the action runs; the regular turn sequence rules do not, which means time will not advance, and if the story contains random events or helpful messages designed to encourage timid players, they will not be seen. I initially thought fiddling with the value of the "meta" variable could address this, but apparently it doesn't. Suggestions on fixing this are welcome.]
+
+Use WAIT for blank lines translates as (- Constant USE_WAIT_FOR_BLANK; -). Use normal blank lines translates as (- Constant USE_NORMAL_BLANK_LINES; -).
+
+Rule for printing a parser error when the latest parser error is the I beg your pardon error and sp_normal:
+	if the normal blank lines option is active:
+		continue the activity;
+	otherwise if the WAIT for blank lines option is active:
+		now the reborn command is "wait";
+		announce the reparsed command;
+		try waiting;
+	otherwise:
+		now the reborn command is "look";
+		announce the reparsed command;
+		try looking.
+
+Section - Commas
+
+[Parsing commas also happens before normal rules can intervene.]
+
+Use no comma-based orders translates as (- Constant USE_NO_COMMA_ORDERS; -). Use no Smarter Parser comma interference translates as (- Constant USE_NO_COMMA_INTERFERENCE; -).
+
+After reading a command when sp_normal:
+	if the no Smarter Parser comma interference option is inactive:
+		let old_cmd be indexed text;
+		now old_cmd is the player's command;
+		if old_cmd matches the regular expression ",":
+			identify error as incorrect use of commas rule;
+			if the number of visible people who are not the player > 0 and the no comma-based orders option is inactive:	
+				explain the reborn command;
+				reject the player's command;
+			otherwise:
+				let new_cmd be indexed text;
+				now new_cmd is the player's command;
+				replace the regular expression ".*\p" in new_cmd with "";
+				now the reborn command is new_cmd;
+				announce the reparsed command;
+				say command clarification break;
+				change the text of the player's command to new_cmd.
+
+This is the incorrect use of commas rule: do nothing.
+
+Table of Smarter Parser Messages (continued)
+SP rule			message
+incorrect use of commas rule	"[if the number of visible people who are not the player > 0 and the no comma-based orders option is inactive]In some stories, you can ask other characters to do things by typing their name, a comma, and a command, such as [get person example], GO [get direction example omitting superfluous details]. Otherwise commas should be avoided in input.[otherwise]Try to keep commands simple and avoid commas."
+
+
 Section - Standardize
 
 
@@ -181,6 +268,9 @@ A smarter parser rule when sp_normal (this is the standardize apostrophes rule):
 
 A smarter parser rule when sp_normal (this is the scandalous standardize swears rule):
 	replace the regular expression "\b(goddamn|god damn|damn|fuck|hell|shit|piss|ass|dick)(ing|ed|er)?\b" in reborn command with "_swear".
+
+
+
 
 Section - Signs of Confusion
 
@@ -219,7 +309,7 @@ Section - Signs of Frustration
 
 
 A smarter parser rule when sp_normal (this is the signs of frustration rule):
-	if input contains "(dumb|moron|idiot|lame|duh|retard|suck|blow|screw)(ic|ed|s)?" or input contains "(_swear|stupid|bored|boring|die|suicide|death|hate)":
+	if input contains "(dumb|moron|idiot|lame|duh|retard|sucks|blows|screw)(ic|ed|s)?" or input contains "(_swear|stupid|bored|boring|die|suicide|death|hate)":
 		identify error as signs of frustration rule;
 		reject the command.
 
@@ -580,6 +670,28 @@ Here is the default rule set, in order, along with an example of the type of mal
 
 (The standardize apostrophes rule converts contractions like "I'm" to "I am", then strips any remaining apostrophes; the "standardize be verbs" replaces am, was, were, and so on with "_be". Later rules can use this tag to simplify pattern matching.)
 
+Section: Dealing with Blank Lines
+
+One of the most common forms of new player input, an empty command (just pressing enter at the prompt) normally results in the message "I beg your pardon?" Smarter Parser treats a blank line as if the player had typed LOOK, instead. You can use WAIT instead of LOOK:
+
+	Use WAIT for blank lines.
+
+...or remove this behavior entirely:
+
+	Use normal blank lines.
+
+Section: Dealing with Commas
+
+The archaic THORIN, TAKE THE RUCKSACK syntax is rarely used in modern IF; much more commonly, new players will include a comma in their input and be confused by the response. If any people are visible when a misunderstood command including a comma is tried, Smarter Parser tries to better explain the expected syntax. Otherwise, the extension strips everything up to and including the comma and reparses the command (so YOU IDIOT, GO NORTH can succeed).
+
+If your story does not allow the player to order characters around (or uses an alternate syntax), you should trigger the second behavior in all cases by adding the following line:
+
+	Use no comma-based orders.
+
+You can stop Smarter Parser from interfering with commas like this:
+
+	Use no Smarter Parser comma interference.
+
 Section: Reparsing
 
 The rules beginning with "stripping" attempt to remove the offending part of the command and try again: >PLEASE TAKE THE SWORD is tried as >TAKE THE SWORD. When this happens, the player is notified. A named phrase controls the style of notification. By default, it looks like this:
@@ -607,9 +719,9 @@ The error message for a smarter parser rule can be changed by amending the Table
 	SP rule						message
 	the stripping niceties rule		"Your fawning attitude sickens me."
 
-These messages can make use of the phrases [get noun example], to print the name of a visible thing, or [get direction example] to print a direction that can be moved in. (*Note: these currently produce preset alternatives, due to a bug in Inform 6E72.)
+These messages can make use of the phrases [get noun example], to print the name of a visible thing, or [get direction example] to print a direction that can be moved in. 
 
-Type "parser" in an unreleased game to see which rule is generating a particular message.
+Use the test command PARSER in an unreleased game to see which rule is generating a particular message.
 
 If you don't like a rule, you can get rid of it with standard rule ordering syntax:
 

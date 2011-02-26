@@ -1,4 +1,4 @@
-Keywords For Conversation by Matt Wigdahl begins here.
+Version 2 of Keywords for Conversation by Matt Wigdahl begins here.
 
 "Bridges Eric Eve's Conversation Package and Aaron Reed's Keyword Interface, providing an interface to support single-keyword conversations."
 
@@ -56,6 +56,7 @@ Understand "[any ask-topical thing]" as implicit-quizzing.
 Understand "[any tell-topical thing]" as implicit-informing.
 Understand "[any other-topical thing]" as implicit-quizzing.
 Understand "[any unsuggested-topical thing]" as implicit-quizzing.
+Understand "[any thing]" as implicit-quizzing when (the current interlocutor is not nothing or the current node is not null-node). [this is to make all keywords typed when in active conversation attempt to resolve as conversation]
 
 Section 2 Topic Keyword Overrides (in place of Section - Examine Grammar Line in Keyword Interface by Aaron Reed)
  
@@ -69,7 +70,7 @@ Rule for printing the name of something (called item) when listing suggested top
 	let kw be indexed text;
 	now kw is the keyword of item;
 	if kw is "":
-		change kw to word number ( the number of words in output ) in output;
+		now kw is word number (the number of words in output) in output;
 	repeat with wordcounter running from 1 to the number of words in output:
 		say "[if wordcounter > 1] [end if]";
 		if word number wordcounter in output matches the regular expression "\b(?i)[kw]":
@@ -82,11 +83,11 @@ Chapter 4 - When Play Begins
 First when play begins:
 	now topic keyword highlighting is true;
 
-Keywords For Conversation ends here.
+Keywords for Conversation ends here.
 
 ---- Documentation ----
 
-Keywords For Conversation is intended to extend Aaron Reed's Keyword Interface to conversations that use Eric Eve's Conversation Package.  Keyword Interface provides mechanisms for highlighting topic keywords, but doesn't go farther than that.  This extension provides the necessary bridgework to make the topic highlighting (and single-keyword conversations) work seamlessly with Eric's extension family.
+Keywords for Conversation is intended to extend Aaron Reed's Keyword Interface to conversations that use Eric Eve's Conversation Package.  Keyword Interface provides mechanisms for highlighting topic keywords, but doesn't go farther than that.  This extension provides the necessary bridgework to make the topic highlighting (and single-keyword conversations) work seamlessly with Eric's extension family.
 
 Conversation Suggestions provides a feature that allows display of available topics.  This extension applies the Keyword Interface keyword highlighting rules to the displayed topic list.  
 
@@ -108,7 +109,7 @@ Example: * Small Talk - Demonstrate topic keyword highlighting and single-keywor
 
 	*: "Small Talk"
 
-	Include Keywords For Conversation by Matt Wigdahl.
+	Include Keywords for Conversation by Matt Wigdahl.
 
 	The Cubicle is a room.  "This is a typical corporate wage slave's cubicle.  Beige and grey decor, fluorescent lighting, and the ceaseless drone of idling computer fans inspire creatively suicidal ideation."
 

@@ -1,8 +1,8 @@
-Version 1/110103 of Custom Library Messages by Ron Newcomb begins here.
+Version 2 of Custom Library Messages by Ron Newcomb begins here.
 
-"Changes all of the built-in messages in Inform's library to other tenses and POVs.  Also provides an activity for additional customizations, and say-phrases for verb phrase generation."
+"Changes the tense and viewpoint of all of the built-in messages in Inform's library.  Also provides an activity for additional customizations, and say-phrases for verb phrase generation."
 
-"with special thanks to David Fisher" [and to many community members as well! ]
+"with special thanks to David Fisher"
 
 [ Ron Newcomb can be reached at pscion@yahoo.com ]
 
@@ -62,6 +62,42 @@ The including all contents list option is a number that varies. The including al
 The not listing concealed items list option is a number that varies. The not listing concealed items list option variable translates into I6 as "CONCEAL_BIT". [ Omit objects with "undescribed" or "scenery": if marked for listing also set, then does not apply at top level, but does lower down ]
 The listing marked items only list option is a number that varies. The listing marked items only list option variable translates into I6 as "WORKFLAG_BIT". [ At top level (only), only list objects which have the "marked for listing" attribute ]
 
+Include (-
+[ Switch__TX   t;
+	if ((t & 1) == 0) {
+		IS__TX = " is"; 
+		ARE__TX = " are"; 
+		IS2__TX = "is "; 
+		ARE2__TX = "are "; 
+		IS3__TX = "is"; 
+		ARE3__TX = "are"; 
+	} else {
+		IS__TX = " was"; 
+		ARE__TX = " were"; 
+		IS2__TX = "was "; 
+		ARE2__TX = "were "; 
+		IS3__TX = "was"; 
+		ARE3__TX = "were"; 
+	}	
+];-).
+
+[ Overrides the one in the Standard Rules ]
+To list the contents of (O - an object), 
+	with newlines, 
+	indented, 
+	giving inventory information, 
+	as a sentence, 
+	including contents, 
+	including all contents, 
+	tersely, 
+	giving brief inventory information, 
+	using the definite article, 
+	listing marked items only, 
+	prefacing with is/are, 
+	not listing concealed items, 
+	suppressing all articles 
+	and/or with extra indentation: 
+	(- Switch__TX((+ story tense +)); WriteListFrom(child({O}), {phrase options}); -). 
 
 
 Section 2 - internal (in place of Section SR5/8/2 - Message support - Intervention - Unindexed in Standard Rules by Graham Nelson) unindexed
@@ -144,7 +180,7 @@ Include (-
 
 [Plurality-like, but not in Plurality]
 
-[generally, "those're" is awkward, and in colloquial speech, "they're" is frequently used.]
+[generally, "those're" is awkward, and in collinqual speech, "they're" is frequently used.]
 To decide what text is Cap That's-They're of/-- (item - an object): mark item in output; if the item acts plural[ or the item is the player], decide on "They're"; otherwise decide on "That's".
 To decide what text is Cap It-They of/-- (item - an object): mark item in output; if the item acts plural [or the item is the player], decide on "They"; otherwise decide on "It".
 
@@ -663,7 +699,7 @@ word (text)
 "kept"
 "keeping"
 "kept"
-"[is as auxiliary]"       [TODO: lacks the infinitive 'be' form?? in some cases?]
+"[is as auxiliary]"
 "[was as auxiliary]"
 "being"
 "been"
@@ -805,7 +841,7 @@ requesting the pronoun meanings action	5	"."
 --		72	"[The person asked] [aux][have*] better things to do."
 --		23	"[We] [aux]seem[-s] to want to talk to someone, but I [can't] see whom."
 --		24	"[We] [can't] talk to [the library message object]." [TODO: always present tense? ]
---		58	"[The person asked] [aux][be*] unable to do that."
+--		58	"[The person asked] [is-are] unable to do that."
 [Section 2.15 - File Operations]
 Restarting the game action	1	"Are you sure you want to restart? "
 Restarting the game action	2	"Failed."
@@ -831,8 +867,8 @@ requesting the score action		2	"There is no score in this story."
 requesting the score action		3	", earning you the rank of "
 [Section 2.18 - Inventory]
 Taking inventory action	5	"[The person asked] [aux]look[-s] through [its-their] possessions."
-Taking inventory action	1	"[We] [=>continuous][aux]carr[-ies] nothing."  [TODO]
-Taking inventory action	2	"[We] [=>continuous][aux]carr[-ies][ignore library line break]"  [TODO: continuous tense]
+Taking inventory action	1	"[We] [is-are] carrying nothing."  [TODO]
+Taking inventory action	2	"[We] [is-are] carrying[ignore library line break]"  [TODO: continuous tense]
 Taking inventory action	3	":[line break]"
 Taking inventory action	4	"."  [TODO:  linebreak?] [unused?]
 --		101	" (providing light)" [they get a parameter [library message object] ]
@@ -859,7 +895,7 @@ Taking inventory action	4	"."  [TODO:  linebreak?] [unused?]
 --		122	 ", inside "
 [Section 2.19 - Darkness]
 --		9	"[if the story tense is in any past tense]It suddenly became pitch dark.[otherwise]It is now pitch dark in here![end if]"
---		17	"It [aux][be*] pitch dark, and [we] [can't] see a thing."
+--		17	"It [if the story tense is in any past tense]was[else]is[end if] pitch dark, and [we] [can't] see a thing."
 Examining action	1	"Darkness, noun.  An absence of light to see by."
 Looking under action	1	"But it[if the story tense is in any past tense] was[else]'s[end if] dark."
 Searching action  		1	"But it[if the story tense is in any past tense] was[else]'s[end if] dark."
@@ -867,7 +903,7 @@ Searching action  		1	"But it[if the story tense is in any past tense] was[else]
 [Section 2.20 - Take]
 Taking action	1	"Taken."
 Taking action	16	"[The person asked] [aux]pick[-s] up [the noun]."
-Taking action	2	"[We] [aux][be*] always self-possessed."
+Taking action	2	"[We] [is-are] always self-possessed."
 Taking action	3	"[We] [=>negation][aux]suppos[e-s] [the noun] [=>would][if the story tense is in any past tense][=>perfect][end if][aux]car[e-s] for that."
 Taking action	4	"[We][']d have to get [if noun is a supporter]off[otherwise]out of[end if] [the noun] first."
 Taking action	5	"[We] already [aux][have*] [that-those noun]."
@@ -881,12 +917,12 @@ Taking action	14	"[We] [can't] reach into [the library message object]."
 [Section 2.21 - Remove]
 Removing it from action	3	"Removed."
 [LibMsg <report npc removing>			"[The actor] remov[e-s] [the % dobj] from [the second noun]."]
-Removing it from action	1	"[Cap it-they of noun] [aux][be*] unfortunately closed."
+Removing it from action	1	"[Cap it-they of noun] [is-are] unfortunately closed."
 Removing it from action	2	"But [it-they of noun] [is-are]n't there [if the story tense is in any past tense]any longer[else]now[end if]."
 [Section 2.22 - Drop]
 Dropping action		4	"Dropped."
 Dropping action		7	"[The person asked] [aux][put*] down [the noun]."
-Dropping action		1	"[The noun] [aux][be*] already [if the story tense is in any past tense]t[end if]here."
+Dropping action		1	"[The noun] [is-are] already [if the story tense is in any past tense]t[end if]here."
 Dropping action		2	"[=>negation][We] [aux][have*] [that-those noun]."
 [Section 2.23 - Insert]
 Inserting it into action	8	"Done."
@@ -894,7 +930,7 @@ Inserting it into action	9	"[We] [aux][put*] [the noun] into [the second noun]."
 Inserting it into action	10	"[The person asked] [aux][put*] [the noun] into [the second noun]."
 Inserting it into action	1	"[We] [aux]need[-s] to be holding [the noun] before [we] [can] put [it-them] into something else."
 Inserting it into action	2	"[Cap That-Those noun] [can't] contain things."
-Inserting it into action	3	"[The noun] [aux][be*] closed."
+Inserting it into action	3	"[The noun] [is-are] closed."
 Inserting it into action	4	"[We]'ll need to take [it-them of noun] off first."
 Inserting it into action	5	"[We] [can't] put something inside itself."
 [Section 2.24 - Put On]
@@ -915,7 +951,7 @@ Giving it to action	3	"[The second noun] [=>negation][aux]seem[end aux] interest
 Giving it to action	4	"[The second noun] [is-are]n't able to receive things."
 [Section 2.26 - Show]
 Showing it to action	1	"[We] [=>negation][=>continuous][aux]hold[-s] [the noun]."
-Showing it to action	2	"[The noun] [aux][be*] unimpressed."
+Showing it to action	2	"[The noun] [is-are] unimpressed."
 [Section 2.27 - Enter]
 Entering action	5	"[We] [aux][get*] [if noun is a supporter]onto[otherwise]into[end if] [the noun]."
 Entering action	8	"[The person asked] [aux][get*] into [the noun]."
@@ -968,19 +1004,19 @@ Looking action		3	" (as [library message object])[ignore library line break]"
 Looking action		8	"[if the library message object is a supporter] (on [otherwise] (in [end if][the library message object])[ignore library line break]"
 Looking action		5	"[if the library message object is the location][We] [otherwise if the library message object is a room]In [the library message object] [we] [otherwise if the library message object is a supporter]On [the library message object] [we] [otherwise if the library message object is an animal]On [the library message object] [we] [otherwise]In [the library message object] [we] [end if][can] [if the locale paragraph count is at least one]also [end if]see [ignore library line break]"     [messages 5 and 6 are now used again, from this extension's I-could-also-see rule, which replaces the standard you-can-also-see rule ]
 Looking action		6	"[if the library message object is not the location].[otherwise if the story tense is in any past tense] there.[otherwise] here.[end if]"
-Looking action		4	"On [the library message object] [list the contents of library message object with as a sentence list option +  tersely list option + not listing concealed items list option + is-are list option + including contents list option + giving brief inventory information list option + listing marked items only list option]."
+Looking action		4	"On [the library message object] [list the contents of library message object with as a sentence list option +  tersely list option + not listing concealed items list option + is-are list option + including contents list option + giving brief inventory information list option]."   [ "+ listing marked items only list"    was removed for 6G60 ]
 Looking action		7	"[We] [aux][see*] nothing unexpected in that direction."
 [Section 2.32 - Examine]
 Examining action	4	"[The person asked] [aux]look[-s] closely at [the noun]."
 Examining action	2	"[We] [aux][see*] nothing special about [the noun]."
 Examining action	5	"[We] [aux][see*] nothing unexpected in that direction."
-Examining action	3	"[The noun] [aux][be*][if the story tense is in any present tense] currently[end if] switched [if noun is switched on]on[otherwise]off[end if]." 
+Examining action	3	"[The noun] [is-are][if the story tense is in any present tense] currently[end if] switched [if noun is switched on]on[otherwise]off[end if]." 
 [Section 2.33 - Search]
 Searching action  	8	"[The person asked] [aux]search[-es] [the noun]."
 Searching action  	4	"[We] [aux][find*] nothing of interest."
-Searching action  	5	"[We] [can't] see inside, since [the noun] [aux][be*] closed."
-Searching action  	6	"[The noun] [aux][be*] empty."
-Searching action  	2	"There [aux][be*] nothing on [the noun]."
+Searching action  	5	"[We] [can't] see inside, since [the noun] [is-are] closed."
+Searching action  	6	"[The noun] [is-are] empty."
+Searching action  	2	"There [is-are] nothing on [the noun]."
 Searching action  	3	"On [the noun] [list the contents of noun with as a sentence list option +  tersely list option + not listing concealed items list option + is-are list option]."
 Searching action  	7	"In [the noun] [list the contents of noun with as a sentence list option +  tersely list option + not listing concealed items list option + is-are list option]."
 [Section 2.34 - Look Under]
@@ -1056,7 +1092,7 @@ Swearing mildly action		1	"Quite."
 [Section 2.46 - Body Movement]
 Climbing action		1	"[We] [=>negation][aux][think*] much would be achieved by that."
 Jumping action		1	"[We] [aux]jump[-s] on the spot, fruitlessly."
-Swinging action		1	"There [aux][be*] nothing sensible to swing here."
+Swinging action		1	"There [is-are] nothing sensible to swing here."
 Waving Hands action 	1	"[We] [aux]wav[e-s], feeling foolish."
 [Section 2.47 - Physical Interaction]
 Attacking action  	1	"Violence [is-are]n't the answer to this one."
@@ -1083,19 +1119,19 @@ Turning action		3	"Nothing obvious happen[-s]."
 Pushing it to action		1	"[The noun] [can] not be pushed from place to place."
 Pushing it to action		2	"[We] [aux][have*] to decide in what direction to push [the noun]."
 Pushing it to action		3	"[We] [=>could][=>negation]push[-es] it [second noun][if story tense is in any past tense], though [we] tried[end if]."
-Pushing action		1	"[Cap It-They noun] [aux][be*] fixed in place."
-Pulling action		1	"[Cap It-They noun] [aux][be*] fixed in place."
-Turning action		1	"[Cap It-They noun] [aux][be*] fixed in place."
-Pushing action		2	"[We] [aux][be*] unable to."
-Pulling action		2	"[We] [aux][be*] unable to."
-Turning action		2	"[We] [aux][be*] unable to."
+Pushing action		1	"[Cap It-They noun] [is-are] fixed in place."
+Pulling action		1	"[Cap It-They noun] [is-are] fixed in place."
+Turning action		1	"[Cap It-They noun] [is-are] fixed in place."
+Pushing action		2	"[We] [is-are] unable to."
+Pulling action		2	"[We] [is-are] unable to."
+Turning action		2	"[We] [is-are] unable to."
 Pushing action		4	"That would [if story tense is in any past tense]have been[else]be[end if] less than courteous."
 Pulling action		4	"That would [if story tense is in any past tense]have been[else]be[end if] less than courteous."
 Turning action		4	"That would [if story tense is in any past tense]have been[else]be[end if] less than courteous."
 [Section 2.49 - Speech / Interpersonal Actions]
-Answering it that action	1	"There [aux][be*] no reply."
-Asking it about action  	1	"There [aux][be*] no reply."
-Asking it for action		1	"There [aux][be*] no reply."
+Answering it that action	1	"There [if story tense is in any past tense]was[else]is[end if] no reply."
+Asking it about action  	1	"There [if story tense is in any past tense]was[else]is[end if] no reply."
+Asking it for action		1	"There [if story tense is in any past tense]was[else]is[end if] no reply."
 Buying action		1	"[Our] impulse buying nearly [aux][get*] the better of [us]."
 Kissing action		1	"Some things [if the story tense is in any past tense]were[else]are[end if] best approached slowly."
 Singing action		1	"[We] [aux]start[-s] singing to [ourselves], though not loud enough to disturb."

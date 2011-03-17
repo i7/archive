@@ -1,4 +1,4 @@
-Version 5 of Adaptive Hints by Eric Eve begins here.
+Version 6 of Adaptive Hints by Eric Eve begins here.
 
 "An adaptive hint system based on Menus by Emily Short."
 
@@ -337,7 +337,7 @@ Example: ** Escape from an Old House - A short game with several adaptive hints
 
 	The Drawing Room is a room. "A window overlooks the drive to the north, but unfortunately it is solidly barred and there seems to be no way to open it. But you could go south to the lounge or east to the hall."
 
-	The barred window is scenery in the drawing room. The description is "You can see through it onto the drive, but there seems to be no way you could open it, and even if you could the bars would prevent your cliimbing through." Understand "bars" as the window.
+	The barred window is scenery in the drawing room. The description is "You can see through it onto the drive, but there seems to be no way you could open it, and even if you could the bars would prevent your climbing through." Understand "bars" as the window.
 
 	Instead of entering or opening the window:
   	now the window is seen;
@@ -382,7 +382,7 @@ Example: ** Escape from an Old House - A short game with several adaptive hints
 
 	Instead of searching the coat, try searching the pocket.
 
-	In the pocket is a large iron key. The description is "It looks just the job for unlocking a large, heavy door."
+	In the pocket is a large iron key. The description of the large iron key is "It looks just the job for unlocking a large, heavy door."
 
 	The solid front door is a door. It is north of the hall and south of the drive. The description is "It's made of thick, solid oak. There's clearly going to be no way through it without opening it, and it's current [if open]open[otherwise]firmly closed[end if]." It is closed, scenery, lockable and locked. The large iron key unlocks the front door.
 

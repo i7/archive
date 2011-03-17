@@ -1,10 +1,15 @@
-Version 2 of Custom Library Messages by Ron Newcomb begins here.
+Version 3 of Custom Library Messages by Ron Newcomb begins here.
 
 "Changes the tense and viewpoint of all of the built-in messages in Inform's library.  Also provides an activity for additional customizations, and say-phrases for verb phrase generation."
 
 "with special thanks to David Fisher"
 
 [ Ron Newcomb can be reached at pscion@yahoo.com ]
+[ Version 1: initial public release (not including several beta versions.) Thanks Jeff Nyman, "capmikee", Paul "Laroquod", and "gravel". ]
+[ Version 2: Corrects "On the table is ." error.  Thanks CEJ Pacian. ]
+[ Version 3: Now compatible with "use no deprecated phrases" when including Plurality, meaning, all "[Cap xx-xxx]" phrases were rewritten to "[Xx-xxx]".  Fixed bug with have* irregular verb, especially when used in the second person present tense. Thanks George Oliver. Also documents snafu with "only understood as far as" which reprints the command afterward regardless what's replaced.  Copied documentation regarding globals from Default Messages to here. Removed optional of/-- word from the case-sensitive say-phrases that-those, etc., due to Inform bug. Cleaned up the index a bit.  Added an example from Default Messages. Removed a phrase that was only used in the example, and added it to the documentation instead. ]
+
+[ WISHLIST:  An example to print out the entirety of the CLM table in a code form that can be copy-pasted back into a work and used with the much smaller Default Messages.  This is if the author needn't change viewpoint or tense during play. ]
 
 Section - Custom Library Messages
 
@@ -14,7 +19,7 @@ Use library message alerts translates as (- Constant LIBRARY_MESSAGE_ALERTS; -).
 The default messages table is a table name that varies. 
 The default messages table is usually the table of custom library messages. 
 
-To say library message verb: (- PrintCommand(); -). ["recap of command"] [prints the command predicate]
+To say library message verb: (- PrintCommand(); -). [ identical to "recap of command" but per Appendix A, "recap of command" isn't guaranteed to be around forever. ]  [prints the command predicate]
 To say library message pronoun: (- print (address) pronoun_word; -).  ["pronoun dictionary word"]
 To say ignore library line break: (- lm_n = -lm_n; -).
 
@@ -38,7 +43,7 @@ The action in progress is an action name that varies.
 
 
 
-Section - List the Contents of Something, with added options
+Section - For Saying "list the contents of something with Options"
 
 The as a sentence list option is a number that varies. The as a sentence list option variable translates into I6 as "ENGLISH_BIT".
 The tersely list option is a number that varies. The tersely list option variable translates into I6 as "TERSE_BIT". [ More terse English style ]
@@ -61,6 +66,9 @@ The including all contents list option is a number that varies. The including al
 
 The not listing concealed items list option is a number that varies. The not listing concealed items list option variable translates into I6 as "CONCEAL_BIT". [ Omit objects with "undescribed" or "scenery": if marked for listing also set, then does not apply at top level, but does lower down ]
 The listing marked items only list option is a number that varies. The listing marked items only list option variable translates into I6 as "WORKFLAG_BIT". [ At top level (only), only list objects which have the "marked for listing" attribute ]
+
+
+Section - Correct a List Writer Snafu - unindexed
 
 Include (-
 [ Switch__TX   t;
@@ -100,7 +108,12 @@ To list the contents of (O - an object),
 	(- Switch__TX((+ story tense +)); WriteListFrom(child({O}), {phrase options}); -). 
 
 
-Section 2 - internal (in place of Section SR5/8/2 - Message support - Intervention - Unindexed in Standard Rules by Graham Nelson) unindexed
+[ The following silences a runtime error when including Plurality, which created "prior named noun" as a thing, not an object.  I put it into this section so it doesn't appear in the author's index.]
+To decide what thing is (x - an object) anyway: (- ({x}) -). 
+
+
+
+Section - internal (in place of Section SR5/8/2 - Message support - Intervention - Unindexed in Standard Rules by Graham Nelson) unindexed
 
 [These all loop through the table in reverse order because when the table is (continued) rather than (amended), it'll find the new messages first]
 
@@ -178,13 +191,9 @@ Include (-
 ];  -) instead of "Long Texts" in "Language.i6t".  [saves a little over 10K of memory]
 
 
-[Plurality-like, but not in Plurality]
+Section - Plurality expansions
 
-[generally, "those're" is awkward, and in collinqual speech, "they're" is frequently used.]
-To decide what text is Cap That's-They're of/-- (item - an object): mark item in output; if the item acts plural[ or the item is the player], decide on "They're"; otherwise decide on "That's".
-To decide what text is Cap It-They of/-- (item - an object): mark item in output; if the item acts plural [or the item is the player], decide on "They"; otherwise decide on "It".
-
-[To decide what text is Cap It-Those of/-- (item - an object): mark item in output; if the item acts plural or the item is the player, decide on "Those"; otherwise decide on "It".]
+[ These are not in Plurality, or if they are, only operate on Things.  Here, we allow operating on "nothing" to mean "use whatever 'the story viewpoint' is set to." ]
 
 To decide if (item - nothing) acts plural:  [then get answer from generic library setting]
 	if the story viewpoint is first person plural, decide yes; ["Do we?"]
@@ -201,17 +210,23 @@ To mark (target - an object) in output:
 	otherwise now the recently said number is 29;
 	now the prior named noun is the target anyway.
 
-To decide what thing is (x - an object) anyway: (- ({x}) -). [silences a runtime error when including Plurality, which creates "prior named noun" as a thing, not object]
+[generally, "those're" is awkward, and in collinqual speech, "they're" is frequently used.]
+To say That's-They're of (item - an object): mark item in output; if the item acts plural, say "They're"; otherwise say "That's".
 
+[ Even though this one is in Plurality already, only this version understands first person and all past tenses. ]
+To say 's-'re:   [*MUST override Plurality's own]
+	if the story tense is in any past tense:
+		if prior named noun acts plural, say " were";
+		otherwise say " was";
+	otherwise if the story viewpoint is first person and the story tense is in any present tense:
+		say "[']m";
+	otherwise if the prior named noun acts plural:
+		say "[']re";
+	otherwise:
+		say "[']s".
 
-Section 5 - Plurality replacements (for use without Plurality by Emily Short)
-
-The prior named noun is an object that varies.
-To decide if (item - object) acts plural: decide on whether or not the item is plural-named.
-After printing the name of something (called the target) (this is the plurality rule): mark target in output.
-
-To decide which text is is-are: decide on is-are of prior named noun.
-To decide which text is is-are of/-- (item - an object): 
+[ Even though this one is in Plurality already, only this version understands first person and all past tenses. ]
+To say is-are of (item - an object):  [*MUST override Plurality's own]
 	mark item in output; 
 	if the story tense is in any past tense:
 		if the item acts plural, say "were";
@@ -223,56 +238,126 @@ To decide which text is is-are of/-- (item - an object):
 	otherwise:
 		say "is".
 
-To decide which text is that-those: decide on that-those of prior named noun.
-To decide which text is that-those of/-- (item - an object): mark item in output; if the item acts plural [or the item is the player], decide on "those"; otherwise decide on "that".
-To decide what text is Cap That-Those: decide on Cap That-Those of prior named noun.
-To decide what text is Cap That-Those of/-- (item - an object): mark item in output; if the item acts plural [or the item is the player], decide on "Those"; otherwise decide on "That".
 
-To decide what text is it-them: decide on it-them of prior named noun.
-To decide what text is it-them of/-- (item - an object): mark item in output; if the item acts plural [or the item is the player], decide on "them"; otherwise decide on "it".
-To decide what text is it-they of/-- (item - an object): mark item in output; if the item acts plural [or the item is the player], decide on "they"; otherwise decide on "it".
 
-To say 's-'re:
-	if the story tense is in any past tense:
-		if prior named noun acts plural, say " were";
-		otherwise say " was";
-	otherwise if the story viewpoint is first person and the story tense is in any present tense:
-		say "[']m";
-	otherwise if the prior named noun acts plural:
-		say "[']re";
-	otherwise:
-		say "[']s".
+Section - Plurality supplements (for use without Plurality by Emily Short)
 
-To say 's-'ve:
-	if the story tense is in any past tense:
-		say "[']d";
-	otherwise if the prior named noun acts plural:
-		say "[']ve";
-	otherwise:
-		say "[']s".
+[ This extension does things just like Plurality when it can, to preserve memory.  If Plurality is not included, this is the heart of it which CLM needs. ]
 
-To decide what text is its-their: decide on its-their of prior named noun.
-To decide what text is its-their of/-- (item - an object): 
+The prior named noun is an object that varies.
+To decide if (item - object) acts plural: decide on whether or not the item is plural-named.
+After printing the name of something (called the target) (this is the plurality rule): mark target in output.
+
+To say is-are: say is-are of prior named noun.
+
+To say that-those: say that-those of prior named noun.
+To say That-those: say That-those of prior named noun. 
+To say that-those of (item - an object): mark item in output; if the item acts plural [or the item is the player], say "those"; otherwise say "that".
+To say That-those of (item - an object): mark item in output; if the item acts plural [or the item is the player], say "Those"; otherwise say "That".
+
+To say it-them: say it-them of prior named noun.
+To say it-them of (item - an object): mark item in output; if the item acts plural [or the item is the player], say "them"; otherwise say "it".
+To say it-they of (item - an object): mark item in output; if the item acts plural [or the item is the player], say "they"; otherwise say "it".
+To say It-They of (item - an object): mark item in output; if the item acts plural [or the item is the player], say "They"; otherwise say "It".
+
+To say its-their: say its-their of prior named noun.
+To say its-their of (item - an object): 
 	mark item in output;
 	if the item acts plural:
-		decide on "their";
+		say "their";
 	otherwise if the item is the player:
-		decide on "your";
+		say "your";
 	otherwise if the item is female:
-		decide on "her";
+		say "her";
 	otherwise if the item is male:
-		decide on "his";
+		say "his";
 	otherwise:
-		decide on "its".
+		say "its".
 
 
+[Section - all this just for the only understood as far as error
 
+[ As nice as it is to set message #28 to something like "I only understood [library message verb] but not the rest of it.", I feel it's better to leave CLM working identically to Default Messages here.  Since fixing this in DM is more difficult due to the whole of LanguageLM() being necessary to re-include, I'll leave matters as they are. It isn't my job to fix inconsistencies in Inform itself. So, for message #28, moving the partially understood command to somewhere other than the end of the message requires a rule. I've included an example for this. ]
+
+Include (-
+    ! If the player was the actor (eg, in "take dfghh") the error must be printed,
+    ! and fresh input called for.  In three cases the oops word must be jiggled.
+
+    if ((etype ofclass Routine) || (etype ofclass String)) {
+        if (ParserError(etype) ~= 0) jump ReType;
+    } else {
+		if (verb_wordnum == 0 && etype == CANTSEE_PE) etype = VERB_PE;
+		players_command = 100 + WordCount(); ! The snippet variable ``player's command''
+        BeginActivity(PRINTING_A_PARSER_ERROR_ACT);
+        if (ForActivity(PRINTING_A_PARSER_ERROR_ACT)) jump SkipParserError;
+    }
+    pronoun_word = pronoun__word; pronoun_obj = pronoun__obj;
+
+    if (etype == STUCK_PE) {    L__M(##Miscellany, 27); oops_from = 1; }
+    if (etype == UPTO_PE) {     
+        for (m=0 : m<32 : m++) pattern-->m = pattern2-->m;
+        pcount = pcount2; 
+	L__M(##Miscellany, 28);  ! CLM replaces this message with a say phrase that does the following two lines as well.
+!	PrintCommand(0); 
+!	L__M(##Miscellany, 56);
+    }
+    if (etype == NUMBER_PE)     L__M(##Miscellany, 29);
+    if (etype == CANTSEE_PE) {  L__M(##Miscellany, 30); oops_from=saved_oops; }
+    if (etype == TOOLIT_PE)     L__M(##Miscellany, 31);
+    if (etype == NOTHELD_PE) {  L__M(##Miscellany, 32); oops_from=saved_oops; }
+    if (etype == MULTI_PE)      L__M(##Miscellany, 33);
+    if (etype == MMULTI_PE)     L__M(##Miscellany, 34);
+    if (etype == VAGUE_PE)      L__M(##Miscellany, 35);
+    if (etype == EXCEPT_PE)     L__M(##Miscellany, 36);
+    if (etype == ANIMA_PE)      L__M(##Miscellany, 37);
+    if (etype == VERB_PE)       L__M(##Miscellany, 38);
+    if (etype == SCENERY_PE)    L__M(##Miscellany, 39);
+    if (etype == ITGONE_PE) {
+        if (pronoun_obj == NULL)
+                                L__M(##Miscellany, 35);
+        else                    L__M(##Miscellany, 40);
+    }
+    if (etype == JUNKAFTER_PE)  L__M(##Miscellany, 41);
+    if (etype == TOOFEW_PE)     L__M(##Miscellany, 42, multi_had);
+    if (etype == NOTHING_PE) {
+        if (parser_results-->ACTION_PRES == ##Remove &&
+        	parser_results-->INP2_PRES ofclass Object) {
+            noun = parser_results-->INP2_PRES; ! ensure valid for messages
+            if (noun has animate) L__M(##Take, 6, noun);
+            else if (noun hasnt container or supporter) L__M(##Insert, 2, noun);
+            else if (noun has container && noun hasnt open) L__M(##Take, 9, noun);
+            else if (children(noun)==0) L__M(##Search, 6, noun);
+            else parser_results-->ACTION_PRES = 0;
+            }
+        if (parser_results-->ACTION_PRES ~= ##Remove) {
+            if (multi_wanted==100)  L__M(##Miscellany, 43);
+            else                    L__M(##Miscellany, 44);
+        }
+    }
+    if (etype == ASKSCOPE_PE) {
+        scope_stage = 3;
+        if (indirect(scope_error) == -1) {
+            best_etype = nextbest_etype;
+            if (~~((etype ofclass Routine) || (etype ofclass String)))
+            	EndActivity(PRINTING_A_PARSER_ERROR_ACT);
+            jump GiveError;
+        }
+    }
+    if (etype == NOTINCONTEXT_PE) L__M(##Miscellany, 73);
+
+    .SkipParserError;
+    if ((etype ofclass Routine) || (etype ofclass String)) jump ReType;
+    say__p = 1;
+    EndActivity(PRINTING_A_PARSER_ERROR_ACT);
+
+-) instead of "Parser Letter I" in "Parser.i6t".
+]
 
 Book - Light Prose Generation, inflections - verb tense, aspect, mood, and voice, and pronoun declension
 
 Chapter 1 - inflections
 
-Section 1 - capitalising words, typecasting numbers
+Section 1 - capitalising words, typecasting numbers - unindexed
 
 The capitalisation mode is a truth state that varies. 
 The capitalisation mode variable translates into I6 as "caps_mode".
@@ -293,12 +378,26 @@ Section 2 - pronoun declension and verb conjugation
 
 [ The idea we're using in here is:  bitfield == table row# ]
 
-[bits 0, 1, 2]
+[bits 0, 1, 2 of a declension]
 Declension is a kind of value. A declension is first person, second person, third person masculine, third person feminine, third person, first person plural, second person plural, or third person plural.
 
 The story viewpoint is a declension that varies. [When play begins, the story viewpoint is usually first person plural.] [or whichever]
 
-[bits 3 & 4]
+Conjugation is a kind of value.  A conjugation is [present tense,] past tense, present-perfect tense, past-perfect tense, continuous present tense, continuous past tense, or continuous present-perfect tense, continuous past-perfect tense, present tense. [This is intended to be a 0-based enum, but all Inform enums are 1-based.  Hence, "present tense" is tacked onto the end. ]
+
+The story tense is a conjugation that varies.
+
+To decide if (x - a conjugation) is in any present tense: (- (({x} & 1) == 0) -).
+To decide if (x - a conjugation) is in any past tense: (- (({x} & 1) ~= 0) -).
+To decide if (x - a conjugation) is in any perfect tense: (- (({x} & 2) ~= 0) -).
+To decide if (x - a conjugation) is not in any perfect tense: (- (({x} & 2) == 0) -).
+To decide if (x - a conjugation) is in any continuous tense: (- (({x} & 4) ~= 0) -).
+To decide if (x - a conjugation) is not in any continuous tense: (- (({x} & 4) == 0) -).
+
+
+Section 2b - declension and conjugation bits - unindexed
+
+[bits 3 & 4 of a declension]
 To decide which declension is subjective case: (- 0 -).
 To decide which declension is objective case: (- 8 -).
 To decide which declension is possessive pronoun case: (- 16 -).
@@ -312,24 +411,13 @@ bit 0 = present(0)/past(1);
 bit 1 = simple(0)/perfect(1);  
 bit 2 = instant(0)/continuous(1)  a.k.a progressive ]
 
-Conjugation is a kind of value.  A conjugation is [present tense,] past tense, present-perfect tense, past-perfect tense, continuous present tense, continuous past tense, or continuous present-perfect tense, continuous past-perfect tense, present tense. [This is intended to be a 0-based enum, but all Inform enums are 1-based.  Hence, "present tense" is tacked onto the end. ]
-
 To decide which conjugation is the past tense bitval: (- 1 -).
 To decide which conjugation is the perfect tense bitval: (- 2 -).
 To decide which conjugation is the continuous tense bitval: (- 4 -).
 
-The story tense is a conjugation that varies.
-
-To decide if (x - a conjugation) is in any present tense: (- (({x} & 1) == 0) -).
-To decide if (x - a conjugation) is in any past tense: (- (({x} & 1) ~= 0) -).
-To decide if (x - a conjugation) is in any perfect tense: (- (({x} & 2) ~= 0) -).
-To decide if (x - a conjugation) is not in any perfect tense: (- (({x} & 2) == 0) -).
-To decide if (x - a conjugation) is in any continuous tense: (- (({x} & 4) ~= 0) -).
-To decide if (x - a conjugation) is not in any continuous tense: (- (({x} & 4) == 0) -).
 
 
-
-Section 3 - pronoun substitutions, used internally
+Section 3 - to say the appropriate pronoun
 
 [NOTE: only Say phrases can distinguish between capitalised and uncapitalised letters; To Decide Which phrases cannot.]
 [ALSO only the first word in the Say phrase distinguishes, so We/He/She/I will only distinguish case for 'we'.]
@@ -413,7 +501,7 @@ To say pov (x - a conjugation): now the story tense is x.
 
 
 
-Section 4 - sentence-level modes
+Section 5 - sentence-level modes
 
 Xould is a kind of value. Xould is non-modal, could, would, or should.
 Could-would-should is a xould that varies. could-would-should is usually non-modal.
@@ -423,7 +511,7 @@ Negation pending is a truth state that varies. Negation pending is usually false
 Question pending is a truth state that varies. Question pending is usually false.
 
 
-Section 5 - scratchpads for extension's internal use - unindexed
+Section 6 - scratchpads for extension's internal use - unindexed
 
 First aux moved is a truth state that varies. First aux moved is usually false [for statements].
 Suffix eaten by do is a truth state that varies. Suffix eaten by do is usually false.
@@ -465,7 +553,7 @@ To decide which number is the appropriate form for (irverb - an irregular verb):
 	decide on 0.  ["y" / "-en"]
 
 
-Chapter - auxiliary words and phrases
+Chapter 2 - auxiliary words and phrases
 
 To decide which text is is/was as auxiliary:
 	if could-would-should is not non-modal, decide on "be";
@@ -480,7 +568,7 @@ To decide which text is is/was as auxiliary:
 			decide on "were"; 
 		decide on "was".
 
-To decide which text is has as auxiliary: 
+To decide which text is has/have as auxiliary: 
 	if could-would-should is not non-modal, decide on "have";
 	if the story tense is in any present tense:
 		if the prior named noun acts plural[ or the prior named noun is the player]:
@@ -516,16 +604,15 @@ To decide what text is (x - xould) as auxiliary:
 	now suffix eaten by c-w-s is false; [shouldn't get down here, but if you DO pass in non-modal...]
 	decide on "".
 
-To decide which text is n't: 
-	if negation pending is false, decide on "";
+To say n't: 
+	if negation pending is false, stop;
 	if question pending is true and the story viewpoint is first person:
-		if story tense is continuous present tense, decide on ""; [to avoid "Am not I carrying..."]
-		if story tense is present tense and passive voice is true, decide on ""; [to avoid "Amn't I carried by..."]
+		if story tense is continuous present tense, stop; [to avoid "Am not I carrying..."]
+		if story tense is present tense and passive voice is true, stop; [to avoid "Amn't I carried by..."]
 	now negation pending is false;
 	if the story viewpoint is first person and story tense is continuous present tense [and non-modal?]:
-		decide on " not"; 
-	decide on "n't".
-
+		say " not"; 
+	say "n't".
 
 To say moment: say "[if the story tense is in any present tense]moment[else]time".
 To say here-there: if the story tense is in any past tense, say "t"; say "here".
@@ -610,7 +697,7 @@ To say end aux: [this is for any case where a [-s], [e-s], [ve], or [-ies] isn't
 		now restore-library-conjugation is the zero conjugation.
 
 
-Section 8 - irregular verbs
+Chapter 3 - irregular verbs
 
 An irregular verb is a kind of value. 
 
@@ -679,7 +766,7 @@ word (text)
 "took"
 "taking"
 "taken"
-"ha[if the story tense is in any past tense]d[otherwise if the story tense is not present tense]ve[otherwise]s" 
+"ha[if the story tense is in any past tense]d[otherwise if the prior named noun acts plural]ve[otherwise]s" 
 "had"
 "having"
 "had"
@@ -906,30 +993,30 @@ Taking action	16	"[The person asked] [aux]pick[-s] up [the noun]."
 Taking action	2	"[We] [is-are] always self-possessed."
 Taking action	3	"[We] [=>negation][aux]suppos[e-s] [the noun] [=>would][if the story tense is in any past tense][=>perfect][end if][aux]car[e-s] for that."
 Taking action	4	"[We][']d have to get [if noun is a supporter]off[otherwise]out of[end if] [the noun] first."
-Taking action	5	"[We] already [aux][have*] [that-those noun]."
-Taking action	6	"[Cap That-Those the noun] [aux]seem[-s] to belong to [the library message object]." 
-Taking action	7	"[Cap That-Those the noun] [aux]seem[-s] to be a part of [the library message object]."
-Taking action	8	"[Cap That-Those library message object] [is-are]n't available."
+Taking action	5	"[We] already [aux][have*] [that-those of the noun]."
+Taking action	6	"[That-Those of the noun] [aux]seem[-s] to belong to [the library message object]." 
+Taking action	7	"[That-Those of the noun] [aux]seem[-s] to be a part of [the library message object]."
+Taking action	8	"[That-Those of the library message object] [is-are]n't available."
 Taking action	9	"[The library message object] [is-are]n't open."
-Taking action	10	"[Cap That's-They're library message object] hardly portable."
-Taking action	11	"[Cap That's-They're library message object] fixed in place."
+Taking action	10	"[That's-They're of the library message object] hardly portable."
+Taking action	11	"[That's-They're of the library message object] fixed in place."
 Taking action	14	"[We] [can't] reach into [the library message object]." 
 [Section 2.21 - Remove]
 Removing it from action	3	"Removed."
 [LibMsg <report npc removing>			"[The actor] remov[e-s] [the % dobj] from [the second noun]."]
-Removing it from action	1	"[Cap it-they of noun] [is-are] unfortunately closed."
+Removing it from action	1	"[It-they of noun] [is-are] unfortunately closed."
 Removing it from action	2	"But [it-they of noun] [is-are]n't there [if the story tense is in any past tense]any longer[else]now[end if]."
 [Section 2.22 - Drop]
 Dropping action		4	"Dropped."
 Dropping action		7	"[The person asked] [aux][put*] down [the noun]."
 Dropping action		1	"[The noun] [is-are] already [if the story tense is in any past tense]t[end if]here."
-Dropping action		2	"[=>negation][We] [aux][have*] [that-those noun]."
+Dropping action		2	"[=>negation][We] [aux][have*] [that-those of the noun]."
 [Section 2.23 - Insert]
 Inserting it into action	8	"Done."
 Inserting it into action	9	"[We] [aux][put*] [the noun] into [the second noun]."
 Inserting it into action	10	"[The person asked] [aux][put*] [the noun] into [the second noun]."
 Inserting it into action	1	"[We] [aux]need[-s] to be holding [the noun] before [we] [can] put [it-them] into something else."
-Inserting it into action	2	"[Cap That-Those noun] [can't] contain things."
+Inserting it into action	2	"[That-Those of the noun] [can't] contain things."
 Inserting it into action	3	"[The noun] [is-are] closed."
 Inserting it into action	4	"[We]'ll need to take [it-them of noun] off first."
 Inserting it into action	5	"[We] [can't] put something inside itself."
@@ -957,7 +1044,7 @@ Entering action	5	"[We] [aux][get*] [if noun is a supporter]onto[otherwise]into[
 Entering action	8	"[The person asked] [aux][get*] into [the noun]."
 Entering action	9	"[The person asked] [aux][get*] onto [the noun]."
 Entering action	1	"But [we]['s-'re] already [if noun is a supporter]on[otherwise]in[end if] [the noun]."
-Entering action	2	"[Cap That's-They're noun] not something [we] [can] [quoted verb posture]."
+Entering action	2	"[That's-They're of the noun] not something [we] [can] [quoted verb posture]."
 Entering action	3	"[We] [can't] get into the closed [noun]."
 Entering action	4	"[We] [can] only get into something free-standing."
 [Section 2.28 - Exit, Get Off]
@@ -1026,48 +1113,48 @@ Looking under action	2	"[We] [aux][find*] nothing of interest."
 Opening action		5	"[We] [aux]open[-s] [the noun]."
 Opening action		6	"[The person asked] [aux]open[-s] [the noun]."
 Opening action		7	"[The noun] [aux]open[-s]."
-Opening action		1	"[Cap That's-They're noun] not something [we] [can] open."
-Opening action		2	"[Cap It-They noun] [aux]seem[-s] to be locked."
-Opening action		3	"[Cap That's-They're noun] already open."
+Opening action		1	"[That's-They're of the noun] not something [we] [can] open."
+Opening action		2	"[It-They of the noun] [aux]seem[-s] to be locked."
+Opening action		3	"[That's-They're of the noun] already open."
 Opening action		4	"[We] [aux]open[-s] [the noun], revealing [if the number of not undescribed not scenery things in the noun is zero]nothing[otherwise][list the contents of noun with the as a sentence list option +  the tersely list option + the not listing concealed items list option][end if]." 
 [Section 2.36 - Close]
 Closing action		3	"[We] [aux]clos[e-s] [the noun]."
 Closing action		4	"[The person asked] [aux]clos[e-s] [the noun]."
 Closing action		5	"[The noun] [aux]clos[e-s]."
-Closing action		1	"[Cap That's-They're noun] not something [we] [can] close."
-Closing action		2	"[Cap That's-They're noun] already closed."
+Closing action		1	"[That's-They're of the noun] not something [we] [can] close."
+Closing action		2	"[That's-They're of the noun] already closed."
 [Section 2.37 - Lock]
 Locking it with action	5	"[We] [aux]lock[-s] [the noun]."
 Locking it with action	6	"[The person asked] [aux]lock[-s] [the noun]."
-Locking it with action	1	"[Cap That-Those noun] [=>negation][aux]seem[end aux] to be something [we] [can] lock."
-Locking it with action	2	"[Cap That's-They're noun] locked at the [moment]."
+Locking it with action	1	"[That-Those of the noun] [=>negation][aux]seem[end aux] to be something [we] [can] lock."
+Locking it with action	2	"[That's-They're of the noun] locked at the [moment]."
 Locking it with action	3	"First [we] [=>would][aux][have*] to close [the noun]."
-Locking it with action	4	"[Cap That-Those noun] [=>negation][aux]seem[end aux] to fit the lock."
+Locking it with action	4	"[That-Those of the noun] [=>negation][aux]seem[end aux] to fit the lock."
 [Section 2.38 - Unlock]
 Unlocking it with action	4	"[We] [aux]unlock[-s] [the noun]."
 Unlocking it with action	5	"[The person asked] [aux]unlock[-s] [the noun]."
-Unlocking it with action	1	"[Cap That-Those noun] [=>negation][aux]seem[end aux] to be something [we] [can] unlock."
-Unlocking it with action	2	"[Cap That's-They're noun] unlocked at the [moment]."
-Unlocking it with action	3	"[Cap That-Those the second noun] [=>negation][aux]seem[end aux] to fit the lock."
+Unlocking it with action	1	"[That-Those of the noun] [=>negation][aux]seem[end aux] to be something [we] [can] unlock."
+Unlocking it with action	2	"[That's-They're of the noun] unlocked at the [moment]."
+Unlocking it with action	3	"[That-Those of the second noun] [=>negation][aux]seem[end aux] to fit the lock."
 [Section 2.39 - Switch On, Off]
 Switching on action	3	"[We] [aux]switch[-es] [the noun] on."
 Switching on action	4	"[The person asked] [aux]switch[-es] [the noun] on."
-Switching on action	1	"[Cap That's-They're noun] not something [we] [can] switch."
-Switching on action	2	"[Cap That's-They're noun] already on."
+Switching on action	1	"[That's-They're of the noun] not something [we] [can] switch."
+Switching on action	2	"[That's-They're of the noun] already on."
 Switching off action	3	"[We] [aux]switch[-es] [the noun] off."
 Switching off action	4	"[The person asked] [aux]switch[-es] [the noun] off."
-Switching off action	1	"[Cap That's-They're noun] not something [we] [can] switch."
-Switching off action	2	"[Cap That's-They're noun] already off."
+Switching off action	1	"[That's-They're of the noun] not something [we] [can] switch."
+Switching off action	2	"[That's-They're of the noun] already off."
 [Section 2.41 - Wear]
 Wearing action		4	"[We] [aux][put*] on [the noun]."
 Wearing action		5	"[The person asked] [aux][put*] on [the noun]."
-Wearing action		1	"[We] [can't] wear [that-those noun]!"
-Wearing action		2	"[We] [=>negation][=>continuous][aux]hold[-s] [that-those noun]!"
-Wearing action		3	"[We] [is-are] already wearing [that-those noun]!"
+Wearing action		1	"[We] [can't] wear [that-those of the noun]!"
+Wearing action		2	"[We] [=>negation][=>continuous][aux]hold[-s] [that-those of the noun]!"
+Wearing action		3	"[We] [is-are] already wearing [that-those of the noun]!"
 [Section 2.42 - Take Off]
 Taking off action 	2	"[We] [aux][take*] off [the noun]."
 Taking off action 	3	"[The person asked] [aux][take*] off [the noun]."
-Taking off action 	1	"[We] [=>continuous][=>negation][aux][wear*] [that-those noun]."
+Taking off action 	1	"[We] [=>continuous][=>negation][aux][wear*] [that-those of the noun]."
 [Section 2.43 - Eating And Drinking, Senses]
 Eating action		2	"[We] [aux][eat*] [the noun]. Not bad."
 Eating action		3	"[The person asked] [aux][eat*] [the noun]."
@@ -1097,13 +1184,13 @@ Waving Hands action 	1	"[We] [aux]wav[e-s], feeling foolish."
 [Section 2.47 - Physical Interaction]
 Attacking action  	1	"Violence [is-are]n't the answer to this one."
 Burning action	1	"This dangerous act [=>would][aux]achiev[e-s] little."
-Cutting action	1	"Cutting [that-those noun] up [=>would][aux]achiev[e-s] little."
+Cutting action	1	"Cutting [that-those of the noun] up [=>would][aux]achiev[e-s] little."
 Rubbing action	1	"[We] [aux]achiev[e-s] nothing by this."
-Setting it To action	1	"[We] [can't] set [that-those noun] to anything."
+Setting it To action	1	"[We] [can't] set [that-those of the noun] to anything."
 Tying it to action 	1	"[We] [=>would][aux]achiev[e-s] nothing by this."
 Waving action	2	"[We] [aux]wav[e-s] [the noun] around, but to no effect."
 Waving action	3	"[The person asked] [aux]wav[e-s] [the noun], to [our] amusement."
-Waving action	1	"But [we] [is-are]n't holding [that-those noun]."
+Waving action	1	"But [we] [is-are]n't holding [that-those of the noun]."
 Squeezing action 	1	"[We] [aux][keep*] [our] hands to [ourselves]."
 Squeezing action 	2	"[We] [aux]achiev[e-s] nothing by this."
 Squeezing action 	3	"[The person asked] [aux]squeez[e-s] [the noun]."
@@ -1119,9 +1206,9 @@ Turning action		3	"Nothing obvious happen[-s]."
 Pushing it to action		1	"[The noun] [can] not be pushed from place to place."
 Pushing it to action		2	"[We] [aux][have*] to decide in what direction to push [the noun]."
 Pushing it to action		3	"[We] [=>could][=>negation]push[-es] it [second noun][if story tense is in any past tense], though [we] tried[end if]."
-Pushing action		1	"[Cap It-They noun] [is-are] fixed in place."
-Pulling action		1	"[Cap It-They noun] [is-are] fixed in place."
-Turning action		1	"[Cap It-They noun] [is-are] fixed in place."
+Pushing action		1	"[It-They of the noun] [is-are] fixed in place."
+Pulling action		1	"[It-They of the noun] [is-are] fixed in place."
+Turning action		1	"[It-They of the noun] [is-are] fixed in place."
 Pushing action		2	"[We] [is-are] unable to."
 Pulling action		2	"[We] [is-are] unable to."
 Turning action		2	"[We] [is-are] unable to."
@@ -1169,10 +1256,10 @@ Custom Library Messages ends here.
 
 ---- DOCUMENTATION ----
 
-Section : Switching tense and point-of-view
+Section : Changing tense and viewpoint
 
-As the big brother of Default Messages by Ron Newcomb, this extension Custom Library Messages allows several features beyond selectively replacing Inform's library messages.  Primarily, the declension and tense of the entire library can be changed with a pair of lines, and changed again at any time during play.  (Merely including the extension sets first person past tense.)
-	*: The story tense is past tense.
+As the big brother of Default Messages by Ron Newcomb, this extension Custom Library Messages allows several features beyond selectively replacing Inform's library messages.  Primarily, the viewpoint and tense of the entire library can be changed with a pair of lines, and changed again at any time during play.  (Merely including the extension sets first person past tense.)
+	The story tense is past tense.
 	The story viewpoint is third person feminine.
 	
 	When a flashback scene ends, now the story tense is present tense.
@@ -1198,23 +1285,40 @@ And for the story tense:
 	continuous present-perfect tense
 	continuous past-perfect tense
 
-Only the past/present portion of the conjugation is permanently set.  Perfect and continuous are "used up", and are primarily intended for prose generation purposes rather than inflecting the entire message collection. 
+Only the past/present portion of the story tense is permanently set.  Perfect and continuous are "used up", and are primarily intended for prose generation purposes rather than inflecting the entire message collection. 
 
-[A below example will print out the entirety of the Custom Library Messages table in a code form that can be copy-pasted into a work, and used with the much smaller extension Default Messages by Ron Newcomb.  However, if we need to change the declension or conjugation during play, then read on.]
+If the extension Plurality is included, it needs to be included before this extension.  Otherwise, "[is-are]" and related substitutions will not work for first person viewpoint or any past tense.
+
+	Include Plurality by Emily Short.
+	Include Custom Library Messages by Ron Newcomb.
 
 
 Section : Selective Message replacement
 
-Identical to Default Messages by Ron Newcomb, messages can be changed by a table continuation. 
+Identical to Default Messages, messages can be changed by a table continuation. (Table amendments may be used for actions to save a little bit of space.)
 
 	*: Table of custom library messages (continued)
 	library-action	library-message-id	library-message-text
-	-- 		10	"Do what?"
-	--		46	"'[=> nothing][Aux][he] [aux]want[-s] either [ignore library line break]"
+	--			10				"(I beg your pardon, but I didn't catch your drift.)"
+	going action	2				"She couldn't go [noun] from here."
+	taking action	1				"She always wanted [a noun]."
+	--	28	"(I understood [library message verb] but not the rest of it.)"
 
-The same assertion "Use library message alerts." works identically here as in Default Messages, as do many of the global variables. See the documentation for Default Messages.
+There's a few variables that come in handy for certain messages. "The noun" and "the second noun" are of course available, as is "the number understood" and similar. The others are:
 
-Table amendments may be used with action messages to save a little bit of space.
+	the person asked -- we cannot use "the actor" within our table, but this is identical.
+
+	library message verb -- this would be "take" for the taking action, "go" for the going action, etc. (More precisely, it is the entire command predicate typically used in "What do you want to take?" or "I only understood you as far as take them.")
+
+	library message pronoun -- when our reader uses a pronoun, this is the pronoun she used.
+
+	pronoun reference object -- the noun that the above pronoun refers to.
+
+	library message object, second library message object, library message amount -- effectively synonymous with the noun, the second noun, and the number understood for non-action messages.
+
+	library message action, library message number -- these are the variables that are compared to our two table columns. The first differs from the library message verb in that it has the present participle ("taking") rather than the root form ("take"). For actions which take two nouns, the preposition is also included ("giving it to").
+
+This extension usually guesses correctly on line break issues, but for those cases where it adds an extra, the say phrase "[ignore library line break]" should cure it.  It can be mixed-n-matched with the normal "[run paragraph on]" if need be.
 
 
 Section : the Printing Library Message activity
@@ -1223,6 +1327,17 @@ A new activity, "printing library message", is available for whatever purpose.  
 
 	*: For printing library message 3 while taking: say "Er, nevermind." 
 	For printing library message 10 while misc messaging: say "Please type something in." 
+
+We can create multiple tables that resemble the custom library messages table, and set one of them as the official table via the table-that-varies "the default messages table", like so.
+	Carry out Lady Marion following the player:
+		now the default messages table is the table of Lady Marion's observations.
+	
+	Table of Lady Marion's observations
+	library-action	library-message-id	library-message-text
+	-- 		10	"'Are you always so quiet?'"
+
+If the alternate table does not hold every message, the activity can take corrective action in any number of ways.  As a safeguard during testing, the option "Use library message alerts" will print a warning if a message went unhandled.  
+	*: Use library message alerts.
 
 
 Section : Complete Verb Phrase Generation
@@ -1245,11 +1360,21 @@ Like the perfective and continuous aspects, these modes are "used up".
 
 Section : Using Verb Phrase Generation
 
-The same say-phrase combinations used within this extension can be used in a work for limited prose generation. The verb is wrapped with "[aux]" and one of the suffixes "[-s]", "[e-s]", "[-es]", "[-ies]", or "[end aux]", and the sentence begins with "[Aux]" (capitalized).  The latter is only for questions, in which one of the helper verbs moves to the front of the sentence, e.g. in "Do you find it useful?" or "Could you find it useful?" Finally, say-phrases are provided to print an appropriate pronoun. These are always named for the first person plural, because it has a unique word and capitalization for all five declensions. It will always print the pronoun appropriate for the story viewpoint.
-	*: say "[Aux][we] [aux]want[-s] it?  Of course.  [We] [aux]lik[e-s] it very much.";
+The same say-phrase combinations used within this extension can be used in a work for limited prose generation. The verb is wrapped with "[aux]" and one of the suffixes "[-s]", "[e-s]", "[-es]", "[-ies]", or the silent "[end aux]".  To allow generating questions, the sentence begins with the capitalized "[Aux]", marking where the first word goes.  For pronouns, say-phrases exist, named after the first person plural because it has a unique word and capitalization for all five declensions. It will always print the pronoun appropriate for the story viewpoint.
+	*: say "[We] [aux]lik[e-s] it very much.";
+
+This can print as:
+	I like it very much.
+	He likes it very much.
+	You liked it very much.
+	They had liked it very much.
+	She would not have liked it very much.
+
+And so on. Likewise for questions.
+	*: say "[Aux][we] [aux]want[-s] it very much?";
 
 
-Irregular verbs replace the word & suffix with the root form immediately followed by an asterick, like "[verb*]".  The verbs understood by default are: eat*, feel*, find*, get*, give*, hear*, put*, see*, take*, have*, go*, wear*, think*, keep*, be*, and do*.
+Irregular verbs replace the word & suffix with the root form immediately followed by an asterick, like "[eat*]".  The verbs understood by default are: eat*, feel*, find*, get*, give*, hear*, put*, see*, take*, have*, go*, wear*, think*, keep*, be*, and do*.
 	*: say "[Aux]Bob [aux][eat*] much lately?";
 
 New irregular verbs can be defined by a sentence and table continuation.
@@ -1274,15 +1399,49 @@ New irregular verbs can be defined by a sentence and table continuation.
 	"waking up"
 	"woken up"
 
+Some verbs can be used as auxiliary verbs rather than as the main verb.  For these, the following phrases should give correct results. 
+	"[is as auxiliary]"
+	"[have as auxiliary]"
+	"[do as auxiliary]"
 
-The say phrase "[=> (an object)]", like "[=> the player]", will 'mark that object in output' a la Plurality.  Using nothing, "[=> nothing]", will reference the story viewpoint.
+For example, with decide as the main verb.
+	say "[We] [have as auxiliary] decided to soldier on."
 
-	Ron Newcomb can be reached at pscion@yahoo.com.
+
+Section : Miscellaneous Substitutions
+
+The say phrase "[=> (an object)]", like "[=> the player]", will 'mark that object in output' a la Plurality.  Using nothing, "[=> nothing]", will reference the story viewpoint.  A few others are used to touch up certain messages.  
+
+	"[moment]" for the final word in "at the moment/time"
+	"[here-there]" for the final word in "is here" vs "was there"
+	"[can]" for can/could 
+	"[can't]" for can't/couldn't
+
+These temporarily put the verb phrase generation into a particular mode. Their effects are used up as above.
+
+	"[=>negation]" 
+	"[=>would]"  
+	"[=>could]" 
+	"[=>perfect]"
+	"[=>continuous]"
+
+None of the say phrases in this section are necessary for the author to learn, but they occasionally come in handy.  New ones can be created by quizzing the story viewpoint and story tense, or by asking if something "acts plural" to determine is/are distinctions. 
+
+	*: To say 's-'ve:    
+		if the story tense is in any past tense:
+			say "[']d";
+		otherwise if the prior named noun acts plural:
+			say "[']ve";
+		otherwise:
+			say "[']s".
+
+
+(Ron Newcomb can be reached at pscion@yahoo.com)
 
 
 Example: * Poster Shopping - A vignette.
 
-Normally, an author wouldn't use the heavily adaptable text like this table is doing. It's done here so a few various viewpoints may be tried out. Indeed, it still doesn't support present tense.
+Normally, an author wouldn't use the heavily adaptable text like this table is doing. It's done here so a few various viewpoints may be tried out. Indeed, this example doesn't fully support present tense.
 
 	*: "Poster Shopping"
 	
@@ -1301,14 +1460,14 @@ Normally, an author wouldn't use the heavily adaptable text like this table is d
 	
 	Table of custom library messages (continued)
 	library-action	library-message-id	library-message-text
-	taking inventory action	1	"[We]['s-'ve] decided to acquire a new movie poster."
+	taking inventory action	1	"[We] [have as auxiliary] decided to acquire a new movie poster."
 	--		10	"[bracket]I didn't catch your drift there.[close bracket]"
 	--		109	" (glowing in the dark"
 	taking action	1	"[We] [go*] for [the noun]."
 	going action	2	"Born and raised in the city, [we] [have*] no idea what direction [is-are] [noun]."
 	--		49	"Which poster [would as auxiliary] [we] [library message verb]?"
 	--		35	"[We] [=>negation][aux][see*] what '[library message pronoun]' could possibly refer to."
-	--		50	"[We]['s-'ve] [if library message amount > 0]gained[otherwise]lost[end if] [library message amount in words] point[s][ignore library line break]"
+	--		50	"[We] [have as auxiliary] [if library message amount > 0]gained[otherwise]lost[end if] [library message amount in words] point[s][ignore library line break]"
 	--		75	" A [random carried thing] [aux]adorn[-s] [our] wall [ignore library line break]"
 	
 	Instead of going when something is carried, end the story.
@@ -1317,10 +1476,35 @@ Normally, an author wouldn't use the heavily adaptable text like this table is d
 	Test her with "pov third person feminine / x me / i / / take / her / s / take horror poster / i / s".
 	Test them with "pov third person plural / x me / i / / take / her / s / take horror poster / i / s".
 
+Example: * But Then What? - Regarding the "only understood as far as" parser error.
+
+Unlike the "What would you like to..." message which incorporates the relevant part of the player's command into itself, the parser error "I only understood you as far as.." does not.  We can change the message, but the player's command will always be tacked on afterward, making it difficult if we wish to end the response with a close quote, a closing bracket, roman type, etc.  For this situation, we must use a rule.  (If we use both, the rule is consulted first.  This can be useful if we want to add "when..." conditions to the rule:  the table's version would be used when no rules apply.)
+
+For additional measure, a phrase printing the rest of the command, and a phrase deciding if the misunderstood word is known at all, also appear.
+
+	*: "But Then What?"
+	
+	Include Custom Library Messages by Ron Newcomb.
+	
+	There is a room called In the Spotlight.   
+
+	Rule for printing a parser error when the latest parser error is the only understood as far as error:
+		say "I see you wanted to [library message verb] but what did you mean by the word [misunderstood word] in '[what was misunderstood]'?" 
+	
+	To decide which snippet is what was misunderstood: 
+		(- (((wn - 1) * 100) + (WordCount() - 2)) -).
+	
+	Rule for printing a parser error when the latest parser error is the only understood as far as error and the misunderstood word is known elsewhere:
+		say "I see you wanted to [library message verb] but, although I know the word [misunderstood word], I wasn't expecting it there."
+	
+	To decide if the misunderstood word is known elsewhere: 
+		(- (wn--, NextWord() ~= 0) -).
+	
+	Test me with "examine me now / examine me closely now /  examine me spotlight".
 
 Example: **** Exhaustive Test - Prints out the same line in every combination of tense, aspect, mood, voice, declension, etc., some 1,024 variations of the same sentence.
 
-	*: "CLM test"
+	*: "Exhaustive Test for Custom Library Messages"
 	
 	Spot is room. Include Custom Library Messages by Ron Newcomb.
 	

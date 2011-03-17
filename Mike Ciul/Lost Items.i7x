@@ -1,4 +1,4 @@
-Version 1/101210 of Lost Items by Mike Ciul begins here.
+Version 2/110308 of Lost Items by Mike Ciul begins here.
 
 "Prints a special message instead of 'You can't see any such thing' when certain items are out of scope, indicating that they have disappeared unexpectedly. Useful for flashbacks, theft, and NPCs who might sneak away."
 
@@ -24,101 +24,10 @@ Section 2 - The Determine Loss rulebook
 Did we lose is an object-based rulebook. The did we lose rules have outcomes we didn't (failure), and we did (success).
 
 Did we lose a known losable not visible thing (this is the default did we lose rule): we did.
-	
-Book 2 - Remembering Where Things Were (for use with Remembering by Aaron Reed)
 
-Chapter 1 - Iterating over Scope
+The default did we lose rule is listed last in the did we lose rulebook.
 
-[Thanks to Andrew Plotkin for this code to make the scope checking not incredibly slow]
-
-To iterate scope with (func - phrase thing -> nothing): (- LoopOverScope({func}-->1); -).
-
-To iterate scope for (actor - thing) with (func - phrase thing -> nothing): (- LoopOverScope({func}-->1, {actor}); -).
-
-Chapter 2 - Keeping track of where we saw things
-
-The remembered carrier is a person that varies.
-
-To decide which object is the encloser of (target - a thing):
-	let H be the holder of target;
-	while H is not nothing:
-		if H is a person or H is a room, decide on H;
-		now H is the holder of H;
-	decide on nothing;
-
-To note location of (target - a thing) (this is noting location):
-	if target is losable:
-		if there is an item of target in Table of Remembered Object Locations:
-			choose row with an item of target in Table of Remembered Object Locations;
-			change encloser entry to the encloser of target;
-		otherwise:
-			if the number of blank rows in Table of Remembered Object Locations is at least 1:
-				choose a blank row in Table of Remembered Object Locations;
-				change item entry to target;
-				change encloser entry to the encloser of target;
-
-When play begins:
-	if at least one losable thing is visible:
-		iterate scope with noting location.
-
-Every turn when at least one losable thing is visible (this is the note position of remembered objects rule):
-	iterate scope with noting location.
-
-Table of Remembered Object Locations
-item	encloser
-a thing	an object
-with 20 blank rows.
-
-Chapter 3 - Recalling where we saw things
-
-To decide which object is the remembered encloser of (item - a thing):
-	if there is an item of noun in the Table of Remembered Object Locations:
-		decide on the encloser corresponding to an item of noun in Table of Remembered Object Locations;
-	decide on nothing;
-
-Chapter 4 - Not Expecting Losable Things To Stay Put 
-
-Section 1 - Identifying the remembered spot of a losable thing
-
-Carry out remembering something losable when the noun is not a person (this is the don't assume losable things stay put rule):
-	Let H be the remembered encloser of the noun;
-	If H is a room:
-		change the remembered spot to H;
-	otherwise:
-		change the remembered spot to nothing;
-		change the remembered carrier to H;
-
-The don't assume losable things stay put rule is listed last in the carry out remembering rulebook.
-			 
-Section 2 - Reporting the person who last held the lost thing (for use without Custom Library Messages by Ron Newcomb)
-
-Report remembering something losable when the remembered spot is not a room and the remembered carrier is a person:
-	If the remembered carrier is the player:
-		say "You don't seem to have [that-those of noun] anymore." instead;
-	otherwise:
-		say "The last time you saw [it-them of noun], [the remembered carrier] had [the noun]."
-
-Section 3 - Custom Reporting the person who last held the lost thing (for use with Custom Library Messages by Ron Newcomb)
-
-Report remembering something losable when the remembered spot is not a room and the remembered carrier is a person:
-	if the remembered carrier is the player:
-		say "[We] [aux][do*]n't seem to have [that-those of noun] anymore." instead;
-	otherwise:
-		say "The last time [we] [if the story tense is past tense]had seen[otherwise]saw[end if] [it-them of noun], [the remembered carrier] [if the story tense is past tense]had [end if]had [the noun]." instead;
-
-[If we wanted to be nice, we would also replace Aaron Reed's general report remembering message "The last time YOU saw...." but we'll assume that anyone who really wants to use both extensions can do their own rewriting.]
-
-Chapter 5 - Printing Parser Errors for Remembering
-
-[The Rememering extension has "You can't see any such thing" hardcoded into its "replace did not make sense in this context" rule. This rule ensures that the correct library message is issued even if we're using a Custom Library Messages extension.]
-	
-Rule for printing a parser error when the latest parser error is the noun did not make sense in that context error (this is the custom replace did not make sense in that context rule):
-	now the latest parser error is the can't see any such thing error;
-	make no decision;
-
-The replace did not make sense in that context rule is not listed in any rulebook.
-
-Book 3 - Noticing what is lost
+Book 2 - Noticing what is lost
 
 Part 1 - The Noticing Absence activity
 
@@ -154,14 +63,31 @@ The item sought is a thing that varies.
 
 Chapter 2 - Printing a parser error
 
-Rule for printing a parser error when the latest parser error is the can't see any such thing error:
+The parser's wn is a number that varies. The parser's wn variable translates into I6 as "wn".
+
+Rule for printing a parser error when the latest parser error is the can't see any such thing error (this is the check for lost items rule):
+	let the remembered wn be the parser's wn;
 	Repeat with the missing item running through lost things:
 		Now the item sought is the missing item;
 		if the player's command includes "[any sought thing]":
 			carry out the noticing absence activity with the missing item;
 			rule fails;
 	now the latest parser error is the can't see any such thing error;
+	now the parser's wn is the remembered wn;
 	make no decision;
+
+Book 3 - Avoiding Extra Line Breaks When Trying an Action During a Parser Error
+
+Converting parser error to action is a truth state that varies.
+
+Before printing a parser error (this is the not yet converting parser error to action rule):
+	Now converting parser error to action is false.
+
+After printing a parser error when converting parser error to action is true (this is the prevent extra line breaks when converting parser error to action rule):
+	say run paragraph on.
+
+Before doing anything when the printing a parser error activity is going on (this is the now converting parser error to action rule):
+	Now converting parser error to action is true.
 
 Book 4 - Testing commands - not for release
 
@@ -203,7 +129,7 @@ One thing that is different from Epistemology, however, is that we can rewrite t
 
 Section: The Noticing Absence Activity
 
-The heart of Lost Items is the "noticing absence" activity. When the parser is about to give the error "you can't see any such thing," Lost Items checks the player's command for lost items. If the player did mention a lost item in his or her command, the Noticing Absence activity is performed with the mentioned item.
+The heart of Lost Items is the "noticing absence" activity. When the parser is about to give the error "you can't see any such thing," the "check for lost items" rule intercepts it. If the player did mention a lost item in his or her command, the Noticing Absence activity is performed with the mentioned item.
 
 If the player mentions more than one lost item, or uses a phrase that matches more than one lost item, only the first item checked will be used. It is assumed that there will only be a small number of losable items, so there shouldn't be many conflicts, but it is important to be aware of this possibility.
 
@@ -213,22 +139,44 @@ The "default notice absence rule" for noticing absence normally handles the Noti
 
 To customize the message, we may replace the default notice absence rule, or add additional rules for different items and situations.
 
+Section: Use with and without Custom Library Messages by Ron Newcomb
+
+All messages printed by Lost Items should print in the correct person and tense when used with CLM. Since CLM makes use of Plurality by Emily Short, one phrase from Plurality is duplicated in the event that neither Plurality nor CLM is included in the source. No matter what other extensions are included, we will still be able to use this phrase:
+
+	if the noun acts plural
+
 Section: Use with Remembering by Aaron Reed
 
-When used with Remembering by Aaron Reed, Lost Items will keep track of where losable items were last seen instead of where they are currently, on the assumption that if they have moved, the player should not know that. In addition, if an object was seen while being carried by another person, the person carrying the object will be remembered, as opposed to the room where the object was seen.
+Remembering prints a special message when examining, taking, or dropping an object that has been seen already. When used with glulx, it tells the player where the PC last saw the object. We can make this work with all verbs using the following rule:
 
-To make Remembering work with all verbs, you can use this rule:
-
-	[this rule seems to cause an extra line break. Can we fix that?]
-
-	For noticing absence of something (called item) (this is the remember lost items rule):
+	*: For noticing absence of something (called item) (this is the remember lost items rule):
 		Try remembering item;
-	
+
 	The remember lost items rule is listed instead of the default notice absence rule in the for noticing absence rulebook.
+
+There's a little bit going on behind the scenes here, because normally an extra line break is printed when an action is tried during the printing a parser error activity. To make the line breaks work out as we'd expect, Lost Items implements a global variable (converting parser error to action) and a trio of rules (the "not yet converting parser error to action" rule in the before printing a parser error rulebook, the "now converting parser error to action" rule in the before rulebook, and the "prevent extra line breaks when converting parser error to action" rule in the after printing a parser error rulebook). It's unlikely that we'll need to interfere with these rules, but it's good to know that they exist.
 
 Section: Testing Commands
 
 There are no new testing commands for Lost Items, but it adds a line to the "epistat" output defined by Epsitemology. The new line tells whether the inspected object is losable, visible, or lost.
+
+Section: Changes
+
+Version 2:
+
+Updated to work with Version 6 of Remembering by Aaron Reed. Actually what this means is that Version 2 does nothing at all with the Remembering verb. Aaron has already implemented all the functionality that was in Lost Items Version 1, although some of it only works with glulx.
+
+Fixed a bug in interactions with Neutral Library Messages by Aaron Reed and possibly other code that depends on the parser's word-number variable.
+
+Gave a name to the check for lost items rule.
+
+Fixed a bug causing an extra line break when an action is triggered by the noticing absence activity.
+
+Section: Credits
+
+Thanks to Eric Eve, Aaron Reed and Ron Newcomb for the other extensions that make this work. Aaron Reed has been a big inspiration for making interactive fiction more user-friendly. Ron Newcomb and Brady Garvin provided some instrumental advice and bugfixes for version 2. Andrew Plotkin and Emily Short, as well as many others on intfiction.org, have always been forthcoming with advice and explanations for the more arcane aspects of Inform.
+
+If you have questions, suggestions or bugfixes, please contact the author at captainmikee@yahoo.com.
 
 Example: * The Artful Dodger - Handling stolen items.
 
@@ -248,7 +196,7 @@ Example: * The Artful Dodger - Handling stolen items.
 
 	Test me with "x watch/g"
 
-Example: *** Living in the Past - Using the Remembering extension and implementing flashbacks.
+Example: *** Living in the Past - Using the Remembering extension and implementing flashbacks. This will tell the player where they last saw some things if it is compiled to glulx.
 
 	*: "Living in the Past"
 
@@ -321,6 +269,9 @@ Example: *** Living in the Past - Using the Remembering extension and implementi
 	Instead of remembering something lost (called item) when the noun is not a person:
 		carry out the noticing absence activity with item;
 	
+	For printing the name of the location when remembering:
+		say "right here"
+
 	Chapter 4 - Testing
 
 	test me with "x flower/smell flower/e/x amelia/smell flower/x flower/smell flower/kiss amelia/g/x amelia"

@@ -1,4 +1,4 @@
-Version 8 of Conversation Framework by Eric Eve begins here.
+Version 9 of Conversation Framework by Eric Eve begins here.
 
 "A framework for conversations that allows saying hello and goodbye, abbreviated forms of ask and tell commands for conversing with the current interlocutor, and asking and telling about things as well as topics."
 
@@ -274,7 +274,7 @@ Report saying goodbye to someone when the farewell type is explicit (this is the
    say "You say goodbye to [the noun]."
 
 This is the say goodbye when moving rule:
-    if the current interlocutor is a person in the location begin;
+    if the current interlocutor is a person enclosed by the location begin;
         now the farewell type is implicit;
         try saying goodbye to the current interlocutor;
    end if.
@@ -348,7 +348,7 @@ Chapter: Overview
 
 Section: Summary
 
-This extension provides three main features: (1) implementing asking and telling about things as well as objects; (2) allowing players to use abbreviated forms of the ASK and TELL commands; and (3) some rudimentary greeting protocols (saying hello and goobye).
+This extension provides three main features: (1) implementing asking and telling about things as well as objects; (2) allowing players to use abbreviated forms of the ASK and TELL commands; and (3) some rudimentary greeting protocols (saying hello and goodbye).
 
 Note that this extension uses the extension Epistemology by Eric Eve, which therefore also needs to be installed on your machine for this extension to work.
 
@@ -360,7 +360,7 @@ The say goodbye when moving rule, which triggers an implicit farewell when movin
 
 Chapter: Asking and Telling about Things
 
-Two new actions are provided: informing about it and quizzing about it (corresponding to TELL SOMEONE ABOUT A THING and ASK SOMEONE ABOUT A THING). By default this allows anything in the game world to be asked about (although this can be changed by imposing knowledge restrictions, as in the example that follows). Reponses can be customised with rules like:
+Two new actions are provided: informing about it and quizzing about it (corresponding to TELL SOMEONE ABOUT A THING and ASK SOMEONE ABOUT A THING). By default this allows anything in the game world to be asked about (although this can be changed by imposing knowledge restrictions, as in the example that follows). Responses can be customised with rules like:
 
 	After informing Fred about the golden goose:
  	say "'I've just seen a golden goose - out in the yard!' you exclaim.
@@ -413,9 +413,9 @@ The default responses to the commands aren't very interesting ("You say hello to
 
 Section: Implicit Greetings
 
-In addition to these explicit greetings, Conversation Framework also implements implicit greetings. Whenever we address a conversational command to someone who isn't already the current interlocutor, an implicit SAY HELLO TO the new interlocutor will be executed. Likewise, if we terminate a conversation by simply moving to another location, an implict SAY GOODBYE TO is executed. If we have not defined any saying goodbye or saying hello rules of our own, nothing much will appear to happen with these implicit greetings, but if we have, we shall find our hello and goodbye rules being invoked.
+In addition to these explicit greetings, Conversation Framework also implements implicit greetings. Whenever we address a conversational command to someone who isn't already the current interlocutor, an implicit SAY HELLO TO the new interlocutor will be executed. Likewise, if we terminate a conversation by simply moving to another location, an implicit SAY GOODBYE TO is executed. If we have not defined any saying goodbye or saying hello rules of our own, nothing much will appear to happen with these implicit greetings, but if we have, we shall find our hello and goodbye rules being invoked.
 
-We may want to distinguish between greetings that the player has explicity commanded (through commands such as SAY HELLO TO, or BYE) and those he has triggered by using a conversational command (to start a conversation) or a movement command (to end one). To that end we can test whether the global variables greeting type and farewell type contain the values implicit or explicit, e.g.:
+We may want to distinguish between greetings that the player has explicitly commanded (through commands such as SAY HELLO TO, or BYE) and those he has triggered by using a conversational command (to start a conversation) or a movement command (to end one). To that end we can test whether the global variables greeting type and farewell type contain the values implicit or explicit, e.g.:
 
 	After saying hello to Fred when the greeting type is explicit:
 	say "'Hi, there, Fred old fellow!' you exclaim.
@@ -477,7 +477,7 @@ Section: Disambiguation
 One problem that can arise with allowing the player to ask (quiz) or tell (inform) about things in the game is that since all known things are in scope for the quizzing it about and informing it about actions, several things may match what the player types, leading to undesirable exchanges like:
 
 	>ask bob about the ball
-	Which do you mean, the rubber ball, the Bingleys' Ball, the ball gown, the balll or the ball?
+	Which do you mean, the rubber ball, the Bingleys' Ball, the ball gown, the ball or the ball?
 
 To be sure, in some cases the player may have asked a genuinely ambiguous question for which a disambiguation prompt may be the best response. Often, though, players will find it annoying and inappropriate, and it would be better if the parser simply picked one of the alternatives.
 
@@ -493,7 +493,7 @@ There's more than one way of dealing this; the best one will depend on the preci
 
 We can then implement the conversation-preferred adjective in whatever way best suits us. We could define it as a property:
 
-	A thing can be conversation-preferred. A thing is usually not conversation-preferrred.
+	A thing can be conversation-preferred. A thing is usually not conversation-preferred.
 
 But we may feel this is a bit inefficient if we need only to pick out a few items that need rescuing from disambiguation prompts in this situation. An alternative might be to define an adjective that applies to a handful of objects:
 
@@ -518,7 +518,7 @@ If you want to end a conversation programmatically (bypassing the leavetaking pr
 
 Section: Other Conversation Extensions
 
-As its name implies, Conversation Framework is intended to provide a framework for conversations: it is not a complete conversation system. If you need further functionality, you may want to use one or more of the following exensions in addition:
+As its name implies, Conversation Framework is intended to provide a framework for conversations: it is not a complete conversation system. If you need further functionality, you may want to use one or more of the following extensions in addition:
 
 The extension Conversational Defaults provides an additional framework for handling default responses to all the conversational commands handled here.
 
@@ -648,7 +648,7 @@ Example: ** The Ring, the Gardener and the the Maid - Putting Conversation Frame
 	  say "'What do you think of Sarah?' you inquire.[paragraph break]'She's a bonny lass, that one!' he declares."
 
 	After telling Jim about "[weather]":
-	  say "'Nice weather today!' you remark.[paragraph break]'Bit hot for working in, if yoiu ask me,' he replies, mopping his brow."
+	  say "'Nice weather today!' you remark.[paragraph break]'Bit hot for working in, if you ask me,' he replies, mopping his brow."
 
 	After asking Jim about "[weather]":
 	  say "'Do you reckon this weather will hold?' you ask.[paragraph break]'Nah, there'll be storms tonight, you mark my words,' he tells you."

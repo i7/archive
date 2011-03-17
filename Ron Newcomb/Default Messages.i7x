@@ -1,4 +1,4 @@
-Version 2 of Default Messages by Ron Newcomb begins here.
+Version 3 of Default Messages by Ron Newcomb begins here.
 
 "Allows customizing the standard messages in the Inform library.  A ground-up reimplementation of David Fisher's extension that economizes on memory."
 
@@ -27,7 +27,7 @@ To #if library message alerts is active and not in a release build: (- #ifdef DE
 To #end if library message alerts is active and not in a release build: (- #endif; #endif; -). 
 
 To decide if intervened in miscellaneous message: 
-	repeat through the table of custom library messages:
+	repeat through the table of custom library messages in reverse order:
 		if the library-message-id entry is the library message number and there is no library-action entry:
 			say the library-message-text entry;
 			unless library message number is -1, say line break;
@@ -39,7 +39,7 @@ To decide if intervened in miscellaneous message:
 
 To decide if intervened in miscellaneous list message: 
 	increase library message number by 100;
-	repeat through the table of custom library messages:
+	repeat through the table of custom library messages in reverse order:
 		if the library-message-id entry is the library message number and there is no library-action entry:
 			say the library-message-text entry;
 			decide yes;
@@ -50,7 +50,7 @@ To decide if intervened in miscellaneous list message:
 	decide no.
 
 To decide if intervened in action message: 
-	repeat through the table of custom library messages:
+	repeat through the table of custom library messages in reverse order:
 		if the library-message-id entry is the library message number  and there is a library-action entry and the library-action entry is the library message action:
 			say the library-message-text entry;
 			unless library message number is -1, say line break;
@@ -59,7 +59,6 @@ To decide if intervened in action message:
 	say "{ [library message action] action #[library message number] }[paragraph break]";
 	#end if library message alerts is active and not in a release build;
 	decide no.
-
 
 
 Default Messages ends here.
@@ -155,12 +154,42 @@ Example: * Poster Shopping - A vignette.
 	
 	Test me with "x me / i / / take / her / s / take horror poster / i / s ".
 
+Example: * But Then What? - Regarding a snafu with the "only understood as far as" error.
+
+Unlike the "What would you like to..." message which incorporates the relevant part of the player's command into itself, the parser error "I only understood you as far as.." does not.  We can change the message, but the player's command will always be tacked on afterward, making it difficult if we wish to end the response with a close quote, a closing bracket, roman type, etc.  For this situation, we must use a rule.  (If we use both, the rule is consulted first.  This can be useful if we want to add "when..." conditions to the rule:  the table's version would be used when no rules apply.)
+
+For additional measure, a phrase printing the rest of the command, and a phrase deciding if the misunderstood word is known at all, also appear.
+
+	*: "But Then What?"
+	
+	Include Default Messages by Ron Newcomb.
+	
+	There is a room called In the Spotlight.   
+
+	Rule for printing a parser error when the latest parser error is the only understood as far as error:
+		say "'You wanted to [library message verb] but what did you mean by the word [misunderstood word] in ['][what was misunderstood][']?'" 
+	
+	To decide which snippet is what was misunderstood: 
+		(- (((wn - 1) * 100) + (WordCount() - 2)) -).
+	
+	To decide which snippet is the misunderstood word: 
+		(- (((wn - 1) * 100) + 1) -).
+
+	Rule for printing a parser error when the latest parser error is the only understood as far as error and the misunderstood word is known elsewhere:
+		say "'You wanted to [library message verb] but, although I know the word [misunderstood word], I wasn't expecting it there.'" 
+	
+	To decide if the misunderstood word is known elsewhere: 
+		(- (wn--, NextWord() ~= 0) -).
+	
+	Test me with "examine me now / examine me closely now /  examine me spotlight".
+
 Example: * Tips & Techniques - This appendix contains phrases for miscellaneous tasks:  testing and finding messages, finding bits of information, etc.
 
 This testing command will print the library message for any number given on the command line.  For example, entering MISC 9 will print "It is now pitch dark in here!", or whatever message we've replaced it with.
 	Understand "misc [number]" as a mistake ("[miscellaneous library message the number understood][run paragraph on]").
 	
-	To say miscellaneous library message (N - a number): (- L__M( ##Miscellany, {N} ); -).
+	To say miscellaneous library message (N - a number): 
+		(- L__M( ##Miscellany, {N} ); -).
 
 
 The following will print the names of all the actions as they should appear in the table.  This is useful when we can't figure out the exact wording.  (Note that one action, "the requesting the story file version action", has no text of its own to replace, so will never appear in our table.)
@@ -170,11 +199,21 @@ The following will print the names of all the actions as they should appear in t
 
 
 A common parser message in games of yore went along the lines of "I don't understand the word 'kludge'."  For this, miscellaneous message #30 could use "[the misunderstood word]".  Try it with "examine lovely me."  Or try it in miscellaneous message #23 with "I don't know a Mr. [misunderstood word]."  Test that one with "Elvis, look" after Elvis has left the story.  Note that it isn't always set properly, so try many variations just in case.
-	To decide which snippet is the misunderstood word: (- (((wn - 1) * 100) + 1) -).
+	To decide which snippet is the misunderstood word:
+		(- (((wn - 1) * 100) + 1) -).
+
+Similarly for the "I only understood you as far as examining yourself." in response to commands like EXAMINE ME CLOSELY NOW comes the rest of the phrase.  See the previous example "But Then What?" for its usage.
+	To decide which snippet is what was misunderstood: 
+		(- (((wn - 1) * 100) + (WordCount() - 2)) -).
+
+One more tool for some parser messages is asking whether the misunderstood word is known at all, or is known but not expected at the place where the player used it.  
+	To decide if the misunderstood word is known at all: 
+		(- (wn--, NextWord() ~= 0) -).
 
 
 Related is entering action #2, "That's not something you can enter/stand/sit on."  Regardless whether the player sits on a chair, lies on a bed, climbs into a car, or stands on a stool, the same action, entering, is used.  But when the player attempts these actions on something that isn't enterable, it's nice if the refusal message correctly acknowledges which action the player tried.   We do this by again quoting the relevant part of the player's command, namely, "[the quoted verb]".  Additionally, the standard message, in order to tack on appropriate prepositions, sends the snippet to a phrase that works much like an After Reading A Command rule.  Try that one with "[the quoted verb posture]".  
-	To decide which snippet is the quoted verb: (- ((verb_wordnum * 100) + 1) -).  [if command is TAKE OFF HAT, gives just TAKE]
+	To decide which snippet is the quoted verb: 
+		(- ((verb_wordnum * 100) + 1) -).  [if command is TAKE OFF HAT, gives just TAKE]
 	
 	To decide which text is (quoted word - a snippet) posture:
 		if the quoted word matches "stand", decide on "stand on";

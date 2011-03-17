@@ -1,7 +1,7 @@
-Version 3/101210 of German by Team GerX begins here.
+Version 3/110303 of German by Team GerX begins here.
 
 "GerX: An extension to make German the language of play, written by Banbury,
-Christian Blümke and Michael Baltes. Designed for I7 release 6F95."
+Christian Blümke and Michael Baltes. Designed for I7 releases 6G60 and 6F95."
 
 "based on deform release 6/11 by Martin Oehm"
 
@@ -162,7 +162,7 @@ Section - Grammar - Pronominal adverbs
 The current pronominal adverb is a pronominal adverb.
 To decide what pronominal adverb is the current pronominal adverb: (- pronominal_adverb_flag -).]
 
-To decide whether a noun has been supplied by a pronominal adverb: (- (pronominal_adverb_flag) -).
+To decide whether the/a noun has been supplied by a pronominal adverb: (- (pronominal_adverb_flag) -).
 To reset the/-- pronominal adverb: (- pronominal_adverb_flag = false; -).
 
 
@@ -798,8 +798,8 @@ Understand "lern nach/ob/ueber/von [text] in [dativ] [something]" as consulting 
 Understand "lern nach/ob/ueber/von [text] aus [dativ] [something]" as consulting it about (with nouns reversed).
 Understand "lern [text] in [dativ] [something]" as consulting it about (with nouns reversed).
 Understand "lern [text] aus [dativ] [something]" as consulting it about (with nouns reversed).
-Understand "lern in [something] nach/ob/ueber/von [text]" as consulting it about.
-Understand "lern aus [something] nach/ob/ueber/von [text]" as consulting it about.
+Understand "lern in [dativ] [something] nach/ob/ueber/von [text]" as consulting it about.
+Understand "lern aus [dativ] [something] nach/ob/ueber/von [text]" as consulting it about.
 Understand the command "forsch" as "lern".
 
 Understand "konsultier [something] ueber/bezueglich [text]" as consulting it about.
@@ -1296,10 +1296,10 @@ To say (obj - an object) unbestimmt im (K - a Kasus): (- WithoutArt({obj}, {K}-1
 
 Section - Saying - Personal pronouns
 
-The prior named noun is a thing that varies.
-The prior named noun variable translates into I6 as "pnn".
+The previously named noun is a thing that varies.
+The previously named noun variable translates into I6 as "pnn".
 
-[Die I6-Variable pnn (prior named noun in I7) wird in |STANDARD_NAME_PRINTING_R|,
+[Die I6-Variable pnn (previously named noun in I7) wird in |STANDARD_NAME_PRINTING_R|,
 den Print-Routinen oder direkt vor der Ausgabe auf das angesprochene Objekt gesetzt.
 Die Textersetzungen, die sich auf das letzte Objekt beziehen, benutzen pnn
 für die Ausgabe.]
@@ -1383,22 +1383,22 @@ To say die: (- print (string) LanguageArticles-->(2 + short_name_case * 4); -).
 To say das: (- print (string) LanguageArticles-->(3 + short_name_case * 4); -).
 To say die plural: (- print (string) LanguageArticles-->(0 + short_name_case * 4); -).
 To say -der-/-die-/-das- (obj - object):
-	(- SetPriorNamedNoun({obj}); print (string) LanguageArticles-->(Gender({obj}) + short_name_case * 4); -).
+	(- SetPreviouslyNamedNoun({obj}); print (string) LanguageArticles-->(Gender({obj}) + short_name_case * 4); -).
 
 
 Section - Saying - Relative pronouns
 
 [ mit angegebenem Objekt: ]
 
-To say *der* (obj - object): (- SetPriorNamedNoun({obj}); print (string) LanguageRelativePronouns-->(Gender({obj}) + Nom * 4); -).
-To say *dessen-deren* (obj - object): (- SetPriorNamedNoun({obj}); print (string) LanguageRelativePronouns-->(Gender({obj}) + Gen * 4); -).
-To say *dessen-derer* (obj - object): (- SetPriorNamedNoun({obj}); print (string) LanguageRelativePronouns-->(Gender({obj}) + Gen * 4 + 12); -).
-To say *dem* (obj - object): (- SetPriorNamedNoun({obj}); print (string) LanguageRelativePronouns-->(Gender({obj}) + Dat * 4); -).
-To say *den* (obj - object): (- SetPriorNamedNoun({obj}); print (string) LanguageRelativePronouns-->(Gender({obj}) + Akk * 4); -).
+To say *der* (obj - object): (- SetPreviouslyNamedNoun({obj}); print (string) LanguageRelativePronouns-->(Gender({obj}) + Nom * 4); -).
+To say *dessen-deren* (obj - object): (- SetPreviouslyNamedNoun({obj}); print (string) LanguageRelativePronouns-->(Gender({obj}) + Gen * 4); -).
+To say *dessen-derer* (obj - object): (- SetPreviouslyNamedNoun({obj}); print (string) LanguageRelativePronouns-->(Gender({obj}) + Gen * 4 + 12); -).
+To say *dem* (obj - object): (- SetPreviouslyNamedNoun({obj}); print (string) LanguageRelativePronouns-->(Gender({obj}) + Dat * 4); -).
+To say *den* (obj - object): (- SetPreviouslyNamedNoun({obj}); print (string) LanguageRelativePronouns-->(Gender({obj}) + Akk * 4); -).
 
-To say *welcher* (obj - object): (- SetPriorNamedNoun({obj}); print (string) LanguageRelativePronouns-->(Gender({obj}) + Nom * 4 + 20); -).
-To say *welchem* (obj - object): (- SetPriorNamedNoun({obj}); print (string) LanguageRelativePronouns-->(Gender({obj}) + Dat * 4 + 20); -).
-To say *welchen* (obj - object): (- SetPriorNamedNoun({obj}); print (string) LanguageRelativePronouns-->(Gender({obj}) + Akk * 4 + 20); -).
+To say *welcher* (obj - object): (- SetPreviouslyNamedNoun({obj}); print (string) LanguageRelativePronouns-->(Gender({obj}) + Nom * 4 + 20); -).
+To say *welchem* (obj - object): (- SetPreviouslyNamedNoun({obj}); print (string) LanguageRelativePronouns-->(Gender({obj}) + Dat * 4 + 20); -).
+To say *welchen* (obj - object): (- SetPreviouslyNamedNoun({obj}); print (string) LanguageRelativePronouns-->(Gender({obj}) + Akk * 4 + 20); -).
 
 [ aufs zuletzt genannte Hauptwort bezogen: ]
 
@@ -1464,7 +1464,7 @@ To list the contents of (O - object) with (C - a case),
 	not listing concealed items,
 	suppressing all articles
 	and/or with extra indentation:
-	(- WriteListFromCase(child({O}), {phrase options}, {C}-1, 1); -).
+	(- WriteListFromCase(child({O}), {phrase options}, {C}-1); -).
 
 To say contents of (O - an object) with (C - a case)
 	(deprecated):
@@ -1545,7 +1545,7 @@ Carry out taking inventory (this is the German print standard inventory rule):
 			tersely, giving inventory information;
 		issue library message taking inventory action number 4; [" bei dir."]
 		if the non-nested lists option is active or the non-nested lists with separate paragraphs option is active:
-			write the inventory sublists; [Leerzeichzen, Zeilenumbruch]
+			write the inventory sublists; [Leerzeichen, Zeilenumbruch]
 		otherwise:
 			say "[line break]";
 	otherwise:
@@ -1830,7 +1830,7 @@ The specification of the location-leaving action is "This action enables the pla
 After deciding the scope of the player while location-leaving or examining (this is the location visibility rule):
 	place the location in scope;
 
-Instead of examining a room (this is the convert examine a room to look rule):
+Instead of examining a room (this is the convert examine a room into looking rule):
 	try looking.
 
 [------------------------------------------------------------------------------]
@@ -1962,11 +1962,12 @@ final question wording		only if victorious	topic		final response rule		final res
 
 Section - Check noun declinations - Not for release
 
-Declining is an action out of world applying to one thing.
+Declining is an action out of world applying to one object.
 
 Understand "deklinier [any thing]" as declining.
+Understand "deklinier [any room]" as declining.
 
-Report declining something (this is the standard report declining rule):
+Report declining (this is the standard report declining rule):
 	say "[Der noun], [des noun], [dem noun], [den noun].[line break][Ein noun], [eines noun], [einem noun], [einen noun]."
 
 
@@ -2050,7 +2051,7 @@ when the item is part of a person and the item is proper-named
 		otherwise:
 			set definite-mode suffixes from the item with C;
 			say "[printed name of item] [des holder of item]";
-	now the prior named noun is the item;
+	now the previously named noun is the item;
 
 
 Part - Translations of built-in extensions 1
@@ -2644,7 +2645,7 @@ Constant BLANKLINE_PE = 20; ! Not formally a parser error, but used by I7 as if
 -) instead of "Parser Error Numbers" in "Definitions.i6t".
 
 Include (-
-!Constant LanguageVersion = "GerX 3 beta 13 (diese Zeile wird nur in der Betaversion angezeigt)";
+!Constant LanguageVersion = "GerX 3";
 
 Constant APPEND_BIT     32768;      ! Hängt die Inhalte der gelisteten Objekte
                                     ! an, anstatt sie in einem Nebensatz zu
@@ -2669,7 +2670,7 @@ Global pronominal_adverb_flag = false; ! *** Gibt es ein Pronominaladverb im Sat
 Global printing_command = false;    ! Krücke, um den Changing Gender auch bei
                                     ! Pluralen zu berücksichtigen.
 
-Global pnn = selfobj;               ! *** prior named noun, für [ist] [hat] usw.
+Global pnn = selfobj;               ! *** previously named noun, für [ist] [hat] usw.
                                     !     ist das zuletzt in einer Textersetzung
                                     !     genannte Objekt
 
@@ -3088,26 +3089,23 @@ Array LanguageVerbPreps table
 
 Include (-
 Array LanguageNumbers table
-    'eins'         1
-    'zwei'         2
-    'drei'         3
-    'vier'         4
-    'fuenf'        5
-    'sechs'        6
-    'sieben'       7
-    'acht'         8
-    'neun'         9
-    'zehn'        10
-    'elf'         11
-    'zwoelf'      12
-    'dreizehn'    13
-    'vierzehn'    14
-    'fuenfzehn'   15
-    'sechzehn'    16
-    'siebzehn'    17
-    'achtzehn'    18
-    'neunzehn'    19
-    'zwanzig'     20
+    'eins' 1  'zwei' 2  'drei' 3  'vier' 4  'fuenf' 5
+    'sechs' 6  'sieben' 7  'acht' 8  'neun' 9  'zehn'  10
+    'elf' 11  'zwoelf' 12 'dreizehn' 13  'vierzehn' 14  'fuenfzehn' 15
+    'sechzehn' 16  'siebzehn' 17  'achtzehn' 18  'neunzehn' 19  'zwanzig' 20
+    'einundzwanzig' 21  'zweiundzwanzig' 22  'dreiundzwanzig' 23
+    'vierundzwanzig' 24 'fuenfundzwanzig' 25  'sechsundzwanzig' 26
+    'siebenundzwanzig' 27  'achtundzwanzig' 28 'neunundzwanzig' 29 'dreissig' 30
+    'einundreissig' 31  'zweiunddreissig' 32  'dreiunddreissig' 33
+    'vierunddreissig' 34  'fuenfunddreissig' 35  'sechsunddreissig' 36
+    'siebenunddreissig' 37  'achtunddreissig' 38 'neununddreissig' 39
+    'vierzig' 40  'einundvierzig' 41  'zweiundvierzig' 42  'dreiundvierzig' 43
+    'vierundvierzig' 44  'fuenfundvierzig' 45  'sechsundvierzig' 46
+    'siebenundvierzig' 47  'achtundvierzig' 48  'neunundvierzig' 49
+    'fuenfzig' 50  'einundfuenfzig' 51  'zweiundfuenfzig' 52
+    'dreiundfuenfzig' 53  'vierundfuenfzig' 54  'fuenfundfuenfzig' 55
+    'sechsundfuenfzig' 56  'siebenundfuenfzig' 57  'achtundfuenfzig' 58
+    'neunundfuenfzig' 59  'sechzig' 60
     ;
 
 [ LanguageNumber n one_style       f;
@@ -4249,7 +4247,7 @@ Include (-
 ! *** Die Printed Inflections aus dem Original wurden komplett gestrichen
 !     und durch neue Routinen ersetzt.
 
-[ SetPriorNamedNoun obj;
+[ SetPreviouslyNamedNoun obj;
     ! *** nur I7/GerX: Für Textersetzungen, die sich auf das zuletzt genannte
     !     Objekt beziehen (z.B. [ist], [hat], [wird] usw.).
     pnn = obj;
@@ -4296,28 +4294,28 @@ Include (-
 [ GIhn obj;    RunCapitalised(PersonalPron, obj, 3); ];
 
 [ ist obj;
-    SetPriorNamedNoun(obj);
+    SetPreviouslyNamedNoun(obj);
     if (obj == 0) { print "ist"; return; }
     if (obj == player) { print "bist"; return; }
     if (obj has pluralname) print "sind"; else print "ist";
 ];
 
 [ hat obj;
-    SetPriorNamedNoun(obj);
+    SetPreviouslyNamedNoun(obj);
     if (obj == 0) { print "hat"; return; }
     if (obj == player) { print "hast"; return; }
     if (obj has pluralname) print "haben"; else print "hat";
 ];
 
 [ wird obj;
-    SetPriorNamedNoun(obj);
+    SetPreviouslyNamedNoun(obj);
     if (obj == 0) { print "wird"; return; }
     if (obj == player) { print "wirst"; return; }
     if (obj has pluralname) print "werden"; else print "wird";
 ];
 
 [ ___t obj;
-    SetPriorNamedNoun(obj);
+    SetPreviouslyNamedNoun(obj);
     if (obj == 0) { print "t"; return; }
     if (obj == player) { print "st"; return; }
     if (obj has pluralname) print "en"; else print "t";
@@ -4325,7 +4323,7 @@ Include (-
 
 
 [ ___et obj;
-    SetPriorNamedNoun(obj);
+    SetPreviouslyNamedNoun(obj);
     if (obj == 0) { print "et"; return; }
     if (obj == player) { print "est"; return; }
     if (obj has pluralname) print "en"; else print "et";
@@ -4333,20 +4331,50 @@ Include (-
 
 
 [ ___e obj;
-    SetPriorNamedNoun(obj);
+    SetPreviouslyNamedNoun(obj);
     if (obj == 0) { print "e"; return; }
     if (obj == player) { print "est"; return; }
     if (obj has pluralname) print "en"; else print "e";
 ];
 
 [ plur pl sg obj;
-    SetPriorNamedNoun(obj);
+    SetPreviouslyNamedNoun(obj);
     if (obj == 0) { print (string) sg; return; }
     if (obj has pluralname) print (string) pl; else print (string) sg;
 ];
 
+[ auf obj; if (obj has supporter) print "auf"; else print "in"; ];
+
+[ von obj; if (obj has supporter) print "von"; else print "aus"; ];
+
+[ GAuf obj; if (obj has supporter) print "Auf"; else print "In"; ];
+
+[ GVon obj; if (obj has supporter) print "Von"; else print "Aus"; ];
 
 
+[ ParsedAuf  obj    i  w num_words entry_size;
+
+! *** (03.02.2011) Hier wird geprüft, ob in der geparsten Spielereingabe eine
+!     der Präpositionen "auf" oder "in" enthalten ist. Wenn ja, wird diese
+!     ausgegeben; wenn nicht, richtet sich die Präposition nach der
+!     Beschaffenheit des Objekts (supporter/container).
+
+#ifdef TARGET_ZCODE;
+    entry_size = 2;
+    num_words = parse->1;
+#ifnot;
+    entry_size = 3;
+    num_words = parse-->0;
+#endif;
+    
+    for (i=0 : i < num_words: i++) {
+       w = parse-->(i*entry_size + 1);
+       if ( w == 'auf' or 'in' && (w->#dict_par1 & 8) )
+                                   ! $1000 (8) ist das Flag für Präpositionen
+           { print (address) w; return; }
+    }
+    print (auf) obj;
+];
 
 ! ----------- Explizite Fehlermeldungen ---------------
 
@@ -4413,19 +4441,22 @@ Include (-
     }
   Consult:  switch (n) {
         1:  "In ", (dem) x1, " findest @20 nichts Interessantes darüber.";
-        2:  print (GDer) actor, " sieht sich ", (den) x1, " an.^";
+        2:  print (GDer) actor, " "; plur("sehen", "sieht", actor);
+            print " sich ", (den) x1, " an.^";
     }
   Cut:      "Es bringt nichts, ", (den) x1, " zu zerschneiden.";
   Disrobe: switch (n) {
         1:  "Du trägst ", (den) x1, " gar nicht.";
         2:  "Du ziehst ", (den) x1, " aus.";
-        3:  print (GDer) actor, " zieht ", (den) x1, " aus.^";
+        3:  print (GDer) actor, " zieh", (___t) actor, " ", (den) x1, " aus.^";
     }
   Dress: switch (n) {
         1:  "Du lä@31t ", (den) x1, " besser wie ", (er) x1, " ", (ist) x1, ".";
         2:  "Das ist nicht nötig.";
-        3:  print_ret (GDer) actor, " möchte gerne bleiben wie ", (er) actor, " ist.";
-        4:  print_ret (GDer) actor, "möchte ", (den) x1, " nicht anziehen.";
+        3:  print_ret (GDer) actor, " möcht", (___e) actor,
+                " gerne bleiben wie ", (er) actor, " ", (ist) actor, ".";
+        4:  print_ret (GDer) actor, "möcht", (___e) actor, " ",
+                (den) x1, " nicht anziehen.";
     }
   Drink:    "Das kann man nicht trinken.";
   Drop: switch (n) {
@@ -4436,22 +4467,21 @@ Include (-
         4:  "In Ordnung.";
         5:  "Es ist kein Platz mehr auf ", (dem) x1, ".";
         6:  "Es ist kein Platz mehr in ", (dem) x1, ".";
-        7:  print (GDer) actor, " legt ", (den) x1, " hin.^";
+        7:  print (GDer) actor, " leg", (___t) actor, " ", (den) x1, " hin.^";
     }
   Eat: switch (n) {
         1:  print_ret (GDer) x1, " ", (ist) x1, " nicht e@31bar.";
         2:  "Du i@31t ", (den) x1, ". Nicht schlecht.";
-        3:  print (GDer) actor, " isst ", (den) x1, ".^";
+        3:  print (GDer) actor, " "; plur("essen", "i@31t", actor);
+            print " ", (den) x1, ".^";
     }
   Enter: switch (n) {
-        1:  print "Aber @20 bist doch schon ";
-            if (x1 has supporter) print "auf "; else print "in ";
-            print_ret (dem) x1, ".";
+        1:  "Aber @20 bist doch schon ", (auf) x1, " ", (dem) x1, ".";
         2:  print "Du kannst ";
             switch (verb_word) {
-              'stell', 'steh':  "auf ", (dem) x1, " nicht stehen.";
-              'sitz', 'setz':   "auf ", (dem) x1, " nicht sitzen.";
-              'lieg', 'leg':    "auf ", (dem) x1, " nicht liegen.";
+              'stell', 'steh':  print_ret (ParsedAuf) x1, " ", (dem) x1, " nicht stehen.";
+              'sitz', 'setz':   print_ret (ParsedAuf) x1, " ", (dem) x1, " nicht sitzen.";
+              'lieg', 'leg':    print_ret (ParsedAuf) x1, " ", (dem) x1,  " nicht liegen.";
               default:          print_ret (den) x1, " nicht betreten.";
             }
         3:  "Du kannst nicht in ", (den) x1, " wenn ", (er) x1,
@@ -4463,19 +4493,15 @@ Include (-
               'lieg', 'leg':    print "Du legst @22 ";
               default:          print "Du steigst ";
             }
-            if (x1 has supporter) print "auf "; else print "in ";
-            print_ret (den) x1, ".";
-        6:  print "(Dazu steigst @20 erst ";
-            if (x1 has supporter) print "von "; else print "aus ";
-            print (dem) x1, ".)^"; say__p = 0; return;
-        7:  if (x1 has supporter || x1 has container) {
-                print "(Du steigst zuerst ";
-                if (x1 has container) print "in "; else print "auf ";
-                print_ret (den) x1, ".)";
-            }
+            print_ret (auf) x1, " ", (den) x1, ".";
+        6:  print "(Dazu steigst @20 erst ", (von) x1, " ", (dem) x1, ".)^";
+            say__p = 0; return;
+        7:  if (x1 has supporter || x1 has container)
+                "(Du steigst zuerst ", (auf) x1, " ", (den) x1, ".)";
             "(Du betrittst zuerst ", (den) x1, ".)";
-        8:  print (GDer) actor, " betritt ", (den) x1, ".^";
-        9:  print (GDer) actor, " steigt auf ", (den) x1, ".^";
+        8:  print (GDer) actor, " "; plur("betreten", "betritt", actor);
+            print " ", (den) x1, ".^";
+        9:  print (GDer) actor, " steig", (___t) actor, " ", (auf) x1, " ", (den) x1, ".^";
 
     }
   Examine: switch (n) {
@@ -4483,7 +4509,7 @@ Include (-
         2:  "Du siehst nichts Besonderes an ", (dem) x1, ".";
         3:  print (GDer) x1, " ", (ist) x1, " im Moment ";
             if (x1 has on) "an."; else "aus.";
-        4:  print (GDer) actor, " betrachtet ", (den) x1, " genau.^";
+        4:  print (GDer) actor, " betracht", (___et) actor, " ", (den) x1, " genau.^";
         5:  "Du siehst nichts Unerwartetes in dieser Richtung.";
     }
   Exit: switch (n) {
@@ -4497,16 +4523,13 @@ Include (-
 	            'tritt', 'tret': print "trittst ";
 	            default:         print "steigst ";
             }
-            if (x1 has supporter) print "von "; else print "aus ";
-            print_ret (dem) x1, ".";
-        4:  print "Aber @20 bist gar nicht ";
-            if (x1 has supporter) print "auf "; else print "in ";
-            print_ret (dem) x1, ".";
-        5:  print (GDer) actor, " steigt von ", (dem) x1, ".^";
-        6:  print (GDer) actor, " steigt aus ", (dem) x1, ".^";
+            print_ret (von) x1, " ", (dem) x1, ".";
+        4:  "Aber @20 bist gar nicht ", (auf) x1, " ", (dem) x1, ".";
+        5:  print (GDer) actor, " steig", (___t) actor, " von ", (dem) x1, ".^";
+        6:  print (GDer) actor, " steig", (___t) actor, " aus ", (dem) x1, ".^";
 
     }
-  GetOff:   "Aber @20 bist gar nicht auf ", (dem) x1, ".";
+  GetOff:   "Aber @20 bist gar nicht ", (auf) x1, " ", (dem) x1, ".";
   Give: switch (n) {
         1:  "Du hast ", (den) x1, " gar nicht.";
         2:  "Jetzt willst @20 es @21 aber mal richtig geben, was?";
@@ -4515,15 +4538,16 @@ Include (-
         4:  print (GDer) x1, " ";
                 print (ist) x1, " nicht";
                 " in der Lage etwas anzunehmen.";
-        5:  "Du gibst ", (dem) x1, " ", (den) second, ".";
-        6: print (GDer) actor, " gibt @21 ", (den) x1, ".^";
-        7: print (GDer) actor, " gibt ", (dem) second, " ", (den) x1, ".^";
+        5:  "Du gibst ", (dem) second, " ", (den) x1, ".";
+        6: print (GDer) actor, " "; plur("geben", "gibt", actor);
+           print " @21 ", (den) x1, ".^";
+        7: print (GDer) actor, " "; plur("geben", "gibt", actor);
+           print " ", (dem) second, " ", (den) x1, ".^";
 
     }
   Go: switch (n) {
-        1:  print "Das geht nicht, solange @20 noch ";
-            if (x1 has supporter) print "auf "; else print "in ";
-            print_ret (dem) x1, " bist.";
+        1:  "Das geht nicht, solange @20 noch ", (auf) x1, " ",
+            (dem) x1, " bist.";
         2:  print_ret (string) CANTGO__TX;   ! "You can't go that way."
         !3:  "Du kannst nicht auf ", (den) x1, " klettern.";
         !4:  "Du kannst ", (den) x1, " nicht hinabsteigen.";
@@ -4533,21 +4557,20 @@ Include (-
         3: "Es gibt hier keine offensichtlichen Ausgänge.";
         4: print "(nach ", (WithoutArt) x1, ")^"; say__p = 0; return;
         5: "Es gibt mehrere Ausgänge. Bitte sage genau, wohin @20 gehen möchtest.";
-        6:  print "Das geht nicht, ", (der) x1; plur(" führen", " führt", x1);
-            " nirgendwohin";
+        6:  print "Das geht nicht, ", (der) x1, " führ", (___t) x1, " nirgendwohin.";
 	    7:  "Du mu@31t sagen, in welche Richtung @20 gehen möchtest.";
-	    8:  print (GDer) actor, " geht hinauf";
-	    9:  print (GDer) actor, " geht hinunter";
-	    10: print (GDer) actor, " geht nach ", (WithoutArt) x1;
-	    11: print (GDer) actor, " kommt von oben herunter";
-	    12: print (GDer) actor, " kommt von unten herauf";
-	    13: print (GDer) actor, " kommt von ", (WithoutArt) x1;
-	    14: print (GDer) actor, " kommt herein";
-	    15: print (GDer) actor, " erreicht ", (den) x1, " von oben";
-	    16: print (GDer) actor, " erreicht ", (den) x1, " von unten";
-	    17: print (GDer) actor, " erreicht ", (den) x1, " von ", (WithoutArt) second;
-	    18: print (GDer) actor, " geht durch ", (den) x1;
-	    19: print (GDer) actor, " kommt von ", (dem) x1;
+	    8:  print (GDer) actor, " geh", (___t) actor, " hinauf";
+	    9:  print (GDer) actor, " geh", (___t) actor, " hinunter";
+	    10: print (GDer) actor, " geh", (___t) actor, " nach ", (WithoutArt) x1;
+	    11: print (GDer) actor, " komm", (___t) actor, " von oben herunter";
+	    12: print (GDer) actor, " komm", (___t) actor, " von unten herauf";
+	    13: print (GDer) actor, " komm", (___t) actor, " von ", (WithoutArt) x1;
+	    14: print (GDer) actor, " komm", (___t) actor, " herein";
+	    15: print (GDer) actor, " erreich", (___t) actor, " ", (den) x1, " von oben";
+	    16: print (GDer) actor, " erreich", (___t) actor, " ", (den) x1, " von unten";
+	    17: print (GDer) actor, " erreich", (___t) actor, " ", (den) x1, " von ", (WithoutArt) second;
+	    18: print (GDer) actor, " geh", (___t) actor, " durch ", (den) x1;
+	    19: print (GDer) actor, " komm", (___t) actor, " von ", (dem) x1;
 	    20: print "auf ", (dem) x1;
 	    21: print "in ", (dem) x1;
 	    22: print ", ", (den) x1, " vor sich her schiebend, und @22 dazu";
@@ -4555,9 +4578,8 @@ Include (-
 	    24: print ", ", (den) x1, " aus dem Weg schiebend";
 	    25: print ", ", (den) x1, " hineinschiebend";
 	    26: print ", @22 mitziehend";
-	    27: print "(Dazu steigst @20 erst ";
-	        if (x1 has supporter) print "von "; else print "aus ";
-	        print (dem) x1, ".)^"; say__p = 0; return;
+	    27: print "(Dazu steigst @20 erst ", (von) x1, " ", (dem) x1, ".)^";
+	        say__p = 0; return;
 		28: print "(Du öffnest zuerst ", (den) x1, ".)^"; say__p = 0; return;
     }
   Insert: switch (n) {
@@ -4569,7 +4591,7 @@ Include (-
         5:  "Du kannst nichts in sich selbst legen.";
         6:  print "(Du ziehst ", (den) x1, " erst aus.)^";
             say__p = 0; return;
-        7:  "Es ist kein Platz mehr in ", (dem) x1, ".";
+        7:  "Es ist kein Platz mehr ", (auf) x1, " ", (dem) x1, ".";
         8:  "In Ordnung.";
         9:  print "Du ";
             switch (verb_word) {
@@ -4577,15 +4599,16 @@ Include (-
 	            'stell': print "stellst";
 	            default: print "legst";
             }
-            print_ret " ", (den) x1, " in ", (den) second, ".";
-        10:  print (GDer) actor, " legt ", (den) x1, " in ", (den) second, ".^";
+            " ", (den) x1, " ", (auf) second, " ", (den) second, ".";
+        10:  print (GDer) actor, " leg", (___t) actor, " ", (den) x1,
+                 " ", (auf) second, " ", (den) second, ".^";
     }
   Inv: switch (n) {
         1:  "Du hast nichts bei @21.";
         2:  print "Du hast "; short_name_case = Akk;
         3:  print "Folgendes bei @21:^";
         4:  print " bei @21.";
-        5:  print (GDer) x1, " durchsucht ";
+        5:  print (GDer) x1, " durchsuch", (___t) x1, " ";
             if (x1 has pluralname || x1 has female) print "ihre";
             else print "seine"; print " Habe.^";
     }
@@ -4634,7 +4657,7 @@ Include (-
         3:  "Du mu@31t ", (den) x1, " dazu erst zumachen.";
         4:  print (GDer) x1; plur(" passen", " pa@31t", x1); " nicht.";
         5:  "Du schlie@30t ", (den) x1, " ab.";
-        6:  print (GDer) actor, " schlie@30t ", (den) x1, " ab.^";
+        6:  print (GDer) actor, " schlie@30", (___t) actor, " ", (den) x1, " ab.^";
     }
   Look: switch (n) {
         1:  print " (auf ", (dem) x1, ")";
@@ -4646,10 +4669,8 @@ Include (-
                           + ISARE_BIT, Nom, 1);
             print "."; if (WriteSublists()==0) "";
         5, 6:
-            if (x1 ~= location) {
-                if (x1 has supporter) print "Auf "; else print "In ";
-                print (dem) x1, " siehst @20 ";
-            }
+            if (x1 ~= location)
+                print (GAuf) x1, " ", (dem) x1, " siehst @20 ";
             else print "Du siehst hier ";
             if (n == 5) print "au@30erdem ";
             WriteListFromCase(child(x1),
@@ -4659,8 +4680,7 @@ Include (-
 
         #ifdef NO_NESTED_LISTS;
         -2: ! -1 wird von Ron Newcombs Default Messages verwendet
-            if (x1 has supporter) print "Auf "; else print "In ";
-            print (dem) x1, " "; ! *** In I7 wird ISARE_BIT ohne " " interpretiert.
+            print (GAuf) x1, " ", (dem) x1, " "; ! *** In I7 wird ISARE_BIT ohne " " interpretiert.
             WriteListFromCase(child(x1),
               ENGLISH_BIT + RECURSE_BIT + PARTINV_BIT + TERSE_BIT + CONCEAL_BIT
               + ISARE_BIT, Nom, 1);
@@ -4669,14 +4689,15 @@ Include (-
         #endif;
 
         7:  "Dort siehst @20 nichts Au@30ergewöhnliches.";
-        8:  if (x1 has supporter) print " (auf "; else print " (in ";
-            print (dem) x1, ")";
-        9:  print (GDer) actor, " sieht sich um.^";
+        8:  print " (", (auf) x1, " ", (dem) x1, ")";
+        9:  print (GDer) actor, " "; plur("sehen", "sieht", actor);
+            print " sich um.^";
     }
   LookUnder: switch (n) {
         1:  "Aber es ist dunkel.";
         2:  "Du findest nichts Interessantes.";
-        3:  print (GDer) actor, " sieht unter ", (den) x1, ".^";
+        3:  print (GDer) actor, " "; plur("sehen", "sieht", actor);
+            print " ", (den) x1, ".^";
     }
   Mild:     "So, so.";
   Miscellany: switch (n) {
@@ -4720,7 +4741,7 @@ Include (-
             aber mir ist nicht klar wem.";
         24: "Mit ", (dem) x1, " kann man nicht reden.";
         25: "Um mit jemandem zu reden, benutze bitte ~Jemand, hallo~.";
-        26: "(Dazu hebst @20 ", (den) x1, " erst auf.)";
+        26: print "(Dazu hebst @20 ", (den) x1, " erst auf.)^"; say__p = 0; return;
         27: if (ExplicitError()) return;
             "Diesen Satz habe ich nicht verstanden.";
         28: #IfDef EXPLICIT_ERROR_MESSAGES; if (ExplicitError()) rtrue;
@@ -4781,7 +4802,8 @@ Include (-
         55: "[Kommentar NICHT notiert.]";
         56: print ".^";
         57: print "?^";
-        58: print (GDer) actor, " kann das nicht tun.^";
+        58: print (GDer) actor, " "; plur("können", "kann", actor);
+            print " das nicht tun.^";
         59: "Du mu@31t ein Hauptwort angeben.";
         60: "Du kannst kein Hauptwort angeben.";
         61: "Du mu@31t den Namen eines Objekts angeben.";
@@ -4791,7 +4813,8 @@ Include (-
         65: "Du mu@31t ein zweites Hauptwort angeben.";
         66: "Du kannst hier kein zweites Hauptwort angeben.";
         67: "Versuch es mit etwas, das mehr Substanz hat.";
-        68: print "(", (GDer) actor, " nimmt zuerst ", (den) x1, ".)^";
+        68: print "(", (GDer) actor, " "; plur("nehmen", "nimmt", actor);
+            print " zuerst ", (den) x1, ".)^";
         69: "(Dazu hebst @20 ", (den) x1, " erst auf.)";
         70: "Die Verwendung von UNDO ist in diesem Spiel nicht erlaubt.";
         71: print (string) DARKNESS__TX;
@@ -4819,10 +4842,8 @@ Include (-
                 + TERSE_BIT + CONCEAL_BIT, Akk) ~= 0) " darin.";
             "nichts.";
         5:  "Du öffnest ", (den) x1, ".";
-        6:  print (GDer) actor, " öffnet ", (den) x1, ".^";
-        7:  print (GDer) x1, " öffne";
-        if (x1 hasnt pluralname) print "t"; else print "n";
-        print ".^";
+        6:  print (GDer) actor, " öffn", (___et) actor, " ", (den) x1, ".^";
+        7:  print (GDer) x1, " öffn", (___et) x1, " sich.^";
     }
   Pronouns: switch (n) {
         1:  print "Die Pronomen beziehen sich im Moment auf Folgendes:^";
@@ -4836,9 +4857,9 @@ Include (-
         2:  "Du bist nicht dazu in der Lage.";
         3:  "Nichts passiert.";
         4:  "Das wäre sehr unhöflich.";
-        5:  print (GDer) actor, " zieht ", (den) x1, ".^";
-        6:  print (GDer) actor, " schiebt ", (den) x1, ".^";
-        7:  print (GDer) actor, " dreht ", (den) x1, ".^";
+        5:  print (GDer) actor, " zieh", (___t) actor, " ", (den) x1, ".^";
+        6:  print (GDer) actor, " schieb", (___t) actor, " ", (den) x1, ".^";
+        7:  print (GDer) actor, " dreh", (___t) " ", (den) x1, ".^";
     }
 ! Push: see Pull
   PushDir: switch (n) {
@@ -4863,7 +4884,8 @@ Include (-
 	            default: print "legst";
             }
             print_ret " ", (den) x1, " auf ", (den) second, ".";
-        9:  print (GDer) actor, " legt ", (den) x1, " auf ", (den) second, ".^";
+        9:  print (GDer) actor, " leg", (___t) actor, " ", (den) x1,
+                " auf ", (den) second, ".^";
     }
   Quit: switch (n) {
         1:  print "Bitte antworte mit Ja oder Nein. ";
@@ -4871,9 +4893,8 @@ Include (-
     }
   Remove: switch (n) {
         1:  print_ret (GDer) second, " ", (ist) second, " leider geschlossen.";
-        2:  print "Aber ", (der) x1, " ", (ist) x1, " gar nicht ";
-            if (second has supporter) print "auf "; else print "in ";
-            print_ret (dem) second, ".";
+        2:  "Aber ", (der) x1, " ", (ist) x1, " gar nicht ", (auf) second, " ",
+            (dem) second, ".";
         3:  "In Ordnung.";
     }
   Restart: switch (n) {
@@ -4921,7 +4942,7 @@ Include (-
         7:  print "In ", (dem) x1, " siehst @20 ";
             WriteListFromCase(child(x1), ENGLISH_BIT + TERSE_BIT + CONCEAL_BIT, Akk);
             ".";
-        8:  print (GDer) actor, " durchsucht ", (den) x1, ".^";
+        8:  print (GDer) actor, " durchsuch", (___t) actor, " ", (den) x1, ".^";
     }
   SetTo:    "Du kannst ", (den) x1, " nicht auf irgendetwas einstellen.";
   Show: switch (n) {
@@ -4935,7 +4956,7 @@ Include (-
   Squeeze: switch (n) {
         1:  "La@31 @24 Hände bei @21.";
         2:  "Das bringt nichts.";
-        3:  print (GDer) actor, " quetscht ", (den) x1, ".^";
+        3:  print (GDer) actor, " quetsch", (___t) actor, " ", (den) x1, ".^";
     }
   Strong:   "Das stand so aber nicht in der Musterlösung.";
   Swing:    "Dort gibt es nichts zu schaukeln.";
@@ -4943,21 +4964,20 @@ Include (-
         1:  "Du kannst ", (den) x1, " nicht ausschalten.";
         2:  print_ret (GDer) x1, " ", (ist) x1, " bereits aus.";
         3:  "Du schaltest ", (den) x1, " aus.";
-        4:  print (GDer) actor, " schaltet ", (den) x1, " aus.^";
+        4:  print (GDer) actor, " schalt", (___et) actor, " ", (den) x1, " aus.^";
     }
   SwitchOn: switch (n) {
         1:  "Du kannst ", (den) x1, " nicht einschalten.";
         2:  print_ret (GDer) x1, " ", (ist) x1, " bereits an.";
         3:  "Du schaltest ", (den) x1, " an.";
-        4:  print (GDer) actor, " schaltet ", (den) x1, " an.^";
+        4:  print (GDer) actor, " schalt", (___et) actor, " ", (den) x1, " an.^";
     }
   Take: switch (n) {
         1:  "In Ordnung.";
         2:  "Immer diese Selbstversessenheit.";
         3:  "Das würde ", (dem) x1, " bestimmt nicht gefallen.";
-        4:  print "Dazu mü@31test @20 zunächst ";
-            if (x1 has supporter) print "von "; else print "aus ";
-            print (dem) x1; if (x1 has supporter) " herunter."; " heraus.";
+        4:  print "Dazu mü@31test @20 zunächst ", (von) x1, " ",
+                (dem) x1; if (x1 has supporter) " herunter."; " heraus.";
         5:  "Du hast ", (den) x1, " bereits.";
         6:  print_ret (GDer) noun, " gehör", (___t) noun, " offenbar zu ",
                 (dem) x1, ".";
@@ -4973,7 +4993,8 @@ Include (-
             " um Platz zu schaffen.)^"; say__p = 0; return;
         14: "Du kannst nicht in ", (den) x1, " hineingreifen.";
         15: "Du kannst ", (den) x1, " nicht tragen.";
-        16: print (GDer) actor, " nimmt ", (den) x1, ".^";
+        16: print (GDer) actor, " "; plur("nehmen", "nimmt", actor);
+            print " ", (den) x1, ".^";
     }
   Taste:    "Du schmeckst nichts Unerwartetes.";
   Tell: switch (n) {
@@ -5001,9 +5022,8 @@ Include (-
         3:  print (GDer) actor, " möchte";
             if (actor has pluralname) print "n";
             print " gerne bleiben wie ", (er) actor, " ist.^";
-        4:  print (GDer) actor, " möchte";
-            if (actor has pluralname) print "n";
-            print " ", (den) x1, " nicht ausziehen.^";
+        4:  print (GDer) actor, " möcht", (___e) actor, " ",
+                (den) x1, " nicht ausziehen.^";
     }
   Unlock:  switch (n) {
         1:  "Du kannst ", (den) x1, " nicht aufschlie@30en.";
@@ -5018,7 +5038,7 @@ Include (-
     }
   Wait: switch (n) {
     1:  "Die Zeit verstreicht.";
-    2:  print (GDer) actor, " warte", (___t) actor, ".^";
+    2:  print (GDer) actor, " wart", (___et) actor, ".^";
     }
   Wake:     "Die bittere Wahrheit ist: Dies ist kein Traum.";
   WakeOther:"Das ist unnötig.";
@@ -6184,9 +6204,17 @@ Include (-
     ! Bevor geschaut wird, ob eine Richtung gemeint sein kann, wird hier
     ! geprüft, ob das letzte Wort ein Infinitiv sein kann.
     
-    ! *** (14.10.2010) Einige Verben werden für den Infinitiv-Test
-    !     übergangen, da sie auch Synonyme für Objekte sein könnten.
+    ! *** (14.10.2010) Verben wurden bislang für den Infinitiv-Test
+    !     übergangen, wenn sie gleichzeitig Synonyme für Objekte waren.
+    !     (z.B. 'lade' oder 'pumpe'). Infinitve dieser Verben wurden nicht
+    !     verstanden.
 
+    !     In IsCollisionCandidate() wird jetzt geprüft, ob es sich um ein
+    !     solches Verb handelt, wobei einige Standard-Wörter und die Tabelle
+    !      "Table of verb-noun collisions", in die der Autor eigene Verb-Synonym-
+    !     Kollisionen eintragen kann, herangezogen werden. Ist das Verb als
+    !     Kollisionskandidat erkannt, wird es zur Infinitivprüfung zugelassen.
+    
     if (verb_word == 0 || ((verb_word->#dict_par1) & 1) == 0
        || IsCollisionCandidate(verb_word)) {
         i = wn; verb_word = CheckInfinitiveClause(); wn = i;
@@ -6433,7 +6461,6 @@ Include (-
                         for (m=0 : m<32 : m++) pattern2-->m = pattern-->m;
                         pcount2 = pcount;
                         if (wn - 1 > max_wn) max_wn = wn - 1;
-                        !max_wn = wn - 1;     ! neu: aus deform
                         etype = UPTO_PE;
                         break;
                     }
@@ -7172,8 +7199,12 @@ Include (-
             continue;
         }
         if (spacing_flag) print (char) ' ';
-        if (i == 0) { print (string) THOSET__TX; jump TokenPrinted; }
-        if (i == 1) { print (string) THAT__TX;   jump TokenPrinted; }
+        if (verb_word == 'no.verb') {
+            if (i == 0 or 1) jump TokenPrinted;
+        } else {
+	        if (i == 0) { print (string) THOSET__TX; jump TokenPrinted; }
+            if (i == 1) { print (string) THAT__TX;   jump TokenPrinted; }
+        }
         if (i >= REPARSE_CODE) {
 	        ! *** hier wird unterschieden zwischen "Platz nehmen" und "aufheben"
             if (IsToken(k-2, SUBSTANTIVE_TOKEN)) {
@@ -7190,7 +7221,7 @@ Include (-
         } else {
             if (i ofclass (+ Direction +) && LanguageVerbLikesAdverb(verb_word))
                 print "nach ", (LanguageDirection) i;
-           else {
+            else {
                 ! *** "mit dem Ding etwas tun":
                 !     verb_word ist 'no.verb', wenn für Aktionen gar kein
                 !     Verb angegeben wurde, z.B. in
@@ -7201,9 +7232,6 @@ Include (-
                 if (dative_flag) print (dem) i;
                 else print (den) i;
                 dative_flag = false;
-                ! Als Annäherung wird hier bei direkten Objekten (den),
-                ! bei indirekten (dem) verwendet, rein aus Häufigkeits-
-                ! gründen. (Und der Einfachheit wegen.)
             }
         }
         .TokenPrinted;
@@ -7213,13 +7241,14 @@ Include (-
 
     ! *** Hier wird das Dich-Token berücksichtigt, um Infintive für
     !     reflexive Verbformen zu schreiben:
-    !     "Worauf willst du Dich setzen?"
+    !     "Worauf willst du dich setzen?"
     if (IsToken(k-2, DICH_TOKEN)) {
         print "@22";
         spacing_flag = true; prep_before = false;
     }
-
+    
     if (from == 0) {
+	    if (verb_word == 'no.verb' && i == 0 or 1) spacing_flag = false;
         if (spacing_flag && ~~prep_before) print (char) ' ';
         i = verb_word;
         if (LanguageVerb(i) == 0)
@@ -7288,7 +7317,10 @@ Include (-
 
 [ PrintTimeOfDayGerman t h m dir   x;
     h = (t/ONE_HOUR) % 12; m = t%ONE_HOUR; if (h==0) h=12;
-    if (m==0) { print (number) h, " Uhr"; return; }
+    if (m==0) {
+	    if (h==1) print "ein"; else print (number) h;
+	    print " Uhr"; return;
+	}
     dir = 1;
     if (m > HALF_HOUR) { m = ONE_HOUR-m; h = (h+1)%12; if (h==0) h=12; dir = -1; }
     switch(m) {
@@ -7317,6 +7349,261 @@ Include (-
     else print (number) h;
 ];
 -) instead of "Analogue Printing" in "Time.i6t".
+
+Include (-
+[ IstimeOfDayWord word;
+    if (word == 'morgens') rtrue;
+    if (word == 'mittags') rtrue;
+    if (word == 'nachmittags') rtrue;
+    if (word == 'abends') rtrue;
+    if (word == 'nachts') rtrue;
+    rfalse;
+];
+
+[ ConsiderTimeOfDay hour timeofday_word  halb add;
+! *** um z.B. "3 uhr nachmittags" sagen zu können
+	if (timeofday_word == -1) return hour;
+	if (hour > 12) return hour;
+	
+	switch (timeofday_word) {
+		'abends': ! *** Der Abend beginnt um 17:00 Uhr und endet um 0:00 Uhr
+		    if (hour >= 5 && hour <= 12) return hour+12; else return hour;
+		'nachts': ! *** Die Nacht beginnt um 21:00 Uhr und endet um 0:00 Uhr
+			if (hour >= 9 && hour <= 12) return hour+12; else return hour;
+	    'nachmittags', 'mittags': ! *** Der Nachmittag dauert von 13 bis 17 Uhr
+	    	if (hour >= 1 && hour <=5) return hour+12; else return hour;
+	    default: return hour;
+    }
+];
+
+! *** (Februar 2011) Endlich auch ein deutsches Time-Token ...
+    
+[ TIME_TOKEN first_word second_word at length flag
+	illegal_char offhour hr mn i original_wn
+	viertelflag minuteflag timeofday_word;
+	original_wn = wn;
+{-call:Plugins::Parsing::Tokens::Values::time}
+	wn = original_wn;
+	first_word = NextWordStopped();
+	switch (first_word) {
+		'mitternacht':
+		    parsed_number = 0; return GPR_NUMBER;
+		'mittag', 'mittags':
+		    parsed_number = TWELVE_HOURS; return GPR_NUMBER;
+	}
+	
+	! Next try the format 12:02
+	at = WordAddress(wn-1); length = WordLength(wn-1);
+	for (i=0: i<length: i++) {
+		switch (at->i) {
+			':': if (flag == false && i>0 && i<length-1) flag = true;
+			else illegal_char = true;
+			'0', '1', '2', '3', '4', '5', '6', '7', '8', '9': ;
+			default: illegal_char = true;
+		}
+	}
+	if (length < 3 || length > 5 || illegal_char) flag = false;
+	if (flag) {
+		for (i=0: at->i~=':': i++, hr=hr*10) hr = hr + at->i - '0';
+		hr = hr/10;
+		for (i++: i<length: i++, mn=mn*10) mn = mn + at->i - '0';
+		mn = mn/10;
+		second_word = NextWordStopped();
+		
+		! 5:16 (Uhr) abends
+		if (second_word == 'uhr')
+		    second_word = NextWordStopped();
+		if (IstimeOfDayWord(second_word)) {
+			hr = ConsiderTimeOfDay(hr, second_word);
+			second_word = NextWordStopped();
+		}
+		
+		parsed_number = HoursMinsWordToTime(hr, mn);
+		if (parsed_number == -1) return GPR_FAIL;
+		if (second_word ~= 'uhr') wn--;
+		return GPR_NUMBER;
+	}
+	
+	! Lastly the wordy format
+	offhour = -1; viertelflag = 0; minuteflag = false;
+	timeofday_word = -1;
+	
+	if (first_word == 'null') offhour = 0; ! "Null Uhr"
+	if (first_word == 'halb') { wn++; viertelflag = 2; }
+	if (first_word == 'dreiviertel') { wn++; viertelflag = 3; }
+	if (first_word == 'viertel') {
+		second_word = NextWordStopped();
+		! "Viertel nach acht", "Viertel vor zehn"
+		if (second_word == 'vor' or 'nach') {
+			offhour = QUARTER_HOUR;
+			wn--;
+		}
+		! "Viertel neun (8:15)"
+		else {
+			viertelflag = 1;
+		}
+	}
+	if (offhour < 0) offhour = TryNumber(wn-1);
+	
+	! Vor einem möglichen Abbruch Wortmarker für explizite Fehlermeldungen setzen.
+	if (wn - 1 > max_wn) max_wn = wn - 1; 
+	
+	if (offhour < 0 || offhour >= ONE_HOUR) return GPR_FAIL;
+
+	second_word = NextWordStopped();
+	if (second_word == 'uhr') second_word = NextWordStopped();
+	
+	! "Viertel 8 und 3 Minuten" unterbinden ...
+	if (viertelflag == 0) {
+		! "sieben Uhr", "sieben Uhr dreißig"
+		if (second_word == 'und') second_word = NextWordStopped();
+		if (second_word == 'minute' or 'minuten') {
+			minuteflag = true;
+			second_word = NextWordStopped();
+		}
+	}
+	
+	! "zehn Uhr abends und drei Minuten"
+	if (IstimeOfDayWord(second_word)) {
+		timeofday_word = second_word;
+		second_word = NextWordStopped();
+		if (second_word == 'und') second_word = NextWordStopped();
+	}
+	switch (second_word) {
+		! "sieben", "halb sieben"
+		-1:
+		    if (minuteflag) {
+			    hr = 0; mn = offhour;
+		    }
+		    else {
+			    if (timeofday_word ~= -1)
+			        hr = ConsiderTimeOfDay(offhour, timeofday_word);
+			    else hr = offhour;
+				if (viertelflag > 0) {
+					! viertelflag ist entweder 1 (Viertel), 2 (Halb) oder 3 (Dreiviertel)
+					hr--;
+					mn = viertelflag*QUARTER_HOUR;
+				}
+				if (wn - 1 > max_wn) max_wn = wn - 1;
+				if (hr > 24) return GPR_FAIL;
+
+			}
+			
+		! "Viertel vor sieben", "zwanzig nach Mitternacht"
+		'vor', 'nach':
+			mn = offhour; hr = TryNumber(wn);
+			if (hr <= 0) {
+				switch (NextWordStopped()) {
+					'mittag': hr = 12;
+					'mitternacht': hr = 0;
+					default:
+					    if (wn - 1 > max_wn) max_wn = wn - 1;
+					    return GPR_FAIL;
+				}
+			}
+			if (wn - 1 > max_wn) max_wn = wn - 1;
+			if (hr >= 25) return GPR_FAIL;
+			if (second_word == 'vor') {
+				mn = ONE_HOUR-mn; hr--; if (hr<0) hr=23;
+				if (offhour == QUARTER_HOUR) viertelflag = true;
+			}
+			wn++; second_word = NextWordStopped();
+			
+			if (second_word == 'uhr')
+				second_word = NextWordStopped();
+			
+			! "Viertel vor neun (Uhr) Abends"
+			if (IstimeOfDayWord(second_word)) {
+				if (viertelflag) hr++;
+				hr = ConsiderTimeOfDay(hr, second_word);
+				if (viertelflag) hr--;
+				second_word = NextWordStopped();
+			}
+						
+		! "six thirty" (diese Form bleibt erhalten)
+		default:
+			if (timeofday_word ~= -1)
+			    hr = ConsiderTimeOfDay(offhour, timeofday_word);
+			else hr = offhour;
+			mn = TryNumber(--wn); if (wn > max_wn) max_wn = wn;
+			if (mn < 0 || mn >= ONE_HOUR) return GPR_FAIL;
+			wn++; second_word = NextWordStopped();
+	}
+
+	if (second_word == 'uhr' or 'minute' or 'minuten')
+		second_word = NextWordStopped();
+
+	! "zwei uhr drei Minuten Nachmittags"
+	if (IstimeOfDayWord(second_word)) {
+		hr = ConsiderTimeOfDay(hr, second_word);
+		second_word = NextWordStopped();
+	}
+	parsed_number = HoursMinsWordToTime(hr, mn);
+    if (wn - 1 > max_wn) max_wn = wn - 1;
+	if (parsed_number < 0) return GPR_FAIL;
+	if (second_word ~= 'uhr' or 'minute' or 'minuten') wn--;
+	return GPR_NUMBER;
+];
+
+[ HoursMinsWordToTime hour minute word x;
+	if (hour > 24) return -1;
+	if (minute >= ONE_HOUR) return -1;
+	
+	if (hour == 24) hour = 0;
+	x = hour*ONE_HOUR + minute; if (hour > 12) return x;
+	x = x % TWELVE_HOURS; !if (word == 'pm') x = x + TWELVE_HOURS;
+	!if (word ~= 'am' or 'pm' && hour == 12) x = x + TWELVE_HOURS;
+	if (hour == 12) x = x + TWELVE_HOURS;
+	return x;
+];
+-) instead of "Understanding" in "Time.i6t".
+
+Include (-
+[ RELATIVE_TIME_TOKEN first_word second_word offhour mult mn original_wn;
+	original_wn = wn;
+	wn = original_wn;
+	
+	first_word = NextWordStopped(); wn--;
+	!if (first_word == 'an' or 'a//') mn=1; else mn=TryNumber(wn);
+	mn=TryNumber(wn);
+	
+    if (mn == -1000) {
+		first_word = NextWordStopped();
+		if (first_word == 'halb') offhour = HALF_HOUR;
+		if (first_word == 'viertel') offhour = QUARTER_HOUR;
+		if (offhour > 0) {
+			second_word = NextWordStopped();
+			!if (second_word == 'of') second_word = NextWordStopped();
+			!if (second_word == 'an') second_word = NextWordStopped();
+			if (second_word == 'stunde') {
+				parsed_number = offhour;
+				return GPR_NUMBER;
+			}
+		}
+		return GPR_FAIL;
+    }
+	wn++;
+	
+	first_word = NextWordStopped();
+	switch (first_word) {
+		'minuten', 'minute': mult = 1;
+		'stunden', 'stunde': mult = 60;
+		default: return GPR_FAIL;
+	}
+	parsed_number = mn*mult;
+	if (mult == 60) {
+		mn=TryNumber(wn);
+		if (mn ~= -1000) {
+			wn++;
+			first_word = NextWordStopped();
+			if (first_word == 'minuten' or 'minute')
+				parsed_number = parsed_number + mn;
+			else wn = wn - 2;
+		}
+	}
+	return GPR_NUMBER;
+];
+-) instead of "Relative Time Token" in "Time.i6t".
 
 
 Section - Printing
@@ -7588,7 +7875,7 @@ Include (-
 ];
 
 [ PersonalPron obj k;
-	SetPriorNamedNoun(obj);
+	SetPreviouslyNamedNoun(obj);
     print (string) PersonalPronouns-->(4*k + Gender(obj, true));
 ];
 
@@ -7615,7 +7902,7 @@ Global caps_mode = false;
         String:   print "<string ~", (string) obj, "~>"; return;
         nothing:  print "<illegal object number ", obj, ">"; return;
     }
-    SetPriorNamedNoun(obj); ! *** obj als "zuvor genanntes Objekt" merken
+    SetPreviouslyNamedNoun(obj); ! *** obj als "zuvor genanntes Objekt" merken
     if (obj == player) return print_yourself(short_name_case);
 
     #Ifdef LanguagePrintShortName;
@@ -8961,12 +9248,51 @@ Array LibcheckIgnoreVerbs table
     return invalid;
 ];
 
-[ LibcheckAnnounce n   no_para;
+[ DictWordCorrection i max    letter length start umlaute;
+    #ifdef TARGET_GLULX;
+    length = Glulx_PrintAnyToArray(StorageForShortName, 24, i);
+    start = 0;
+    #ifnot;
+    @output_stream 3 StorageForShortName;
+    print (address) i;
+    @output_stream -3;
+    length = StorageForShortName-->0;
+    start = 2;
+    #endif;
+    umlaute = 0;
+
+    if (max) length = max;
+    
+    ! *** Vokabel i nach Umlauten durchsuchen und mit Umschreibungen ausgeben
+    for (i=0 : i < length : i++) {
+	    
+        letter = StorageForShortName->(i+start);
+        #ifdef TARGET_ZCODE;
+        if (letter == CHAR_AE or CHAR_OE or CHAR_UE or CHAR_SS) umlaute++;
+        #endif;
+        switch (letter) {
+            CHAR_AE: print "ae";
+            CHAR_OE: print "oe";
+            CHAR_UE: print "ue";
+            CHAR_SS: print "ss";
+            default: print (char) letter;
+        }
+    }
+    #ifdef TARGET_ZCODE;
+    if (length == 9-(umlaute*3)) print "(...)";
+    #ifnot;
+    if (length == DICT_WORD_SIZE) print "(...)";
+    #endif;
+];
+
+[ LibcheckAnnounce n newlines   i;
+    say__p = 0;
+    newlines = 2-newlines;
     switch (n) {
         1:  if (~~LC_notice_printed) {
                 LC_notice_printed = true;
                 print "LIBCHECK hat Probleme gefunden:";
-                if (~~no_para) print "^^";
+                for (i=0 : i < newlines : i++) print "^";
             }
         2:  if (LC_notice_printed) {
                 LC_notice_printed=false;
@@ -8975,33 +9301,37 @@ Array LibcheckIgnoreVerbs table
                     Option ~Use skip libcheck.~ wird der automatische Libcheck
                     bei Spielbeginn übersprungen.
                      ^^
-                    LIBCHECK ENDE.^";
+                    LIBCHECK ENDE.^^";
             }
     }
 ];
 
-[ SuffixAddress i mode  letter start length;
+[ SuffixAddress dw mode     i letter start length;
     ! Vokabel auf Hilfsfeld schreiben
     #ifdef TARGET_GLULX;
-    length = Glulx_PrintAnyToArray(UmlautAux, 24, i);
+    length = Glulx_PrintAnyToArray(UmlautAux, 24, dw);
     start = 0;
     #ifnot;
     @output_stream 3 UmlautAux;
-    print (address) i;
+    print (address) dw;
     @output_stream -3;
     length = UmlautAux-->0;
     start = 2;
     #endif;
-
-    ! *** Vokabel mit abgesetzten Endungen ausgeb | en
+    
+    ! *** Vokabel mit abgesetzten Endungen ausgeb|en
     for (i=0 : i < length : i++) {
         letter = UmlautAux->(i+start);
-        if (i == length-mode) print " | ";
+        if (i == length-mode) print "|";
         print (char) letter;
     }
+    print " [Korrekturvorschlag: ";
+    DictWordCorrection(dw, length-mode);
+    print "]";
 ];
 
-[ ShowDictStat      dict_entries a i j verb_count;
+[ ShowDictStat      dict_entries a i j 
+                    verb_count meta_count noun_count prep_count;
     say__p = 0;
     
 	dict_entries = (dict_start - dict_end)/dict_entry_size;
@@ -9012,6 +9342,9 @@ Array LibcheckIgnoreVerbs table
 	    i = dict_start + a*dict_entry_size;
         j = i->#dict_par1;
         if (j & 1) verb_count++;
+        if (j & $$00000010) meta_count++;
+        if (j & $$10000000) noun_count++;
+        if (j & $$00001000) prep_count++;
     }
     
     print "Info: Maximale Länge der Wörterbucheinträge: ";
@@ -9024,63 +9357,74 @@ Array LibcheckIgnoreVerbs table
         erhöht werden: Use DICT_WORD_SIZE of <N>.";
     #endif;
     
-    print " Das ";
+    print "^^Das ";
     #ifdef TARGET_GLULX;
     print "Glulx";
     #ifnot;
     print "Z-Machine";
     #endif;
     print "-Wörterbuch enthält ", dict_entries, " Einträge. Davon sind ",
-        verb_count, " als Verben gekennzeichnet.^^";
+        verb_count, " als Verben, ", meta_count, " als Meta-Befehle, ",
+         noun_count, " als Objektsynonyme und ", prep_count, " als
+         Präpositionen gekennzeichnet.^^";
 ];
 
-[ XLibCheck silent ignore_lib_verbs     o n errors i j listed dict_entries a
-    gender_error;
+[ XLibCheck silent ignore_lib_verbs     o n errors i j synonyms_listed dict_entries
+                                        a gender_error;
 
     say__p = 1;
     ! *** Gesamtliste aller Vokabeln mit Umlauten ohne Objektbezug erstellen,
     !     um auch die Vokabeln zu erwischen, die nicht in der name-Property
     !     eines Objekts stehen.
-
-    ! *** Gesamtliste der Dictionary-Words mit Umlauten
     
     ! *** Anzahl der Wörterbucheinträge ermitteln. Eine Schleife direkt über die
     !     Adressen kann wegen eines "signed integer overflows" fehlschlagen.
-    
     dict_entries = (dict_start - dict_end)/dict_entry_size;
     if (dict_entries < 0) dict_entries = -dict_entries;
 
     for (a = 0 : a < dict_entries : a++ ) {
+	    
 	    ! *** Adresse berechnen
 	    i = dict_start + a*dict_entry_size;
-        j = i->#dict_par1; ! *** (?) Muss hier auch schon stehen, sonst wird keine Liste erzeugt
+        
+	    j = 0;      
         if (ignore_lib_verbs) {
                 for (n = 1 : n <= LibcheckIgnoreVerbs-->0 : n++ )
-                      if (LibcheckIgnoreVerbs-->n == i) j=-1;
-                if (j==-1) continue; ! for i
+                      if (LibcheckIgnoreVerbs-->n == i) { j = -1; break; }
+                if (j==-1) continue; ! for a
         }
         if (UmlautCheck(i)) {
             errors++;
             if (errors == 1) {
 	            LibcheckAnnounce(1);
-                listed = true;
 	            print "Gesamtliste aller Vokabeln, die Umlaute
 	                   oder 'ß' enthalten:^^";
             }
             j = i->#dict_par1;
             print errors, ": ", (address) i;
-            if (j & 1) print " [Verb]";
-            print "^";
+            if (j & 1) print " [Verb] [Korrekturvorschlag: siehe Verben-Check
+                               weiter unten]^";
+            else {
+	            if (j & $$10000000) {
+		            print " [Objekt-Synonym]";
+		            synonyms_listed++;
+	            }
+	            if (j & $$00001000) print " [Präposition]";
+	            if (j & $$00000010) print " [Meta-Verb]";
+	            print " [Korrekturvorschlag: ", (DictWordCorrection) i, "]^";
+            }
         }
     }
     if (errors) {
-        print "^Hintergrund: Vokabeln (Verben und Präpositionen in Kommandos
-                sowie Synonyme für Objekte),
-                die Umlaute (ä, ö, ü) oder
-                Eszett (ß) enthalten, werden vom GerX-Parser nicht verstanden.
-                Umlaute und 'ß' in Vokabeln müssen deshalb immer mit
-                ae, oe, ue und ss umschrieben werden. Nur so können Umlaute
-                und ihre Umschreibungen korrekt vom Spiel verstanden werden.^^";
+        print "^Hintergrund: Vokabeln (Verben und Präpositionen in Satzmustern
+                sowie Synonyme für Objekte), die Umlaute (ä, ö, ü) oder
+                Eszett (ß) enthalten, können vom GerX-Parser nicht korrekt mit der
+                Eingabe des Spielers abgeglichen werden, da sämtliche Umlaute und ß
+                in der Spielereingabe vor der Analyse durch Umschreibungen ersetzt werden.
+                Umlaute und ß in Vokabeln müssen deshalb immer mit
+                ae, oe, ue und ss umschrieben werden (siehe Korrekturvorschlag).
+                Nur so werden alle Umlaute und ß sowie deren Umschreibungen
+                in der Spielereingabe korrekt vom Spiel verstanden.^^";
     }
                 
     errors = 0;
@@ -9122,52 +9466,52 @@ Array LibcheckIgnoreVerbs table
     if (errors == 0) {
         if (LC_notice_printed || ~~silent) {
             print "Keine";
-            if (listed) print " offensichtlichen";
+            if (synonyms_listed) print " offensichtlichen";
         }
     }
     else if (errors) print "^", errors;
     if (LC_notice_printed || errors || (errors==0 && ~~silent) ) {
-        print " Fehler bei den Objektdefinitionen.^";
+        print " Fehler bei den Objektdefinitionen.";	
         if (gender_error) { print "^Achtung: Mehrdeutige oder fehlende
             Genus-Definitionen sollten bei der ausschließlichen Verwendung
             von Inform-7-Code nicht vorkommen. Die Ursachen dafür könnten
             in eingebundenem Inform-6-Code liegen oder ein Fehler in
             GerX sein.^";
         }
-        if (listed) print "^Achtung: Objekte mit dem Attribut ~privately-named~
-			oder gruppierten Vokabeln (~vokabel1/vokabel2/vokabel3~) können
-			nicht vollständig geprüft werden. Es ist deshalb möglich,
-			dass diese Objekte noch Synonyme mit Umlauten oder 'ß' haben,
-			die in der Gesamtliste oben aufgeführt sind.^";
+        else {
+	        if (errors) print " Siehe Korrekturvorschlag in der Gesamtliste
+	                            weiter oben.";
+	        print "^";
+        }  
+        if (synonyms_listed && (synonyms_listed ~= errors) ) {
+	        print "^Achtung: ";
+	        if (synonyms_listed==1) print "Es wurde ein Objektsynonym gefunden,
+	        	das Umlaute/ß enthält";
+	        else print "Es wurden ", synonyms_listed, " Objektsynonyme gefunden, die
+	        	Umlaute/ß enthalten";
+			print " (siehe
+				Gesamtliste weiter oben). Objekte mit dem Attribut ~privately-named~
+				oder gruppierten Vokabeln (~vokabel1/vokabel2/vokabel3~),
+				die nicht automatisch geprüft werden können, sollten
+				deshalb manuell auf ";
+			if (synonyms_listed>1) print "die gelisteten Synonyme";
+			else print "das gelistete Synonym";
+			print " hin überprüft werden.^";
+		}
     }
 ];
 
-[ YLibcheck silent ignore_lib_verbs   i j k last last2 mode warnings dict_entries a;
+[ YLibcheck silent ignore_lib_verbs   i j k last last2 mode warnings dict_entries
+                                      a suffix_warning;
     say__p = 1;
-    
-    ! *** Verben auf Umlaute prüfen:
-    
+        
     dict_entries = (dict_start - dict_end)/dict_entry_size;
     if (dict_entries < 0) dict_entries = -dict_entries;
 
-    for (a = 0 : a < dict_entries : a++ ) {
-        i = dict_start + a*dict_entry_size;
-        j = i->#dict_par1;
-        if (j & 1) {
-            if (UmlautCheck(i)) {
-	            warnings++;
-	            if (warnings == 1) {
-    	            LibcheckAnnounce(1, true);
-    	            print "^Folgende Verben enthalten Umlaute oder 'ß':^^";
-	            }
-                print warnings, ": ", (address) i, "^";
-            }
-        }
-    }
-
-    ! *** Verben auf Endung 'e', 'n' (nach 'l') oder 'en':
-
+    ! *** Verben auf Endung 'e', 'n' (nach 'l') oder 'en' + Umlaute/ß prüfen:
+    
     warnings = 0;
+    suffix_warning = false;
 
     for (a = 0 : a < dict_entries : a++ ) {
         i = dict_start + a*dict_entry_size;
@@ -9190,58 +9534,69 @@ Array LibcheckIgnoreVerbs table
 
             last = LastCharacterAddress(i);
             last2 = LastCharacterAddress(i, 1);
+            
+            ! *** (22.02.2011) Verben, die  auf 'ae', 'ee', 'ie', 'oe' oder 'ue'
+            !     enden, werden nicht angemeckert.
+            if (last == 'e' && last2 == 'a' or 'e' or 'i' or 'o' or 'u') continue;
 
             if (last2 == 'l' && last == 'n') mode = 1;
             else if (last2 == 'e' && last == 'n') mode = 2;
             else if (last == 'e') mode = 1;
 
-            if (mode) {
+            if (mode || UmlautCheck(i)) {
+	            if (mode) suffix_warning = true;
 	            warnings++;
 	            if (warnings == 1) {
-    	            LibcheckAnnounce(1, true);
-    	            print "^Folgende Verben haben Endungen:^^";
+    	            LibcheckAnnounce(1,1);
+    	            print "^Folgende Verben haben Endungen und/oder enthalten Umlaute/ß:^^";
 	            }
                 print warnings, ": ";
                 SuffixAddress(i, mode);
-                if (UmlautCheck(i)) print " [Umlaut/ß vorhanden, siehe oben]";
                 print "^";
                 mode = 0;
             }
         }
      }
-     if (warnings) {
+     if (suffix_warning) {
         print "^Hintergrund: Verben sollten immer im Imperativ (der Befehlsform)
             für die 2. Person Singular angegeben werden, wobei der Spieler
             das Spiel konventionsgemäß duzt. Es empfiehlt sich, immer die
             knappste Form eines Verbs (~geh~) ohne Endungen zu definieren, damit
             möglichst viele Wortformen (~geh~, ~gehe~, ~gehen~, ~geht~)
-            verstanden werden. Der Parser erkennt Endungen in der
-            Spielereingabe, deshalb braucht man sie nicht extra anzugeben.";
+            verstanden werden (siehe Korrekturvorschlag).
+            Der Parser erkennt Endungen in der Spielereingabe, deshalb braucht
+            man sie nicht extra anzugeben.";
 
         print "^^Tipp: Wenn das Verb auch ohne die Endung einen gültigen
             Imperativ darstellt, sollte die bestehende Definition geändert
             und ausschließlich die Form ohne Endung verwendet werden.
             ^^
-            Sind Verben mit der Endung 'e', 'en' oder 'n' (nach 'l')
-            notwendig, weil sie ohne Endung keine korrekte Form haben, kann
-            man diese in einem Not-for-release-Abschnitt in die fortgesetzte
-            Tabelle ~Table of blessed verb forms (continued)~ eintragen, damit
-            sie beim nächsten Library-Check nicht mehr als Fehler gemeldet
-            werden.
+            Sind Verben mit der Endung 'e', 'en' oder 'n'
+            notwendig, weil sie entweder ohne Endung keine korrekte Form haben
+            (z.B. 'knuddl' als ungültige Imperativ-Form des Verbs 'knuddeln') oder
+            gar keine (deutschen) Verben sind (z.B. 'ausgaenge', 'analyze'),            
+            kann man diese in einem Not-for-release-Abschnitt in die fortgesetzte
+            Tabelle ~Table of blessed verb forms (continued)~ eintragen und
+            somit abgsegnen; die Verben in dieser Tabelle werden beim nächsten
+            Library-Check ignoriert und nicht mehr als Fehler gemeldet.
             ^^
-            Ein Beispiel für eine Liste mit den Verben 'knuddle' und 'fummle',
-            deren Formen ohne 'e' keine gültigen Imperative sind und deshalb
-            mit 'e' am Ende definiert werden sollten:
+            Es folgt ein Beispiel für eine Tabelle mit dem Verb 'knuddle' und
+            dem englischen Verb 'analyze', deren Formen ohne 'e' keine gültigen
+            Imperative sind und deshalb mit 'e' am Ende definiert werden sollten:
             ^^
-            Section - Verbformen, die von Libcheck
-            ignoriert werden sollen - Not for release
+            Section - Abgesegnete Verbformen - Not for release
             ^^Table of blessed verb forms (continued)^
             Verb^
             ~knuddle~^
-            ~fummle~^";
+            ~analyze~^";
       }
-      else if (~~silent) print "^Keine Fehler bei den Verben-Definitionen.^";
+      if (warnings==0 && silent==false) {
+	      print "^Keine Fehler bei den Verben-Definitionen.^";
+	      if (~~LC_notice_printed) print "^";
+      }   
 ];
+
+       
 
 #Endif; ! DEBUG
 -).
@@ -9259,6 +9614,7 @@ German ends here.
 By including this German extension (GerX) you can make German the language of play.
 The I6 code for German language processing is exclusively based on the deform library 6/11 by Martin Oehm.
 GerX is, like I7 itself, a work in progress.
+
 Please send bug reports, suggestions, and comments to
 
 	"GerX@pageturner.de"
@@ -9275,7 +9631,7 @@ Mit dieser German-Extension (GerX) kann man deutschsprachige Textadventures mit 
 
 GerX wurde von Banbury, Christian Blümke und Michael Baltes erstellt. Der Inform-6-Code, der für die spezielle Behandlung der deutschen Eingabe- und Ausgabetexte verantwortlich ist, wurde ausschließlich der deform-Bibliothek Release 6/11 von Martin Oehm entnommen und so behutsam wie möglich für die Benutzung mit Inform 7 angepasst. Danke an Martin Oehm für diese Steilvorlage!
 
-GerX ist so ausgelegt, dass der Autor, wie beim englischen Original auch, alle Standard-Antworten ändern kann. Sehr bequem geht das z.B. mit der Extension "Default Messages" von Ron Newcomb. Alle neuen Rules haben Namen, die man im Inform-Index nachschlagen kann. Über diese lassen sich die Rules ersetzen oder in ihrer Reihenfolge beeinflussen. Für die in Inform 7 enthaltenen Erweiterungen Rideable Vehicles von Graham Nelson sowie Locksmith, Menus und Basic Screen Effects von Emily Short bringt GerX schon Übersetzungen mit. Die Original-Erweiterungen müssen im Quelltext vor der deutschen Erweiterung eingebunden werden.
+GerX ist so ausgelegt, dass der Autor, wie beim englischen Original auch, alle Standard-Antworten ändern kann. Sehr bequem geht das z.B. mit der Extension Default Messages von Ron Newcomb in Kombination mit German Default Messages von Team GerX. Alle neuen Rules haben Namen, die man im Inform-Index nachschlagen kann. Über diese lassen sich die Rules ersetzen oder in ihrer Reihenfolge beeinflussen. Für die in Inform 7 enthaltenen Erweiterungen Rideable Vehicles von Graham Nelson sowie Locksmith, Menus und Basic Screen Effects von Emily Short bringt GerX schon Übersetzungen mit. Die Original-Erweiterungen müssen im Quelltext vor der deutschen Erweiterung eingebunden werden.
 
 Um mit GerX arbeiten zu können, muss sich der Autor jedoch mit ein paar Besonderheiten vertraut machen. So gibt es zum Beispiel neue Methoden, Texte mit flexiblen Adjektiv- und/oder Substantiv-Endungen auszugeben. Es gibt auch einige Regeln für das Benennen von Dingen und Vokabeln, an die sich der Autor halten muss, damit das Spiel am Ende richtig funktioniert und der Spieler die größtmögliche Flexibilität bei der Eingabe seiner Anweisungen hat. All das wird im Folgenden erläutert werden.
 
@@ -9435,7 +9791,7 @@ Section: Methode I: Die Denglisch-Variante (Standard)
 
 Es müssen deutsche Objektnamen und englische Arten-Bezeichnungen verwendet werden, was zu einem etwas unschönen Sprachen-Mix führt:
 
-	The Keller is a room.
+	The Keller is a male room.
 
 	The Kiste is a female container in the Keller, fixed in place.
 
@@ -9444,8 +9800,8 @@ Es müssen deutsche Objektnamen und englische Arten-Bezeichnungen verwendet werd
 	The Oelkanne is a female thing in the Keller. The printed name is "Ölkanne".
 
 	A Karotte is a kind of thing. It is female and edible. The printed plural name is "Karotten". Understand "Karotte" and "Moehre" as a Karotte. Understand "Karotten" and "Moehren" as the plural of Karotte.
-
-    In the box are six Karotten.
+	
+	In the box are six Karotten.
 
 Enthält der Objektname Umlaute oder ß, muss das Vokabular mit den Umschreibungen (ae, oe, ue, ss) angepasst werden(so wie bei "grün" im Beispiel). Benutzt man Umschreibungen im Objektnamen, muss der angezeigte Objektname, der printed name, nachgezogen werden (wie bei der "Ölkanne"). Der angezeigte Plural-Objektname (printed plural name) und das Plural-Vokabular für mehrere Objekte derselben Art (hier: die Karotten) müssen von Hand angepasst werden, wenn der Plural nicht wie im Englischen mit 's' am Ende gebildet wird.
 
@@ -9460,7 +9816,7 @@ Um den unschönen Sprachen-Mix zu vermeiden, kann man die Arten (kinds) "thing" 
 
 Beispiele:
 
-	The basement is a room. The printed name is "Keller".
+	The basement is a male room. The printed name is "Keller". Understand "Keller" as the basement.
 
 	The box is a male container in the basement, fixed in place. The printed name is "Kasten". Understand "Kasten" as the box.
 
@@ -9468,7 +9824,7 @@ Beispiele:
 
 	A carrot is a kind of thing. It is female and edible. The printed name is "Karotte". The printed plural name is "Karotten". Understand "Karotte" and "Moehre" as a carrot. Understand "Karotten" and "Moehren" as the plural of a carrot.
 
-    In the box are six carrots.
+	In the box are six carrots.
 
 Bei Eigennamen muss nur das Vokabular nachgeliefert werden. Der angezeigte Objektname wird vom Bezeichner übernommen.
 
@@ -9522,7 +9878,7 @@ Oder noch unangenehmer:
 	Du kannst die Birne nicht anziehen!
 
 
-Um das zu vermeiden und die Pronomen entsprechend korrekt zu setzen, kann man einzelnen Synonymen eines von vier Attributen folgen lassen, die das abweichende Geschlecht der Vokabel kennzeichnen. Diese Attribute sind:
+Um das zu vermeiden und die Pronomen korrekt zu setzen, kann man einzelnen Synonymen eines von vier Attributen folgen lassen, die das abweichende Geschlecht der Vokabel kennzeichnen. Diese Attribute sind:
 
 	"[m]" (Maskulinum, männlich)
 	"[f]" (Femininum, weiblich)
@@ -9636,7 +9992,7 @@ Möchte man zum Beipiel Körperteile, sagen wir Nasen, für alle Personen erzeug
 	A Nase is a kind of thing. A Nase is female. The plural of Nase is Nasen.
 	A Nase is part of every person.
 
-Der Inform-Compiler erzeugt nun automatisch eine Nase für jede Person im Spiel, wobei die Bezeichner, die angezeigten Objektnamen und das entsprechende Vokabular ebenfalls angelegt werden -- nur leider auf Englisch. In GerX ist ein Workaround enthalten, der zumindest den angezeigten Objektnamen auf Deutsch ausgibt ("deine Nase", "Nase des Polizisten", "Bennos Nase" usw.). Um das englische Vokabular zu unterbinden, müssen die erzeugten Teile privately-named sein und der printed name muss nachgereicht werden:
+Der Inform-Compiler erzeugt nun automatisch eine Nase für jede Person im Spiel, wobei die Bezeichner, die angezeigten Objektnamen und das zum Objekt gehörige Vokabular ebenfalls angelegt werden -- nur leider auf Englisch. In GerX ist ein Workaround enthalten, der zumindest den angezeigten Objektnamen auf Deutsch ausgibt ("deine Nase", "Nase des Polizisten", "Bennos Nase" usw.). Um das englische Vokabular zu unterbinden, müssen die erzeugten Teile privately-named sein und der printed name muss nachgereicht werden:
 
 	A Nase is privately-named.
 	The printed name of a Nase is "Nase".
@@ -9702,7 +10058,7 @@ Der so ausgegebene Objektname steht jedoch immer im Nominativ; um den jeweils be
 
 Section: Pronomen, Hilfsverben und Verb-Endungen
 
-Die Ausdrücke passen sich an Numerus und Genus des zuletzt genannten Objekts oder eines angegebenen Objekts an. Mit "zuletzt genanntem Objekt" ist das Objekt gemeint, das als letztes mit einer Textersetzung explizit angegeben wurde. Das zuletzt genannte Objekt heißt in GerX "prior named noun" und kann vom Autor in eigenen Name-Printing-Rules als Variable des Typs "Thing" befragt oder neu gesetzt werden.
+Die Ausdrücke passen sich an Numerus und Genus des zuletzt genannten Objekts oder eines angegebenen Objekts an. Mit "zuletzt genanntem Objekt" ist das Objekt gemeint, das als letztes mit einer Textersetzung explizit angegeben wurde. Das zuletzt genannte Objekt heißt in GerX "previously named noun" und kann vom Autor in eigenen Name-Printing-Rules als Variable des Typs "Thing" befragt oder neu gesetzt werden.
 
 Pronomen:
 
@@ -9846,12 +10202,12 @@ Die Adjektiv-Endung kann auch im indefinite article genutzt werden:
 
 Section: Endungen für Substantive
 
-	"[-n]" für Plural-Substantive im Dativ. Im Dativ wird ein "n" angehängt.
+	"[-n]" für Plural-Substantive, die auf "e" enden. Im Dativ wird ein "n" angehängt.
 
 	The printed name of the Zwerge is "Zwerge[-n]".
 	"Die Zwerge, der Zwerge, den Zwergen, die Zwerge."
 
-Die Endung kann auch für männliche Substantive, die auf "e" enden (der Affe, der Bote, der Bube, der Drache, der Hase, der Junge, der Knabe, der Kollege, der Kunde, der Löwe, der Neffe, der Russe; Ausnahme: der Käse) benutzt werden.
+Die Endung kann auch für männliche Substantive, die auf "e" enden (der Affe, der Bote, der Bube, der Drache, der Hase, der Junge, der Knabe, der Kollege, der Kunde, der Löwe, der Neffe, der Russe usw.; Ausnahme: der Käse) benutzt werden.
 
 	The printed name of the Affe is "Affe[-n]".
 	"Der Affe, des Affen, dem Affen, den Affen."
@@ -9904,7 +10260,7 @@ Um den aktuellen Modus der Artikel zu bestimmen, gibt es folgenden Ausdruck:
 Den aktuellen Artikelmodus verändert man mit
 
 	set current article mode to <article mode>;
-
+	
 
 Section: Beispiele für die Verwendung von Textersetzungen und mögliche Ausgabetexte
 
@@ -10030,6 +10386,33 @@ Als Say-Phrase:
 
 	"[contents of <object> with <case>]" (unbestimmt)
 	"[the contents of <object> with <case>]" (bestimmt)
+	
+	
+Section: Unverschachtelte Inhaltslisten anhängen (Non-nested lists)
+
+Bei Verwendung der Use-Option "non-nested lists" wird der Inhalt von Dingen in gesonderten Listen nach der Hauptinhaltsliste ausgeführt, wenn die Inhaltsliste mit der Listenoption "as a sentence" ausgegeben wird. Möchte man als Autor nun selbst unverschachtelte Inhaltslisten verwenden, fügt man nach dem Schreiben der Inhaltsliste eine der folgenden Phrasen hinzu:
+
+	write the/-- sublists;
+	
+Schreibt die Sub-Listen direkt nach der Inhaltsliste. Dies ist die Standard-Variante.
+
+	write the/-- sublists with line break;
+	
+Fügt vor die Sub-Listen einen Zeilenumbruch ein.
+
+	write the/-- sublists with paragraph break;
+	
+Fügt vor die Sub-Listen einen Absatz ein.
+
+	write the/-- sublists with space;
+	
+Fügt vor die Sub-Listen ein Leerzeichen ein.
+
+	write the/-- inventory sublists;
+	
+Für die unverschachtelte Ausgabe des Inventars als Satz.
+
+Ist die Option "non-nested lists" nicht aktiv, haben die aufgeführten Phrasen keinen Effekt.
 
 
 Section: Einfache Listen
@@ -10189,18 +10572,71 @@ Section: Die deform-Eigenschaft init benutzen
 
 	*: Use init property.
 
-Ermöglicht die Benutzung der deform-Eigenschaft init zum einfachen Initialisieren von Objekten mittels I6-Code.
+Ermöglicht die Benutzung der deform-Eigenschaft init zum Initialisieren von Objekten mittels Einbindung von I6-Code.
 
+
+Chapter: Neue oder erweiterte Standard-Aktionen und -Kommandos
+
+Section: Einen Raum verlassen (room-leaving)
+
+Viele Spieler versuchen intuitiv, den aktuellen Standort mit >VERLASSE RAUM oder ähnlichen Kommandos zu verlassen, was naheliegend ist. Trotzdem ist dies kein Standardverhalten des Inform-Weltmodells. In GerX ist das Verlassen eines Raums auf diese Weise möglich. Die neue Aktion, die dieses Verhalten bewirkt, heißt "room-leaving".
+
+	>VERLASS
+	>VERLASS (DEN/DIESEN) ORT/RAUM/PLATZ/STANDORT
+	
+Wenn ein Raum nur einen einzigen offensichtlichen Ausgang hat, wird ein Gehen in die entsprechende Richtung versucht. Gibt es mehrere Richtungen, in die man gehen kann, fragt das Spiel nach und bittet um genauere Richtungsangaben.
+
+Der aktuelle Raum kann auch mit seinen Synonymen angesprochen werden. Dazu muss das Vokabular für den Raum definiert werden.
+
+	The Lab is a neuter room. The printed name is "Labor". Understand "Labor" and "Laboratorium" as the Lab.
+	
+Nun kann man das Labor auch per
+
+	>VERLASS LABOR/LABORATORIUM
+	
+verlassen.
+
+
+Section: Inventar als Satz anzeigen
+
+Im englischen Original-Inform wird das Inventar (die Dinge, die die Spielerfigur bei sich trägt) standardmäßig nur als Liste angezeigt. In GerX wird, genau wie in deform, eine Möglichkeit zum Umschalten zwischen der Anzeige als Liste und der Ausgabe als vollständiger Satz angeboten. Die zwei neuen Aktionen, die das Umschalten steuern, heißen "wide taking inventory" und "tall taking inventory".
+
+Anstelle von I können in den folgenden Beispielen natürlich auch die synonymen Kommandos INVENTAR, INV, BESITZ oder EIGENTUM verwendet werden.
+
+	>I QUER/SATZ/BREIT
+	>I ALS SATZ
+
+Nach Eingabe eines dieser Kommandos wird das Inventar als Satz angezeigt und der Inventar-Stil (dargestellt durch die Variable inventory style) auf "wide inventory" gesetzt. Beim nächsten einfachen Aufruf des Inventars z.B. per >I wird der aktuelle Stil zur Ausgabe benutzt. 
+
+	>I
+	Du hast ein Glas (darin Wasser) und einen Apfel bei dir.
+	
+Mit aktivierter Use-Option "non-nested lists" sieht es so aus:
+
+	>I
+	Du hast ein Glas und einen Apfel bei dir. In dem Glas ist Wasser.
+
+Die Kommandos
+
+	>I HOCH/LISTE/LANG
+	>I ALS LISTE
+	
+zeigen das Inventar als Liste an (der Inform-Standard) und setzen den Inventar-Stil (inventory style) auf "tall inventory".
+
+Es ist jederzeit möglich, die Variable inventory style auf einen der Werte "wide inventory" (Satz) oder "tall inventory" (Liste) zu setzen. Möchte man z.B. das Spiel standardmäßig mit der Einstellung "Inventar als Satz anzeigen" beginnen, kann die Variable gleich bei Spielbeginn geändert werden:
+
+	When play begins: now inventory style is wide inventory.
+	
 
 Chapter: Spezielles Parsen
 
 Section: Wortköpfe und -schwänze (Compound Heads und Compound Tails) von langen Wörtern abtrennen
 
-Inform verarbeitet im Z-Code-Format nur die ersten neun Zeichen einer Vokabel. Auch im Glulx-Format ist das der Standard, die Länge der Lexikoneinträge lässt sich aber per ...
+Inform verarbeitet im Z-Code-Format nur die ersten neun Zeichen einer Vokabel. Auch im Glulx-Format ist das der Standard, die Länge der Lexikoneinträge lässt sich aber per
 
 	Use DICT_WORD_SIZE of <N>.
 
-... ändern. Für Z-Code gibt es diese Möglichkeit leider nicht.
+ändern. Für Z-Code gibt es diese Möglichkeit leider nicht.
 
 Bei der Verwendung von Vokabeln, die länger als 9 Zeichen sind, kann es also vorkommen, dass sich Objekte nicht unterscheiden lassen.
 
@@ -10209,13 +10645,13 @@ Bei der Verwendung von Vokabeln, die länger als 9 Zeichen sind, kann es also vo
 
 In dem Beispiel würden die Vokabeln für die zwei Objekte intern jeweils gleich lauten, nämlich 'streichho'. Der Parser kann das Streichholz deshalb nicht von den Streichhölzern unterscheiden. Um dieses etwas altertümliche Limit zu umgehen, kann man in GerX, wie in deform auch, Wortköpfe oder -schwänze von langen Wörtern abschneiden lassen, sodass der Parser mit zwei kürzeren Vokabeln arbeiten kann.
 
-Der Autor definiert die Tabelle ...
+Der Autor definiert folgende Tabelle
 
 	Table of compound heads (continued)
 	Head    	n
 	"streich"    	0
 
-... und aktiviert ihre Berücksichtigung beim Parsen mit der Use-Option "Use compound heads.".
+und aktiviert ihre Berücksichtigung beim Parsen mit der Use-Option "Use compound heads.".
 Jetzt lassen sich Streichholz und Streichhölzer folgendermaßen definieren:
 
 	The Packung Streichhölzer is a female container. Understand "streich-" and "hoelzer" as the Packung Streichhölzer.
@@ -10475,7 +10911,17 @@ Das Wort im Satzmuster, das auf "[force pronoun]" folgt ("davor"), wird als Pron
 	>KNIE DAVOR NIEDER
 	Du kniest dich vor den Altar.
 
+Um zu prüfen, ob der Bezug zu einem Substantiv durch ein Pronominaladverb hergestellt wurde, benutzt man folgende Phrase:
 
+	... whether/if the/a noun has been supplied by a pronominal adverb ...
+	
+Um den Bezug zu löschen, schreibt man
+
+	reset the pronominal adverb;
+	
+Diese Phrasen werden beispielweise in der GerX-Rule "adjust the pronominal adverb reference when removing" benutzt.
+	
+	
 Chapter: Die Extensions "Basic Screen Effects", "Locksmith", "Menus" und "Rideable Vehicles"
 
 Für die in I7 integrierten Erweiterungen Rideable Vehicles von Graham Nelson sowie Locksmith, Menus und Basic Screen Effects von Emily Short bringt GerX schon deutsche Übersetzungen mit. Die Installation zusätzlicher Erweiterungen ist nicht notwendig. Die Original-Extensions müssen vor der German-Extension eingebunden werden, damit die englischen Standardmeldungen und Verbendefinitionen durch deutsche Entsprechungen ersetzt werden.
@@ -10521,26 +10967,26 @@ Example: * Die Jadestatue - Martin Oehms Jade-Beispiel für Inform 7. Die ausfü
 
 	Lichtung im Dschungel is a room. "Du stehst auf einer Lichtung im dichten Dschungel. Im Norden steht ein alter, von Ranken überzogener Schrein. Im Süden führt ein schmaler Pfad zurück in die Zivilisation."
 
-	Instead of going south in the Dschungel when the player has the Jadestatue: say "Du schaffst es, mit der Statue wieder zurück in die Zivilisation zu gelangen."; end the game in victory.
+	Instead of going south in the Dschungel when the player has the Jadestatue: say "Du schaffst es, mit der Statue wieder zurück in die Zivilisation zu gelangen."; end the story saying "Du hast gewonnen".
 
 	Instead of going south in the Dschungel, say "Nicht ohne die Statue!".
 
 	Instead of going nowhere from the Dschungel, say "Dort ist der Dschungel zu dicht, es gibt keinen Pfad in diese Richtung."
 
 	A faustgross Stein is in the Dschungel. It is male. "In der Nähe des Schreins liegt ein glatter, runder Stein im Gras." Instead of examining the Stein, say "Der Stein ist so groß wie eine Faust und außergewöhnlich glatt und rund." Understand "gross", "glatt" and "rund" as Stein. The printed name of the Stein is "faustgroß[^] Stein". The Stein is portable.
-
+	
 	The alt Schrein is scenery in the Dschungel. It is male. Instead of examining the Schrein, say "Der alte Toltekenschrein ist fast komplett mit Efeu überwuchert." Instead of entering the Schrein, try going north. Understand "toltekisch", "Efeu" and "Ranken [p]" as Schrein. The printed name of the Schrein is "alt[^] Schrein".
-
+	
 	Im Schrein is a room. It is north of the Dschungel. "In dem kleinen Schrein ist es dunkel, nur wenig Licht fällt durch das halb verfallene Dach. Ein großer Lichtstrahl fällt auf eine Steinsäule in der Mitte des Schreins.[paragraph break]Die Lichtung liegt im Süden." Outside from Im Schrein is the Dschungel.
-
-	The Steinsäule is a supporter in Im Schrein. It is female. Instead of examining the Steinsäule, say "Die Säule ist aus glattem Stein gehauen, etwas mehr als einen Meter hoch und oben flach, wie ein Podest." Understand "Steinsaeule", "Saeule", "Podest [n]" and "Steinpodest [n]" as Steinsäule.
-
-	The Jadestatue is on the Steinsäule. It is female and portable. Instead of examining the Jadestatue, say "Es ist die Statue einer toltekischen Gottheit, komplett aus grüner Jade geschnitzt. Sie glänzt und sieht sehr wertvoll aus." Understand "gruen", "klein", "Statue", "Figur", "Jadestatue" and "Jadefigur" as Jadestatue.
-
-	Instead of taking the Jadestatue when the Jadestatue is on the Steinsäule and the Stein is not on the Steinsäule: say "Als du das Gewicht der Statue von der Säule nimmst, hörst Du ein klickendes Geräusch. Kurz darauf wirst du von Giftpfeilen durchbohrt."; end the game in death.
-
+	
+	The Steinsaeule is a supporter in Im Schrein. It is female. The printed name is "Steinsäule". Instead of examining the Steinsaeule, say "Die Säule ist aus glattem Stein gehauen, etwas mehr als einen Meter hoch und oben flach, wie ein Podest." Understand "Saeule", "Podest [n]" and "Steinpodest [n]" as Steinsaeule.
+	
+	The Jadestatue is on the Steinsaeule. It is female and portable. Instead of examining the Jadestatue, say "Es ist die Statue einer toltekischen Gottheit, komplett aus grüner Jade geschnitzt. Sie glänzt und sieht sehr wertvoll aus." Understand "gruen", "klein", "Statue", "Figur", "Jadestatue" and "Jadefigur" as Jadestatue.
+	
+	Instead of taking the Jadestatue when the Jadestatue is on the Steinsaeule and the Stein is not on the Steinsaeule: say "Als du das Gewicht der Statue von der Säule nimmst, hörst Du ein klickendes Geräusch. Kurz darauf wirst du von Giftpfeilen durchbohrt."; end the story saying "Du bist gestorben".
+	
 	When play begins: say "Endlich! Nach tagelangem Suchen im Dschungel stößt du auf eine Lichtung. Und auf etwas mehr. Vielleicht ist dies der Ort, an dem sich die Jadestatue befindet?[paragraph break]".
-
+	
 	Test me with "s / u mich / i / nimm den Stein / untersuche ihn / i / n / lege Stein auf Säule / untersuche die Statue / nimm sie / i / s / s".
 
 
@@ -10559,67 +11005,67 @@ Example: * Der Mantel der Finsternis - Eine Übersetzung des Demo-Spiels "Cloak 
 	The Foyer of the Opera House is a room. The printed name is "Foyer der Oper". "Du stehst in einer großen, prächtig in Rot und Gold dekorierten Eingangshalle. Funkelnde Kronleuchter hängen von der Decke herab. Der Ausgang zur Straße liegt im Norden, weitere Türen befinden sich im Süden und Westen."
 
 	Instead of going north in the Foyer, say "Du bist doch gerade erst angekommen, und draußen scheint das Wetter ohnehin nur noch schlechter zu werden."
-
+	
 	The Cloakroom is west of the Foyer. The printed name is "Garderobe". "An den Wänden dieses kleinen Raumes befanden sich offenbar einmal Reihen von Kleiderhaken aus Messing, von denen jetzt nur noch einer geblieben ist. Der Ausgang ist eine Tür im Osten."
-
+	
 	In the Cloakroom is a supporter called the small brass hook. It is a male scenery. The printed name is "klein[^] Messinghaken[-s]".
-
+	
 	Understand "klein", "haken", "messinghaken", "kleiderhaken" and "haekchen [n]" as the hook.
-
+	
 	The description of the hook is "Es ist nur ein einfacher Kleiderhaken aus Messing, [if something is on the hook]mit [a list of things on the hook with dative] daran[otherwise]der an die Wand geschraubt ist[end if]."
-
+	
 	The Bar is south of the Foyer. The printed name of the Bar is "Foyer-Bar". The Bar is dark. "Die Bar ist nicht halb so prächtig, wie du annahmst, nachdem du das Foyer im Norden gesehen hast. Sie ist völlig leer, bis auf das Sägemehl am Boden, in dem du eine hingekritzelte Nachricht erkennen kannst."
-
+	
 	The scrawled message is female scenery in the Bar. The printed name is "krakelig[^] Nachricht". Understand "krakelig", "gekrakelt", "gekitzelt", "Nachricht", "Botschaft", "Schrift", "Boden [m]", "Saegemehl [n]" as the message.
-
+	
 	Neatness is a kind of value. The neatnesses are neat, scuffed, and trampled.
-
+	
 	The message has a neatness. The message is neat.
-
+	
 	Instead of examining the message:
 		increase score by 1;
 		say "Die Nachricht, fein säuberlich in das Sägemehl geschrieben, lautet:";
-		end the game in victory.
-
+		end the story saying "Du hast gewonnen".
+	
 	Instead of examining the trampled message:
 		say "Die Nachricht wurde zertrampelt. Du kannst gerade noch folgende Worte entziffern:";
-		end the game saying "Du hast verloren".
-
+		end the story saying "Du hast verloren".
+	
 	Instead of doing something other than going in the bar when in darkness:
-		if the message is not trampled, change the neatness of the message
-		to the neatness after the neatness of the message;
+		if the message is not trampled, now the neatness of the message
+		is the neatness after the neatness of the message;
 		say "Im Dunkeln? Du könntest hier leicht etwas durcheinander bringen."
-
+	
 	Instead of going nowhere from the bar when in darkness:
 		now the message is trampled;
 		say "Es ist keine gute Idee, im Dunkeln hier herumzutappen."
-
+	
 	The velvet cloak is a male thing worn by the player. The printed name of the cloak is "Samtmantel[-s]". The cloak can be hung or unhung. Understand "dunkel", "schwarz", "benetzt", "Samtmantel", "Satinmantel", "Samt [n]", "Satin [n]", "Mantel", "Umhang", "Gewand [n]" as the cloak. The description of the cloak is "Ein schöner Samtmantel, mit Satin durchzogen und von Regentropfen leicht benetzt. Er ist so tief schwarz, dass es fast scheint, als entzöge er dem Raum jegliches Licht."
-
+	
 	Carry out taking the cloak:
 		now the bar is dark.
-
+	
 	Carry out putting the unhung cloak on something in the cloakroom:
 		now the cloak is hung;
 		increase score by 1.
-
+	
 	Carry out putting the cloak on something in the cloakroom:
 		now the bar is lit.
-
+	
 	Carry out dropping the cloak in the cloakroom:
 		now the bar is lit.
-
+	
 	After putting the cloak on the hook:
 		say "Du hängst den Mantel an den Haken."
-
+	
 	Instead of dropping or putting the cloak on when the player is not in the cloakroom:
 		say "Dies ist nicht der richtige Ort, um einen so schönen Mantel herumliegen zu lassen."
-
+	
 	When play begins:
 		say "[paragraph break]Du eilst durch die verregnete Novembernacht und bist froh, die strahlenden Lichter der Oper zu sehen. Es ist überraschend, dass hier nicht mehr Menschen sind, aber was erwartest du von so einem einfachen Beispiel ... ?"
-
+	
 	Understand "haeng [something preferably held] an/auf [something]" as putting it on.
-
+	
 	Test me with "s / n / w / inventar / häng mantel an haken / o / s / lies nachricht".
 
 

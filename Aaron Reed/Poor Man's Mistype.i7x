@@ -1,8 +1,9 @@
-Version 6 of Poor Man's Mistype by Aaron Reed begins here.
+Version 7 of Poor Man's Mistype by Aaron Reed begins here.
 
 "Adds basic typo correction by checking the first few letters of misunderstood input against the printed names of nearby objects. Requires Smarter Parser by Aaron Reed."
 
 [Versions:
+ -- Version 7: Fixed a bug in GetFirstNonDictWord that was leaving the word counter in an unexpected place.
  -- Version 6: Doesn't try to correct one or two character words; catches misspelled articles and a few common misspelled verbs.
  -- Version 5: Documentation updates.
  -- Version 4: Updated for compatibility with Version 6 of Smarter Parser; fixed a bug where upper-case letters would break matches; fixed a bug where a comma in the command could lead to mistaken matches.
@@ -18,7 +19,7 @@ Include Version 12 of Smarter Parser by Aaron Reed.
 
 Chapter - Sequence
 
-The Poor Man's Mistype rule is listed before the stripping unnecessary addendum rule in the Smarter Parser rules. The strip misspelled articles rule is listed before the Poor Man's Mistype rule in the Smarter Parser rules.
+The Poor Man's Mistype rule is listed before the stripping unnecessary addendum rule in the Smarter Parser rules. The strip misspelled articles rule is listed before the Poor Man's Mistype rule in the Smarter Parser rules. 
 
 Chapter - Rules
 
@@ -63,15 +64,20 @@ To decide which number is the position of first bad word: (- GetFirstNonDictWord
 
 Include (-
 
-[ GetFirstNonDictWord myword;
+[ GetFirstNonDictWord myword   twn;
+	twn=wn;
 	wn = 1;
 	myword = 0;
 	while (myword ~= -1) {
 		myword = NextWordStopped();
 		if (myword == 0) {
+			myword=wn-1;
+			wn=twn;
 			return wn-1;
 		}
 	}
+	myword=wn-1;
+	wn=twn;
 	return -1;	
 ];
 

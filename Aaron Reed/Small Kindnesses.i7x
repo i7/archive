@@ -1,8 +1,9 @@
-Version 10 of Small Kindnesses by Aaron Reed begins here.
+Version 11/110320 of Small Kindnesses by Aaron Reed begins here.
 
 "Provides a number of small interface improvements for players, understanding commands like GO BACK and GET IN, an EXITS command which automatically runs after failed movement, a USE verb, and more. Compatible with Modified Exit and Approaches by Emily Short, Keyword Interface by Aaron Reed, and Implicit Actions by Eric Eve."
 
 [Changelog:
+ -- Version 11: Minor fixes
  -- Version 10: Updated for compatibility with Player Experience Upgrade
  -- Version 9: Updated EXIT to leave through a sole exit even if its through a door, but not to work when the only valid direction is IN; removed Automatically Leave Containers Before Going (since several other extensions, including Implicit Actions and Modified Exit already cover this). Modified exit listing to also be a standalone action. Fixed a bug in the example.
  -- Version 8: Added the "Examining rooms" section. Facing by Emily Short covers looking at adjacent rooms in a way that overrides what happens here.
@@ -15,7 +16,7 @@ Version 10 of Small Kindnesses by Aaron Reed begins here.
 
 Chapter - Compatibility
 
-Section - Parser Speak (for use without Neutral Library Messages by Aaron Reed)
+Section - Parser Speak (for use without Keyword Interface by Aaron Reed)
 
 To say as the parser: do nothing. To say as normal: do nothing.
 
@@ -24,9 +25,7 @@ Chapter - Responses
 Table of Small Kindnesses Responses
 rule name	message
 Small Kindnesses carry out using rule	"[as the parser]You'll have to try a more specific verb than use.[as normal][line break]" 
-Small Kindnesses report on no exits rule	"[as the parser]In fact, you can't see any obvious exits.[as normal][line break]"
-Small Kindnesses report on one exit rule	"[as the parser]The only way to go is [list of viable directions].[as normal][line break]"
-Small Kindnesses report on exits rule	"[as the parser]From here, you can go [list of viable directions].[as normal][line break]"
+
 
 Chapter - Exit leaves when there's only one way to go
 
@@ -72,6 +71,18 @@ Section B (for use without Modified Exit by Emily Short)
 
 The small kindnesses exit leaves when there's only one way to go rule is listed instead of the convert exit into go out rule in the check exiting rules.
 
+Chapter - Leaving a named objects (for use without Modified Exit by Emily Short) 
+
+Understand "exit [thing]" as getting off. Understand "get out of [thing]" as getting off.
+
+This is the new can't get off things rule:	
+	if the actor is on the noun, continue the action;
+	if the actor is carried by the noun, continue the action;
+	if the actor is in the noun, continue the action;
+	stop the action with library message getting off action number 1 for the noun.
+
+The new can't get off things rule is listed instead of the can't get off things rule in the check getting off rules.
+
 
 Chapter - Go Back returns to previous location
 
@@ -116,7 +127,10 @@ Chapter - Show valid directions after going nowhere
 
 [Based on the "Bumping into Walls" example. Tell players trying to move invalidly which directions are open.]
 
+Use no normal movement tricks translates as (- Constant NO_NORMAL_MOVEMENT_TRICKS; -).
+
 Instead of going nowhere (this is the Small Kindnesses reporting on exits rule):
+	if the no normal movement tricks option is active, continue the action;
 	if in darkness:
 		issue miscellaneous library message number 17; ["It is pitch dark, and you can't see a thing."]
 		stop the action; 
@@ -140,6 +154,11 @@ Report listing exits when count of exits is 1 (this is the Small Kindnesses repo
 Report listing exits when count of exits > 1 (this is the Small Kindnesses report on exits rule):
 	say the message corresponding to a rule name of Small Kindnesses report on exits rule in the Table of Small Kindnesses Responses.
 
+Table of Small Kindnesses Responses (continued)
+rule name	message
+Small Kindnesses report on no exits rule	"[as the parser]In fact, you can't see any obvious exits.[as normal][line break]"
+Small Kindnesses report on one exit rule	"[as the parser]The only way to go is [list of viable directions].[as normal][line break]"
+Small Kindnesses report on exits rule	"[as the parser]From here, you can go [list of viable directions].[as normal][line break]"
 
 
 Chapter - Allow for switching things in darkness
@@ -208,6 +227,7 @@ Here are the names of all the sections.
 	Chapter - Allow for switching things in darkness
 	Chapter - Don't perform implicit actions for doomed tasks
 	Chapter - Implement Use verb for common actions
+
 
 Example: * Checkup - A small example illustrating the extension's functionality.
 

@@ -1,4 +1,4 @@
-Version 2 of Measured Liquid by Emily Short begins here.
+Version 4 of Measured Liquid by Emily Short begins here.
 
 "Measured Liquid provides a concept of volume, together with the ability to fill containers, pour measured amounts of liquid, and drink from containers. It handles mixtures as well, if desired. It is compatible with, but does not require, the Metric Units extension by Graham Nelson."
 
@@ -30,6 +30,12 @@ Definition: a fluid container is patently empty:
 	yes.
 
 Check an actor inserting a non-empty open fluid container into something (this is the can't stash full cups rule):
+	if the second noun is fixed in place or the second noun is scenery:
+		make no decision; [if we don't carry it around, it's probably not a liability.]
+	if the second noun is part of something which is fixed in place:
+		make no decision;
+	if the second noun is part of something which is scenery:
+		make no decision;
 	if the actor is the player:
 		say "That might lead to spills.";
 	stop the action.
@@ -82,25 +88,21 @@ Definition: a fluid container is full if the fluid content of it is the fluid ca
 
 Chapter 4 - Prefixes and Suffixes
 
-Before printing the name of a fluid container (called the target) while not drinking or pouring or opening (this is the prefix empties rule):
-	if the person asked is not the player:
-		do nothing;
-	if asking someone to try doing something:
-		do nothing;
-	if the target is patently empty:
+Before printing the name of a fluid container (called the target) while not drinking or pouring (this is the prefix empties rule):
+	if the current action is the action of opening the target:
+		make no decision;
+	if the person asked is the player and the target is patently empty:
 		say "empty ";
 	otherwise:
-		do nothing.
+		make no decision;
 
-Before printing the plural name of a fluid container (called the target) while not drinking or pouring or opening (this is the plural prefix empties rule):
-	if the person asked is not the player:
-		do nothing;
-	if asking someone to try doing something:
-		do nothing;
-	if the target is patently empty:
+Before printing the plural name of a fluid container (called the target) while not drinking or pouring (this is the plural prefix empties rule):
+	if the current action is the action of opening the target:
+		make no decision;
+	if the person asked is the player and the target is patently empty:
 		say "empty ";
 	otherwise:
-		do nothing.
+		make no decision;
 
 Before printing the name of a closed transparent fluid container (called the target) while taking inventory (this is the prefix closedness rule):
 	say "closed ".
@@ -108,7 +110,9 @@ Before printing the name of a closed transparent fluid container (called the tar
 Rule for printing room description details of an empty fluid container (this is the don't append emptiness rule):
 	stop.
 
-After printing the name of a fluid container (called the target) while not examining or searching or pouring or opening (this is the suffix with contents rule):
+After printing the name of a fluid container (called the target) while not examining or searching or pouring (this is the suffix with contents rule):
+	if the current action is the action of opening the target:
+		do nothing;
 	if the target is a liquid source:
 		do nothing instead;
 	if the target is closed and the target is not transparent:
@@ -119,7 +123,9 @@ After printing the name of a fluid container (called the target) while not exami
 		say " of [liquid of the target]";
 		omit contents in listing.
 
-After printing the plural name of a fluid container (called the target) while not examining or searching or pouring or opening (this is the plural suffix with contents rule):
+After printing the plural name of a fluid container (called the target) while not examining or searching or pouring (this is the plural suffix with contents rule):
+	if the current action is the action of opening the target:
+		do nothing;
 	if the target is a liquid source:
 		do nothing instead;
 	if the target is closed and the target is not transparent:
@@ -133,6 +139,11 @@ After printing the plural name of a fluid container (called the target) while no
 Report opening a fluid container when the noun is not transparent (this is the report fluid container contents on opening rule):
 	say "You open [the noun], which [fill description of the noun][paragraph break]" instead.
 
+Chapter 5 - Room Description Details
+
+Rule for printing room description details of a fluid container:
+	do nothing instead.
+
 Part 2 - Liquids
 
 Liquid is a kind of value.  A fluid container has a liquid.  
@@ -140,9 +151,9 @@ Liquid is a kind of value.  A fluid container has a liquid.
 Some liquids are defined by the Table of Liquids.
 
 Table of Liquids
-liquid	potable	flavor
-nonliquid	false	some text
-water	true	"Refreshing!"
+liquid	potable	flavor	description
+nonliquid	false	some text	some text
+water	true	"Refreshing!"	--
 
 To decide what text is the flavor of (beverage - a liquid):
 	decide on flavor corresponding to a liquid of beverage in the Table of Liquids.
@@ -156,7 +167,7 @@ Instead of an actor rubbing a fluid container (this is the clean away traces rul
 	if the no trace amounts option is active:
 		make no decision;
 	if the noun is not empty:
-		say "It's hard to clean [the noun] while [it-they] still contain[s] [the liquid of the noun].";
+		say "It's hard to clean [the noun] while [it-they] still contain[s] so much.";
 		rule fails;
 	if the liquid of the noun is not nonliquid:
 		say "[The actor] clean[s] away all traces of [the liquid of the noun].";
@@ -227,7 +238,7 @@ Swimming in is an action applying to one thing. Understand "swim in [something]"
 
 Rule for supplying a missing noun while an actor swimming in (this is the try to swim in visible lakes rule):
 	if a liquid lake is visible:
-		change the noun to a random visible liquid lake; 
+		now the noun is a random visible liquid lake; 
 	otherwise:
 		say "There's nothing sensible to swim in.";
 		rule fails.
@@ -238,11 +249,15 @@ Check an actor swimming in a liquid lake (this is the block swimming in liquid l
 	stop the action.
 
 Check an actor swimming in a fluid container (this is the block swimming in small vessels rule):
+	if the noun is a liquid lake:
+		make no decision;
 	if the player is the actor:
 		say "You wouldn't fit in [the noun]." instead;
 	stop the action.
 
 Check an actor swimming in something (this is the block swimming in random objects rule):
+	if the noun is a liquid lake:
+		make no decision;
 	if the player is the actor:
 		say "[The noun] [is-are]n't something you can swim in." instead;
 	stop the action.
@@ -290,7 +305,10 @@ This is the examining fluid containers rule:
 		make no decision;
 	if the noun is closed and the noun is not transparent:
 		make no decision;
-	say "[The noun] [fill description of the noun][paragraph break]";
+	say "[The noun] [fill description of the noun]";
+	if the description of the liquid of the noun is not "":
+		say " [description of the liquid of the noun]";
+	say "[paragraph break]";
 	now examine text printed is true.
 
 Chapter 2 - Searching
@@ -444,6 +462,13 @@ Check an actor tasting an undrinkable fluid container (this is the can't taste n
 		say "The [liquid drunk] [is-are]n't something you can drink." instead;
 	stop the action.
 	
+Check tasting a closed fluid container (this is the can't drink from shut containers rule):
+	if the actor is the player:
+		say "(first opening [the noun])[command clarification break]";
+	silently try opening the noun;
+	if the noun is closed:
+		stop the action.
+
 Check tasting a fluid container (this is the report flavors of drinks rule):
 	if the flavor of the liquid of the noun is not "":
 		say "[flavor of the liquid of the noun][paragraph break]" instead;
@@ -479,10 +504,10 @@ Carry out an actor filling something with something (this is the convert filling
 Rule for supplying a missing second noun while an actor filling (this is the assume matching source rule):
 	repeat with possible source running through visible non-empty fluid containers:
 		if the liquid of the possible source is the liquid of the noun and the possible source is not the noun:
-			change the second noun to the possible source;
+			now the second noun is the possible source;
 			rule succeeds;
 	if the person asked can touch a liquid source (called the target source):
-		change the second noun to the target source;
+		now the second noun is the target source;
 	otherwise:
 		if the player is the person asked:
 			say "You must fill [the noun] with something specific." instead;
@@ -627,6 +652,8 @@ Report someone pouring something into something (this is the standard report som
 
 Chapter 3 - Basic Mixtures
 
+Section 1 - Allowing for Mixtures to Exist
+
 Use mixed liquids translates as (- Constant MIXED_LIQUIDS; -). 
 
 The liquid-mixture refusal is some text that varies. The liquid-mixture refusal is "That would mix [the liquid of the noun] with [the liquid of the second noun]."
@@ -644,6 +671,8 @@ Carry out an actor pouring something into something when the mixed liquids optio
 	if the liquid poured is not the liquid of the second noun and the second noun is non-empty:
 		now the liquid of the second noun is the resulting liquid.
 
+Section 2 - New Pouring Rules
+
 The pouring it into action has a liquid called the resulting liquid.
 
 Last setting action variables for pouring something into something when the mixed liquids option is active (this is the establish mixture rule):
@@ -656,6 +685,7 @@ Last setting action variables for pouring something into something when the mixe
 			let L be the value produced by the liquid-mixing rules for the amount poured;
 			now the resulting liquid is L.
 
+Section 3 - Liquid-mixing Rulebook
 
 The liquid-mixing rules are a volume based rulebook producing a liquid.
 The liquid-mixing rulebook has a fluid container called the destination container.
@@ -687,9 +717,11 @@ Last liquid-mixing rule (this is the default conversion of liquids rule):
 	[If we can't locate a valid mixture of liquids, set the second noun to use the same liquid as the first]
 	rule succeeds with result the liquid of the noun.
 
+Section 4 - Initial Table of Liquid Mixtures
+
 Table of Liquid Mixtures
 mix-list	result
-{water, nonliquid}	water
+a list of liquids	a liquid
  
 
 Chapter 4 - Unsuccessful Attempts 
@@ -840,7 +872,9 @@ If we want to remove this constraint, we can unlist it by writing
 
 Section: Inserting fluid containers
 
-By default, we are not allowed to put an open, non-empty fluid container into another container, because it's likely to spill. This gets around the nonsensical situation of stowing a vase full of water into a backpack and then coming back later to find that the water all stayed in. If we do want to allow this after all, we can unlist the relevant rule thus:
+By default, we are not allowed to put an open, non-empty fluid container into another portable container, because it's likely to spill. (Fixed in place or scenery containers are exempt, to allow for refrigerators, cabinets, and similar installations.) This gets around the nonsensical situation of stowing a vase full of water into a backpack and then coming back later to find that the water all stayed in. 
+
+If we do want to allow this after all, we can unlist the relevant rule thus:
 
 	*: The can't stash full cups rule is not listed in any rulebook.
 
@@ -1007,6 +1041,25 @@ Example: * Lakeshore - A lakeshore with a lake as a liquid source, an openable g
 
 	Test me with "swim / swim in flask / fill flask / x flask / close flask / drink from flask / x flask / in / swim / drink from flask / x flask / swim in the water".
 
+Example: * Lakeshore Swim - A lakeshore where the player can swim successfully.
+
+	*: "Lakeshore Swim"
+
+	Include Measured Liquid by Emily Short.
+
+	Lakeside is a room. Inside from Lakeside is a Shack.
+
+	The lake is a liquid lake in Lakeside. The liquid of the lake is water.
+
+	The player carries a graduated closed openable fluid container called a flask. The fluid capacity of the flask is 10.0 fl oz.
+
+	The block swimming in liquid lakes rule is not listed in any rulebook. 
+
+	Report swimming in the lake:
+		say "You go for a swim in the lake and come out much refreshed."
+
+	Test me with "swim".
+
 Example: * Metric Lakeshore - As above, but in cubic centimeters. Note that this example will compile only if our settings panel is set to Glulx.
 
 	*: "Metric Lakeshore"
@@ -1037,7 +1090,7 @@ While the example uses a slightly fiddly parsing trick to handle the three-varia
 
 	After reading a command:
 		if the player's command includes "pour [a volume] of " or the player's command	 includes "pour [a volume] from ":
-			change the set volume to the volume understood;
+			now the set volume is the volume understood;
 			replace the matched text with "pour".
 			
 	Check an actor pouring something into something when the set volume is not null volume:

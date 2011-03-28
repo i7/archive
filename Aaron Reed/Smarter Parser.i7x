@@ -1,4 +1,4 @@
-Version 13 of Smarter Parser (for Glulx only) by Aaron Reed begins here.
+Version 13/110320 of Smarter Parser by Aaron Reed begins here.
 
 "Understands a broader range of input than the standard parser, and can direct new players towards proper syntax."
 
@@ -363,7 +363,7 @@ A Smarter Parser rule when sp_normal (this is the stripping punctuation rule):
 		identify error as stripping punctuation rule;
 		reparse the command.
 
-Section - Noun alone examines (for use without Keywords by Aaron Reed)
+Section - Noun alone examines (for use without Keyword Interface by Aaron Reed)
 
 [We don't want to make a new action, since that might interfere with "doing anything except examining" style rules.]
 [BUG: If the player types an examine word alone and the parser supplies a noun, this rule erroneously fires, printing a confusing EXAMINE {VERB}. But only sometimes?! weird...]
@@ -433,7 +433,7 @@ stripping niceties rule		"[as the parser]You can just state your commands direct
 Section - scandalous standardize swears
 
 A smarter parser rule when sp_normal (this is the scandalous standardize swears rule):
-	replace the regular expression "\b(goddamn|god damn|damn|damm)( )?(it|ed)?\b" in reborn command with "_swear";
+	replace the regular expression "\b(goddamn|god damn|damn|damm)( it|it| ed|ed)?\b" in reborn command with "_swear";
 	replace the regular expression "\b(fuck|freak|piss)(ing|er)?s?\b" in reborn command with "_swear";
 	replace the regular expression "\b(hell|shit|ass|dick)s?\b" in reborn command with "_swear".
 
@@ -442,7 +442,7 @@ Section - Stripping Interjections
 [Problem: commands in the form >_SWEAR BOB are silently reparsed as >BOB.]
 
 A smarter parser rule when sp_normal (this is the stripping interjections rule):
-	if stripping "(in )?(the )?_swear( you| this)?" is fruitful, only in the middle:
+	if stripping "\b(in )?(the )?_swear( you| this)?\b" is fruitful[, only in the middle]:
 		if the number of words in the reborn command > 0:
 			identify error as stripping interjections rule;
 			reparse the command;
@@ -450,8 +450,6 @@ A smarter parser rule when sp_normal (this is the stripping interjections rule):
 			identify error as signs of frustration rule;
 			reject the command.
 			
-		
-		
 
 Section - Signs of Frustration
 

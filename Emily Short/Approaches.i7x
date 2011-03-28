@@ -1,4 +1,4 @@
-Version 3 of Approaches by Emily Short begins here.
+Version 4 of Approaches by Emily Short begins here.
 
 "Approaches provides a GO TO place action which allows the player to move through visited rooms to a new location. It also allows other characters to traverse the map to named locations. It is designed to work with Locksmith by Emily Short."
 
@@ -54,17 +54,17 @@ Check an actor approaching (this is the can't approach our current location rule
 
 The approach-finding rules are a rulebook.
 
-The approach-heading is a direction that varies.
+The approach-heading is an object that varies.
 The approach-destination is a room that varies.
 The final destination is a room that varies.
 
 A first approach-finding rule (this is the recording destination rule):
-	change the final destination to the noun.
+	now the final destination is the noun.
 
 An approach-finding rule (this is the approach-heading selection rule):
-	change approach-heading to the best route from the location to the noun through visited rooms, using doors;
+	now approach-heading is the best route from the location to the noun through visited rooms, using doors;
 	if approach-heading is not a direction:
-		change approach-heading to the best route from the location to the noun through visited rooms, using even locked doors;
+		now approach-heading is the best route from the location to the noun through visited rooms, using even locked doors;
 
 An approach-finding rule (this is the refusing bad headings rule):
 	if approach-heading is not a direction:
@@ -72,7 +72,7 @@ An approach-finding rule (this is the refusing bad headings rule):
 		rule fails; 
 
 An approach-finding rule (this is the find outcome rule):
-	change approach-destination to the room approach-heading from the location; 
+	now approach-destination is the room approach-heading from the location; 
 
 An approach-finding rule (this is the actual approach movement rule):
 	silently try going approach-heading. 
@@ -94,7 +94,7 @@ Carry out going while the player is hurrying (this is the creating a path histor
 	let X be the number of entries in the path so far of the player;
 	if X is greater than 1:
 		let previous direction be entry (X - 1) in the path so far of the player;
-		if the previous direction is the approach-heading, change adverb to "again ";  
+		if the previous direction is the approach-heading, now adverb is "again ";  
 	let N be indexed text;
 	if approach-destination is proper-named:
 		let N be "[approach-heading] [adverb]to [approach-destination-name]";
@@ -120,12 +120,12 @@ Carry out someone approaching (this is the other character approach rule):
 	clear path-walked for the actor;
 	let initial location be the location of the actor; 
 	while the location of the actor is not the noun:
-		change approach-heading to the best route from the location of the actor to the noun, using doors;
+		now approach-heading is the best route from the location of the actor to the noun, using doors;
 		if approach-heading is not a direction:
-			change approach-heading to the best route from the location of the actor to the noun, using even locked doors;
+			now approach-heading is the best route from the location of the actor to the noun, using even locked doors;
 		if approach-heading is not a direction:
 			stop the action; 
-		change approach-destination to the room approach-heading from the location of the actor; 
+		now approach-destination is the room approach-heading from the location of the actor; 
 		try the actor going the approach-heading;
 		if the location of the actor is not the approach-destination:
 			stop the action.
@@ -156,10 +156,10 @@ By default, Approaches will find a route only through rooms already visited by t
 If we wish to change this behavior, we may do so by replacing the approach-heading selection rule, which currently reads thus:
 
 	An approach-finding rule (this is the approach-heading selection rule):
-		change approach-heading to the best route from the location to the noun through visited rooms, using doors;
+		now approach-heading is the best route from the location to the noun through visited rooms, using doors;
 		if approach-heading is not a direction
 		begin; 
-			change approach-heading to the best route from the location to the noun through visited rooms, using even locked doors;
+			now approach-heading is the best route from the location to the noun through visited rooms, using even locked doors;
 		end if.
 
 Section: Routes through unvisited rooms
@@ -167,7 +167,7 @@ Section: Routes through unvisited rooms
 If we wanted, we could replace this rule with another, such as 
 
 	An approach-finding rule (this is the new approach-heading selection rule):
-		change approach-heading to the best route from the location to the noun, using even locked doors.
+		now approach-heading is the best route from the location to the noun, using even locked doors.
 
 This eliminates the double-pass approach and allows the player to move across areas of the map as yet unvisited. 
 
@@ -184,7 +184,7 @@ Section: Routes in darkness
 If we want to force the player to avoid darkness, we could also write
 
 	An approach-finding rule (this is the lighted-room approach-heading selection rule):
-		change approach-heading to the best route from the location to the noun through lighted rooms, using even locked doors.
+		now approach-heading is the best route from the location to the noun through lighted rooms, using even locked doors.
 
 ...though another approach would be to find and execute the path, but stop the player at the point where he reaches a dark room and not allow him to enter it. The example "Traveling with Candles", below, demonstrates how to do this.
 
@@ -226,9 +226,9 @@ For instance, we might change to the following if we wanted to be sure to list d
 		if X is greater than 1
 		begin;
 			let previous direction be entry (X - 1) in the path so far of the player;
-			if the previous direction is the approach-heading, change adverb to "again ";
+			if the previous direction is the approach-heading, now adverb is "again ";
 		end if;
-		if the room-or-door approach-heading from the location is a door, change adverb to "[adverb]through [the room-or-door approach-heading from the location] ";
+		if the room-or-door approach-heading from the location is a door, now adverb is "[adverb]through [the room-or-door approach-heading from the location] ";
 		let N be indexed text;
 		if approach-destination is proper-named, 
 			let N be "[approach-heading] [adverb]to [approach-destination-name]";
@@ -389,7 +389,7 @@ Finally, because our travel is by vehicle, we're going to restrict the player to
 	The new approach heading finding rule is listed instead of the approach-heading selection rule in the approach-finding rules.
 
 	This is the new approach heading finding rule:
-		change approach-heading to the best route from the location to the noun.
+		now approach-heading is the best route from the location to the noun.
 
 	Section 3 - The scenario
 
@@ -415,7 +415,7 @@ Here we want to change both the individual pieces of the movement description (u
 		add the approach-heading to the path so far of the player;
 		let N be indexed text;
 		let N be "[the approach-destination]";
-		if approach-destination is improper-named, change N to "[N in lower case]"; 
+		if approach-destination is improper-named, now N is "[N in lower case]"; 
 		add N to the described motion of the player;
 		say "[run paragraph on]"; [a mildly inelegant hack to correct for the fact that the indexed-text handling is inserting gratuitous line breaks here]
 

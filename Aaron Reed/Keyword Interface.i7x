@@ -1,8 +1,9 @@
-Version 7 of Keyword Interface by Aaron Reed begins here.
+Version 8 of Keyword Interface by Aaron Reed begins here.
 
 "This extension emulates Blue Lacuna's emphasized keyword system for simplifying common IF input. Nouns, directions, and topics can be typed without a verb to examine, go, or discuss. Works with Glulx or z-code."
 
 [Changelog:
+  -- Version 8: Updated for compatibility with Neutral Library Messages and Player Experience Upgrade
   -- Version 7: Updated for build 6F95; simplified method for setting default state of different keyword types without needing a "when play begins" rule; expanded American Dialect checks to cover all default message appearances of "emphasize," "recognize," and "color" and their variants; changed "things" command to omit items carried by the player; fixed a bug with a post-keyword setting "look" not happening in games without required keywords; many changes to the documentation to make it more accurate and clear.
   -- Version 6: Now emphasizes objects listed after opening an opaque container; omit release number in welcome message if it is not set.
   -- Version 5: Updated to use no deprecated features
@@ -17,7 +18,13 @@ Version 7 of Keyword Interface by Aaron Reed begins here.
  -- Add ALL CAPS as another emphasis style.
 ]
 
+Chapter - Compatibility
+
+Section - Inclusions
+
 Include Basic Screen Effects by Emily Short.
+
+Chapter - Setup
 
 Keywords required is a truth state that varies. Keywords required is usually false.
 
@@ -80,7 +87,7 @@ Direction keywording something is an activity.
 Rule for printing the name of a direction (called dir) while looking (this is the Keyword Interface highlight directions while looking rule):
 	carry out the direction keywording activity with dir.
 
-Rule for printing the name of a direction (called dir) while exits listing (this is the Keyword Interface highlight directions while exits listing rule):
+Rule for printing the name of a direction (called dir) while listing exits (this is the Keyword Interface highlight directions while listing exits rule):
 	carry out the direction keywording activity with dir.
 
 Section - Rule for direction keywording something
@@ -112,6 +119,10 @@ To say as the parser:
 To say as normal:
 	now we-are-parser-speaking is false; 
 	reset styles with the style of parser-word.
+
+Chapter - Don't auto-convert parser messages (For use without Neutral Library Messages by Aaron Reed)
+
+Section - Don't auto-convert parser messages (For use without Player Experience Upgrade by Aaron Reed)
 
 Before printing a parser error when parser highlighting is true (this is the Keyword Interface before printing a parser error rule):
 	say "[as the parser]".
@@ -354,11 +365,11 @@ Section - Exits
 
 [This routine is lifted straight from the example in the Inform 7 docs.]
 
-Understand "exits" as exits listing. Exits listing is an action out of world applying to nothing.
+Understand "exits" as listing exits. Listing exits is an action out of world applying to nothing.
 
 Definition: a direction (called thataway) is viable if the room thataway from the location is a room.
 
-Carry out exits listing (this is the Keyword Interface carry out exits listing rule):
+Carry out listing exits (this is the Keyword Interface carry out listing exits rule):
 	let count of exits be the number of viable directions; 
 	if the count of exits is 0, show KI message for no-available-exits;
 	otherwise show KI message for show-available-exits instead.
@@ -433,7 +444,7 @@ To say recogniz: if the American dialect option is active, say "recogniz"; else 
 
 Table of Keyword Interface messages
 KI message	KI output
-not-a-verb-I-recognise	"That's neither a verb I [recogniz]e nor a keyword you can use right now."
+not-a-verb-I-recognise	"[as the parser]That's neither a verb I [recogniz]e nor a keyword you can use right now.[as normal]"
 keyword-introduction	"As you read [story title], you'll see certain [emphasiz]ed keywords in the prose. Type any keyword to advance the story. [if object keyword highlighting is true]You can type an [emphasiz]ed [o]object[x] keyword to examine that item more closely. [end if][if direction keyword highlighting is true]An [emphasiz]ed [d]direction[x] indicates that typing that word will move you that direction or towards that distant scenery. [end if][if topic keyword highlighting is true]An [emphasiz]ed word in [t]conversation[x] means typing that word will steer the conversation towards that topic. [end if][paragraph break]If the keyword[if the number of active keyword systems > 1]s in the paragraph above are[else] in the paragraph above is[end if] not distinct from the surrounding text, type KEYWORDS to adjust the display style."
 welcome-message	"Welcome to [o][story title][x][if release number > 0], release [release number][end if].[paragraph break]If no words above were [color]ed or [emphasiz]ed, press K now.[paragraph break]Press [t]N[x] to begin from the beginning or [t]R[x] to restore an existing story."
 keyword-setting-instructions	"[story title] makes use of [emphasiz]ed keywords. It is [if keywords required is true]necessary[else]recommended[end if] that your interpreter program correctly displays them with some form of emphasis. Type a number below to cycle through display options until you find one that shows clearly on your system."
@@ -602,7 +613,7 @@ The flexibility of Keyword Interface means it can be used for multiple purposes.
 
 	Labyrinth is south of Passage and west of Halls. Halls is south of Dungeon and west of Pit. Pit is south of Harrows. Harrows is east of Dungeon and south of Caverns. Dungeon is east of Passage and south of Abyss. Passage is south of Abattoir. Abbattoir is west of Abyss and north of Passage. Abyss is west of Caverns.   
 
-	After looking: try exits listing.
+	After looking: try listing exits.
 
 Example: ** The Gnome's Holiday - A full example of emphasized objects, compassless directions, and conversation topics.
 
@@ -632,13 +643,13 @@ We implement an extremely simple conversation system to demonstrate emphasized t
 
 	Every room has some text called the exits text.
 
-	First carry out exits listing: 
+	First carry out listing exits: 
 		unless the exits text of location is "":
 			say the exits text of location;
 			say line break;
 		stop the action.
 
-	After looking: try exits listing. 
+	After looking: try listing exits. 
 
 	Section - Instructions
 
@@ -680,7 +691,7 @@ We implement an extremely simple conversation system to demonstrate emphasized t
 
 	A lever is an undescribed device in Cozy Shack. Instead of pushing or pulling the lever, try switching on the lever. After switching on the lever: now drawbridge is open; say "You hear a splash and a creak from outside the shack.".
 
-	After going to Treasure-Strewn Wonderland for the first time: say "You enter the land of treasure. Congratulations!"; end the game in victory. Understand "wonderland" as east when location is Gnome's Garden.
+	After going to Treasure-Strewn Wonderland for the first time: say "You enter the land of treasure. Congratulations!"; end the story saying "You have won". Understand "wonderland" as east when location is Gnome's Garden.
 
 	Test me with "copy / drawbridge / door / open door / path / x path / gnome / drawbridge / dragon / Quinnabel / personality / path / unlock door / open it / exits / door / pull lever / out / wonderland".
 

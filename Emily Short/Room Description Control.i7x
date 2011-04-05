@@ -1,4 +1,4 @@
-Version 9 of Room Description Control by Emily Short begins here.
+Version 10 of Room Description Control by Emily Short begins here.
 
 "A framework by which the author can considerably change the listing of objects in a room description. Includes facilities for concealing objects arbitrarily and changing the order in which objects are listed."
 
@@ -56,19 +56,19 @@ A description-priority rule (this is the loading table rule):
 	repeat with item running through mentionable things
 	begin;
 		choose a blank row in the Table of Seen things;
-		change output entry to item;  
+		now output entry is item;  
 	end repeat;
 
 lowest-rank is a number that varies.
 
 A description-priority rule (this is the description-ranking rule): 
-	change lowest-rank to 1000;
+	now lowest-rank is 1000;
 	repeat through the Table of Seen Things
 	begin;  
 		now the description-rank of the output entry is 0;
 		consider the ranking rules for the output entry;
-		change the current rank entry to the description-rank of the output entry;
-		if description-rank of the output entry is less than lowest-rank, change lowest-rank to description-rank of the output entry;
+		now the current rank entry is the description-rank of the output entry;
+		if description-rank of the output entry is less than lowest-rank, now lowest-rank is description-rank of the output entry;
 	end repeat;
 	sort the Table of Seen Things in reverse current rank order;
 
@@ -143,7 +143,7 @@ This is the new describe contents rule:
 A description-concealing rule while entering a container (called special-target):
 	repeat with item running through marked for listing things
 	begin;
-		if item is not enclosed by special-target, change the item to not marked for listing;
+		if item is not enclosed by special-target, now the item is not marked for listing;
 	end repeat.
 
 Section 3 - Debugging - Not for release
@@ -262,3 +262,5 @@ Version 6 updates to use "object-based rulebook" rather than "object-based-ruleb
 Version 7 adds the don't mention things out of play rule; this means that if the author places some things in scope by hand, they will not be assumed to belong to the room description. This can be overridden by replacing or suspending the rule. Version 7 also adds section headings to the documentation.
 
 Version 8 adds a fix for bugs involving multiple identical objects, so that they will not each earn their own individual listings.
+
+Version 10 removes deprecated phrases.

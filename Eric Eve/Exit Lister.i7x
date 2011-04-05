@@ -1,4 +1,4 @@
-Version 9 of Exit Lister by Eric Eve begins here.
+Version 10 of Exit Lister by Eric Eve begins here.
 
 "A status line exit-lister and an EXITS command, with optional colouring of unvisited exits. Selected rooms and doors can be optionally be excluded from the list of exits."
 
@@ -8,10 +8,32 @@ Include Basic Screen Effects by Emily Short.
 
 Chapter 2 - Exit Lister Setup
 
+Section 1 - Apparent
+
 A room has a text called destination name. The destination name of a room is usually "".
 
 A door can be apparent. A door is usually apparent.
 A room can be apparent. A room is usually apparent.
+
+Section 2 - Dark Stuff
+
+dark-exits-invisible is a truth state that varies. dark-exits-invisible is true.
+
+The light-meter is a privately-named scenery thing. 
+
+Definition: a room (called the target room) is light-filled: 
+    if the target room is lighted, decide yes; 
+    move the light-meter to the target room; 
+    if the light-meter can see a lit thing, decide yes; 
+    remove the light-meter from play; 
+    decide no. 
+
+
+Definition: a room (called target-destination) is darkness-occluded: 
+	if dark-exits-invisible is false, decide no;
+	if not in darkness, decide no;	
+	decide on whether or not target-destination is not light-filled.
+
 
 Chapter 3 - Exit Lister Tables
 
@@ -47,7 +69,7 @@ To say exit list:
   begin;
     let farplace be the room way from the location;
     now direction-object is the room-or-door way from the location;
-    if direction-object is apparent
+    if direction-object is apparent and farplace is not darkness-occluded
     begin;      
       increase the exits count by 1;      
       if farplace is unvisited and indicate-unvisited is show-unvisited,  say "[unvisited-mark][u-v way][end-unvisited-mark]";
@@ -76,6 +98,8 @@ The direction-object is an object that varies.
 
 Chapter 6 - Exit Lister Actions
 
+Section 1 - ExitStarting and ExitStopping
+
 ExitStarting is an action out of world.
 
 ExitStopping is an action out of world.
@@ -99,6 +123,7 @@ Carry out ExitStarting (this is the standard Exit Starting rule):
 Report ExitStarting:
   say "Exit listing is now on.";
   
+Section 2- ExitListing
   
 ExitListing is an action out of world.
 
@@ -117,7 +142,7 @@ To list the exits:
   begin;
     let farplace be the room way from the location;
     now direction-object is the room-or-door way from the location;
-    if the direction-object is apparent, increase exits count by 1;
+    if the direction-object is apparent and farplace is not darkness-occluded, increase exits count by 1;
   end repeat;
   if exits count is 0
   begin;
@@ -131,7 +156,7 @@ To list the exits:
   begin;
     let farplace be the room way from the location;   
     now direction-object is the room-or-door way from the location;
-    if direction-object is apparent
+    if direction-object is apparent and farplace is not darkness-occluded
     begin;
         say "[way]";
         if farplace is visited, say " (to [destname farplace])";       
@@ -146,8 +171,8 @@ To say list the exits: list the exits.
     
 To say no-obvious-exits: say "There are no obvious exits."
 
-Report ExitListing when listing explained is 0 (this is the explain exit listing rule):
-  now listing explained is 1;
+Report ExitListing when listing explained is false (this is the explain exit listing rule):
+  now listing explained is true;
   say "(Use EXITS ON to enable the status line exit lister and EXITS OFF to turn it
  off.)"
   
@@ -155,7 +180,7 @@ To say destname (place - a room):
   if the destination name of place is "", say "[the place]" in lower case;
   otherwise say "[destination name of place]".
  
-listing explained is a number that varies.  
+listing explained is a truth state that varies.  
   
 Chapter 7 - Exit Lister Indicating Unvisited
 
@@ -260,6 +285,10 @@ Exit Lister ends here.
 
 Chapter: Basic Overview
 
+Section: What's New
+
+Version 10 of Exit Lister suppresses the listing of exits that lead from one dark room to another, although this behaviour can be changed by setting the global variable.dark-exits-invisible to false. For further details see the section on Listing or Hiding Exits in the Dark below.
+
 Section: Status Line Exit Lister
 
 This extension implements a status line exit lister similar to that provided as standard in TADS 3. The player can turn it on and off with the EXITS ON and EXITS OFF command. Its presence or absence may also be controlled programmatically by setting Exit Listing to enabled or disabled.
@@ -357,7 +386,9 @@ You can also extend the range of symbols on offer by continuing the Table of Exi
 
 
 
-Chapter: Exits - Apparent or Not Apparent
+Chapter: Hiding or Showing Exits
+
+Section: Apparent or Not Apparent
 
 Doors can be apparent or not apparent. In some cases you may not want an exit shown in the exit lister because the player is not yet meant to know that an exit exists in that direction (for example, if a bookcase is in fact a secret door). In such a case you can declare the door through which the secret exit leads as not apparent. Once the player has discovered the secret exit you can make the door apparent, and then the exit will show up in the lister.
 
@@ -366,6 +397,20 @@ Rooms can also be apparent on not apparent. By default every room is apparent, b
 	Every turn:
 		if the location is the Short Path, now the Sunken Garden is apparent;
 		otherwise now the Sunken Garden is not apparent.
+
+Section: Listing or Hiding Exits in the Dark
+
+If the player character is in a dark room we may not want the player to see any of the exits leading to other unlit rooms: the Exit Lister could potentially give too much information away in cases where the game text is telling us "It is pitch darkness and you can't see a thing" but the Status Line Exit Lister (and the EXITS commands) nevertheless lists all the exits leading from this pitch dark location. By default Exit Lister therefore suppresses the listing of directions that would lead to unlit locations when the player character is in a darkness. In this context "unlit" means a room that is not only dark itself but also contains no visible light source.
+
+To change this behaviour we can simply set the value of the truth state variable dark-exits-invisible to false. When dark-exits-invisible is false all exits are listed (provided they are apparent) regardless of the state of the lighting. This is illustrated further in Example B.
+
+We might also want to prevent travel to an unlit room from a dark location on the grounds that the player character can't see where he's going. To do this we can take advantage of the fact that Exit Lister defines the adjective darkness-occluded to refer to unlit rooms adjacent to a room where the player character is in darkness. To prevent dark-to-dark travel without giving anything away we could thus use something like:
+
+	*: Instead of going nowhere when in darkness: say can't see way in dark.
+	Instead of going to a darkness-occluded room: say can't see way in dark.
+	To say can't see way in dark: say "It's too dark to see where you're going."
+
+This is also illustrated in Example B below.
 
 Chapter: Customizing No Exit Messages
 
@@ -387,8 +432,6 @@ For example:
 	otherwise say "It's unclear where the exits are."
 
 	
-
-
 	
 Example: * A Walk in the Woods - A brief exit lister example
 
@@ -440,3 +483,34 @@ Example: * A Walk in the Woods - A brief exit lister example
 
 
 You can run the above test, but it won't really show what's happening in the status line lister, so you might do better to enter the commands manually one at at a time.
+
+
+Example: * Exploring the Dark - Hiding and Showing Dark Exits
+
+	*: "Exploring the Dark"
+	
+	Include Exit Lister by Eric Eve.
+
+	The Secluded Grove is a room. "You stand just outside the mouth of a dark cave to the east."
+
+	The blazing torch is in the Secluded Grove. It is lit.
+
+	The Dark Cave is east of Secluded Grove. 
+	"The main exit is to the east. Other exits lead north and south."
+	It is dark.
+
+	Narrow Crawl is north of Dark Cave. "This seems to be a dead end. The only way out is back south." It is dark.
+
+	Long Tunnel is south of Dark Cave. "The tunnel comes to a dead end. The only way out is back north." It is dark. 
+
+	Instead of thinking:
+		say "You have a [if dark-exits-invisible is true]bright[otherwise]dim[end if] idea, as a result of which you [if dark-exits-invisible is true]can[otherwise]can't[end if] now see darkened exits.";
+		now dark-exits-invisible is whether or not dark-exits-invisible is false.
+		
+	Instead of going nowhere when in darkness: say can't see way in dark.
+
+	Instead of going to a darkness-occluded room: say can't see way in dark.
+
+	To say can't see way in dark: say "It's too dark to see where you're going."
+		
+There's little point including a "test me" script for this example, since it would run too fast for us to see the changes to the status line. We can try exploring the caves with or without the torch, and with or without issuing a THINK command to see the effect.

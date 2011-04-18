@@ -1,4 +1,4 @@
-Version 4 of Far away by Jon Ingold begins here.
+Version 5 of Far away by Jon Ingold begins here.
 
 "Creates an adjective for far-off objects which cannot be touched."
 
@@ -52,14 +52,14 @@ To decide if reporting errors: if the person asked is the player and access-flag
 
 Section - Distant Objects rulebook
 
-Distant objects is an object-based rulebook. 
+The distant objects rules are a thing based rulebook. 
 
-The far-off object is a thing that varies.
+The far-flung-thing is a thing that varies.
 
 To decide if we can't get at (n - a thing):
 [ This runs the rulebook. Means we can consider noun and second noun neatly in the accessibility rule above. ]
-	change the far-off object to n;
-	consider the distant objects rules for the far-off object;
+	change the far-flung-thing to n;
+	consider the distant objects rules for the far-flung-thing;
 	if rule failed:
 		decide yes;
 		change access-flag to 0;
@@ -74,7 +74,7 @@ The last distant objects rule when reporting errors (this is the can't touch rul
 
 Section - Messages
 
-The far-off message is a text that varies. The far-off message is "[The far-off object] [is-are] out of reach."
+The far-off message is a text that varies. The far-off message is "[The far-flung-thing] [is-are] out of reach."
 
 
 
@@ -134,7 +134,7 @@ The living room contains a tree, and some decorations. Only the very top of the 
 
 	Instead of taking a decoration when the noun is on the tree and the noun is not the star, say "If you start being picky about it you'll never get it done."
 
-	Every turn: if all the decorations are enclosed by the tree and the star is on the top of tree, end the game saying "The festivites may commence!".
+	Every turn: if all the decorations are enclosed by the tree and the star is on the top of tree, end the game saying "The festivities may commence!".
 
 At present, the player cannot hope to complete his task. So we give him a stepladder, and a rule to make is overcome the distant objects problem.
 
@@ -158,7 +158,7 @@ Example: *** Starfield Dome - a more complicated example, with an NPC, and vario
 
 	The Starfield Dome is a room. "A wide dome, offering a view of the heavens above. The stars are out in all their glory, beautiful and clear[if the glass dome is open]. The open dome gives you an unfiltered view, but with the wind you are shivering[end if][if the player is flying] and close enough to touch[otherwise] - down here on earth, everything's a bit too dark for comfort[end if]."
 
-	The glass dome is a distant transparent thing in the Dome.  The glass dome is scenery. It has description "[if open]The glass of the dome has peeled back, to let in the wind and the light[otherwise]The dome is made of geodesic sections, and beyond it are the stars[end if]. A series of pylons form the supports of the dome, and in the apex of these is a small release button."	The glass dome can be open or closed.
+	The glass dome is a distant thing in the Dome.  The glass dome is scenery. It has description "[if open]The glass of the dome has peeled back, to let in the wind and the light[otherwise]The dome is made of geodesic sections, and beyond it are the stars[end if]. A series of pylons form the supports of the dome, and in the apex of these is a small release button."	The glass dome can be open or closed.
 
 The following details are part of the dome. They don't need to be separately declared 'distant' - they adopt this from the glass dome. 
 

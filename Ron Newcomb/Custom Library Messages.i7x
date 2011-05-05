@@ -1,4 +1,4 @@
-Version 4/110416 of Custom Library Messages by Ron Newcomb begins here.
+Version 4/110422 of Custom Library Messages by Ron Newcomb begins here.
 
 "Changes the tense and viewpoint of all of the built-in messages in Inform's library.  Also provides an activity for additional customizations, and say-phrases for verb phrase generation."
 
@@ -9,6 +9,7 @@ Version 4/110416 of Custom Library Messages by Ron Newcomb begins here.
 [ Version 2: Corrects "On the table is ." error.  Thanks CEJ Pacian. ]
 [ Version 3: Now compatible with "use no deprecated phrases" when including Plurality, meaning, all "[Cap xx-xxx]" phrases were rewritten to "[Xx-xxx]".  Fixed bug with have* irregular verb, especially when used in the second person present tense. Thanks George Oliver. Also documents snafu with "only understood as far as" which reprints the command afterward regardless what's replaced.  Copied documentation regarding globals from Default Messages to here. Removed optional of/-- word from the case-sensitive say-phrases that-those, etc., due to Inform bug. Cleaned up the index a bit.  Added an example from Default Messages. Removed a phrase that was only used in the example, and added it to the documentation instead. ]
 [ Version 4: Saying "[The player] saw [the player]" now works correctly for non-second person viewpoints. Thanks Mark Tilford. Several Going action messages were corrected for obvious faults, and looking action #6 was touched to deal with line break issues when additional rules follow I-could-also-see. Thanks CEJ Pacian, StJohnLimbo, and Matt W.  Fixed many more messages for particular tense-viewpoint combinations. Thanks Ben Sokal.  Informed the list writer to change between past & present tenses. Modified Aux/aux say-phrases so I could change the [n't] say-phrase so it always prints n't/not when used, to make it more user-friendly outside of the extension.  Removed a few say-phrases that weren't used at all. Documented remaining say-phrases. Re-arranged documentation. Added the "any third person singular" and "any third person plural" objects to cover some edge cases. Rewrote the irregular verb handling to use 5 table rows per entry rather than four.  Polished extension's appearance in the author's index. Added the [^] capitalisation say-phrase from the extension Mentioned In Room Descriptions.  Added [have+], [are+], and [do+] to ease migration from David's CLM extension.  For Glulx builds only, split the I-could-also-see rule in twain, so the former can be replaced without nixing the listing nondescript items activity. Added the ability to expand the list of pronouns & declensions (story viewpoints) for members of the LGBT community.  Added new example for same.  Removed support for second person plural; an example demonstrates how to add it back in.  Added a run-time problem callout in the case of a missing library message, which prints which table the message is missing from, and corrected its ability to detect same. The use option library message alerts is now always on, in testing builds only. Rewrote from scratch the code to decide on verb inflections -- it's really elegant now!  Gave names to the grammatical cases and verb inflections.  Now uses section replacement on Plurality for much smoother integration.  Rewrote L__M() and completely removed LanguageLM() so there's only one intervened phrase, which is now an activity For rule which works better with rules placed before & after it.  Extracted some higher functionality out and moved it to another extension, "Automated Verb Phrases".  Renamed the that-those phrase to that-those-us because Plurality's is in nominative case, not dative case.  Thanks Ben Sokal.  Fixed a few messages to use the library message object or the second noun instead of the noun.  And finally, replaced the pronoun in "You have died" with [We] becase, even though the message is arguably out of world, the player at the keyboard presumably does not die.  But if so, this would explain I-F's perpetually limited audience, and anyone who argues otherwise won't be around long enough to complain much about the change. Thanks CEJ Pacian. ]
+[ Version 4/110422:  Switch_TX had its present/past swapped. Thanks CEJ Pacian. ]
 
 
 [ WISHLIST:  An example to print out the entirety of the CLM table in a code form that can be copy-pasted back into a work and used with the much smaller Default Messages.  This is if the author needn't change viewpoint or tense during play. ]
@@ -578,7 +579,7 @@ To say #end if: (- #endif; -).
 [ The list writer has these linking verbs hard-coded as print (string), so we replace them just-in-time. ]
 Include (-
 [ Switch__TX   t;
-	if ((t & 1) == 0) { IS__TX = " is";    ARE__TX = " are";   IS2__TX = "is ";    ARE2__TX = "are ";    IS3__TX = "is";    ARE3__TX = "are";    }
+	if (((t - 1) & 1) == 0) { IS__TX = " is";    ARE__TX = " are";   IS2__TX = "is ";    ARE2__TX = "are ";    IS3__TX = "is";    ARE3__TX = "are";    }
 	else                                                  { IS__TX = " was"; ARE__TX = " were"; IS2__TX = "was "; ARE2__TX = "were "; 	IS3__TX = "was"; ARE3__TX = "were"; }	
 ];-).
 
@@ -898,7 +899,7 @@ Exiting action		2	"[We] [can't] get out of the closed [library message object]."
 Getting off action	1	"But [we] [aren't*] on [the library message object] at the [moment]."
 [Exiting action		4	"But [we] [aren't*] [if library message object is a supporter]on[otherwise]in[end if] [the library message object]."]
 [Section 2.29 - Go]
-Going action		2	"[We] [can’t] go that way." 
+Going action		2	"[We] [can't] go that way." 
 Going action		1	"[We] [=>would][have*] to get [if library message object is a supporter]off[otherwise]out of[end if] [the library message object] first."
 Going action		6	"[We] [can't], since [the library message object] [aux]lead[-s] nowhere."
 Going action		7	"Go in which compass direction?"
@@ -1100,12 +1101,12 @@ Custom Library Messages ends here.
 
 Section : Changing Tense and Viewpoint
 
-This extension can change the tense and/or viewpoint of all of Inform's pre-packaged responses at once.  It also allows replacing Inform's library messages in the same way as Default Messages by Ron Newcomb.  We select the viewpoint and tense with the following lines.  If we don't specify, first person past will be used.
+This extension can change the tense and/or viewpoint of all of Inform's pre-packaged responses at once.  It also allows replacing Inform's library messages in the same way as Default Messages by Ron Newcomb.  We select the viewpoint and tense with the following lines.  If we don't specify, first person present will be used.
 
 	*: The story tense is past tense.
 	The story viewpoint is third person feminine.
 	
-The possible 'declensions' for the story viewpoint are:
+The possible viewpoints are:
 	first person
 	second person
 	third person masculine
@@ -1114,7 +1115,7 @@ The possible 'declensions' for the story viewpoint are:
 	first person plural
 	third person plural
 
-For the story tense, the 'conjugations' are these.
+And the story tenses:
 	present tense
 	past tense
 
@@ -1153,10 +1154,10 @@ In our own writing, these phrases say whichever pronoun is appropriate for the s
 	"[Ourselves]" 
 	"[Our]" 
 
-For example:
+For example, this:
 	Report wearing something: say "[We] donned [the noun]." instead.
 
-Could print as any of these.
+could print as any of these.
 	I donned the...
 	You donned the...
 	He donned the...
@@ -1175,12 +1176,12 @@ For regular verbs, we only append one of the suffix phrases "[-s]", "[-es]", "[e
 	Report waving: say "[We] wav[e-s] back." instead.
 	Report spying: say "[We] sp[-ies] on [the noun]." instead.
 
-For irregular verbs, we must explicitly tell Inform about them.  This extension already defines several:  are*, aren't*, have*, do*, go*, eat*, feel*, find*, get*, give*, hear*, put*, see*, take*, wear*, think*, and keep*.  For example:
+For irregular verbs, we must explicitly tell Inform about them.  This extension already defines several:  are*, aren't*, have*, do*, go*, eat*, feel*, find*, get*, give*, hear*, put*, see*, take*, wear*, think*, and keep*.  (The trailing asterisk prevents confusing Inform.)  For example:
 	Report eating: say "[We] [eat*] [the noun]." instead.
 
 That prints either "eat" or "ate", as appropriate.  The others are used similarly.  
 
-We can add to this list as well, of course.  In the following sample, we add "weave" and "say".  For the say-phrase we use within our prose, we use the present plural with an asterick appended.  We list the other three forms in plain ol' text. 
+We can add to this list as well, of course.  In the following sample, we add "weave" and "say".  For the say-phrase we use within our prose, we use the present plural with an asterisk appended.  We list the other three forms in plain ol' text. 
 
 	*: Some irregular verbs are weave*, say*.
 	
@@ -1193,7 +1194,7 @@ We can add to this list as well, of course.  In the following sample, we add "we
 	"say"
 	"said"
 
-The order is very important here.  Not only do the order of the astericked verbs need come in the same order as their corresponding sets in the list, but the three forms in each set come in the same order as that of a relation from chapter 13.9 of the manual:  "The verb to weave (he weaves, they weave, he wove) implies the..."  
+The order is very important here.  Not only do the order of the asterisked verbs need come in the same order as their corresponding sets in the list, but the three forms in each set come in the same order as that of a relation from chapter 13.9 of the manual:  "The verb to weave (he weaves, they weave, he wove) implies the..."  
 
 Occasionally we'll need to use one of are, have, or do, as a helping verb instead of the main verb. For this, these: 
 	"[are+]"
@@ -1282,7 +1283,7 @@ If the alternate table does not hold every message, we can leverage the activity
 		choose the library message corresponding to the library message action # library message number from the table of Lady Marion's observations;
 		if the chosen row is zero, make no decision;
 		say the library-message-text entry;
-		library line break.
+		library line break if applicable.
 
 
 The initial "choose the library message corresponding to (action name) # (number) from (table)" phrase does most of the work.  Like other 'choose' phrases dealing with tables, it selects a row which later "..entry" phrases reference.  The "chosen row" is a number -- the row it chose.  Notably, it is zero if there is no corresponding message for that action and number combination in that table, allowing the rule to pass the situation to the next rule in the 'for' rulebook.  Otherwise, after the say statement shows the message to the reader, "library line break if applicable" might tack on a "[line break]" unless the message itself used "[ignore library line break]". 
@@ -1295,9 +1296,7 @@ If no rule in the activity's 'for' phase makes a decision, a runtime error will 
 
 Section : Miscellaneous Substitutions
 
-Several say-phrases that this extension uses internally are useful for the author who needs multiple tenses or viewpoints in their story.  For the pronoun appropriate to the story viewpoint, we use one of the following phrases.
-
-Many of the following are similar to the ones found in the extension Plurality. 
+Several say-phrases that this extension uses internally are useful for the author who needs multiple tenses or viewpoints in their story.  Many of the following are similar to the ones found in the extension Plurality. 
 
 	"['s-'re]" - contraction for is-are-am
 	"[is-are of (an object)]"
@@ -1308,6 +1307,7 @@ Many of the following are similar to the ones found in the extension Plurality.
 	"[it-them of (an object)]" 
 	"[it-they of (an object)]" 
 	"[It-They of (an object)]" 
+	"[^]" - capitalises what text the next phrase 'decides on'
 
 These touch-up a few miscellaneous messages.
 

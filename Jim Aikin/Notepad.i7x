@@ -1,4 +1,4 @@
-Version 1 of Notepad by Jim Aikin begins here.
+Version 2 of Notepad by Jim Aikin begins here.
 
 "A system for creating an in-game notepad that the player can write on."
 
@@ -108,7 +108,7 @@ Check an actor writing on something (this is the ordinary check writing it on ru
 Carry out an actor writing on something (this is the ordinary carry out writing it on rule):
 	let T be indexed text;
 	let T be the topic understood;
-	change the memo of the second noun to T;
+	now the memo of the second noun is T;
 	if the actor is the player:
 		say "You write '[T]' on [the second noun].";
 	otherwise:
@@ -119,6 +119,8 @@ Section 4 - Adding It To
 Adding it to is an action applying to one topic and one thing and requiring light. Understand "add [text] to [something]" and "append [text] to [something]" as adding it to.
 
 Check an actor adding to something (this is the ordinary check adding it to rule):
+	let carrying-pen be a truth state;
+	let carrying-pen be false;
 	if the second noun is not a notepad:
 		if the actor is the player:
 			say "You can't write anything on [the second noun]." instead;
@@ -129,8 +131,7 @@ Check an actor adding to something (this is the ordinary check adding it to rule
 		say "[The second noun] [if the second noun is plural-named]are[otherwise]is[end if] currently write-protected, and can't be written on.";
 		rule succeeds;
 	if the pen-needed of the second noun is true:
-		let carrying-pen be a truth state;
-		let carrying-pen be false;
+		now carrying-pen is false;
 		repeat with P running through the allowed-pens of the second noun:
 			if the actor carries P:
 				now carrying-pen is true;
@@ -148,7 +149,7 @@ Carry out an actor adding to something (this is the ordinary carry out adding it
 	let T be the topic understood;
 	let C be indexed text;
 	let C be the memo of the second noun;
-	change the memo of the second noun to "[C] [T]";
+	now the memo of the second noun is "[C] [T]";
 	if the actor is the player:
 		say "You add [run paragraph on]";
 	otherwise:
@@ -165,6 +166,8 @@ Section 5 - Copying It To
 Copying it to is an action applying to two things and requiring light. Understand "copy [something] on [something]", "copy [something] to [something]", "copy [something] onto [something]", and "duplicate [something] on [something]" as copying it to.
 
 Check an actor copying something to something (this is the ordinary check copying it to rule):
+	let carrying-pen be a truth state;
+	let carrying-pen be false;
 	if the noun is not a notepad:
 		say "No text can be copied from [the noun]." instead;
 	otherwise if the second noun is not a notepad:
@@ -187,8 +190,7 @@ Check an actor copying something to something (this is the ordinary check copyin
 	otherwise if the memo of the noun is "":
 		say "At the moment, nothing is written on [the noun]." instead;
 	if the pen-needed of the second noun is true:
-		let carrying-pen be a truth state;
-		let carrying-pen be false;
+		now carrying-pen is false;
 		repeat with P running through the allowed-pens of the second noun:
 			if the player carries P:
 				now carrying-pen is true;
@@ -203,7 +205,9 @@ Check an actor copying something to something (this is the ordinary check copyin
 		rule succeeds.
 		
 Carry out an actor copying something to something (this is the ordinary carry out copying it to rule):
-	change the memo of the second noun to the memo of the noun;
+	let T be indexed text;
+	let T be the memo of the noun;
+	now the memo of the second noun is T;
 	if the actor is the player:
 		say "You copy [run paragraph on]";
 	otherwise:
@@ -231,7 +235,7 @@ Check an actor erasing (this is the ordinary check erasing rule):
 		rule succeeds.
 
 Carry out an actor erasing (this is the ordinary carry out erasing rule):
-	change the memo of the noun to "";
+	now the memo of the noun is "";
 	if the actor is the player:
 		say "You erase [run paragraph on]";
 	otherwise:
@@ -275,7 +279,7 @@ Carry out an actor erasing from something (this is the ordinary carry out erasin
 		let char be character number N in C;
 		if char is " ":
 			replace character number N in C with "";
-		change the memo of the second noun to C;
+		now the memo of the second noun is C;
 		say "The erasure leaves [the second noun] reading [run paragraph on]";
 		let term be the terminor of the memo of the second noun;
 		if term is terminated:
@@ -327,6 +331,8 @@ Section: What it does.
 Notepad allows the author to create one or more things called notepads. The player can write text on a notepad, read the text, erase the text, add to the text, erase specific strings of characters from the text, and copy the text from one notepad to another. Text on a notepad can be write-protected. Other characters can also use notepads, if ordered to do so by the player.
 
 By default, a writing implement is needed to write on a notepad (but not to erase what's on it). The writer must be carrying the writing implement.
+
+Version 2 is updated to work with Inform 6G60. The Check rules in Sections 4 and 5 have been edited to reflect Inform's more strict handling of the declaration of temporary variables, and the now deprecated syntax "change X to Y" has been removed.
 
 Section: Using Notepad.
 
@@ -465,11 +471,11 @@ Example: * Beethoven - A deaf NPC who responds only to commands written in the c
 		otherwise:
 			now Beethoven-willing is true;
 			change the text of the player's command to the queued command;
-			change the queued command to "".
+			now the queued command is "".
 
 	Instead of showing the conversation book to Beethoven:
 		if the memo of the conversation book is empty, say "Beethoven frowns at the empty page. 'You have an odd sense of humor,' he says gruffly.";
-		otherwise change the queued command to "beethoven, [memo of the conversation book]".
+		otherwise now the queued command is "beethoven, [memo of the conversation book]".
 	
 	Section 4 - The Playing Action
 

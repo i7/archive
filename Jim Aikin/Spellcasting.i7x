@@ -1,4 +1,4 @@
-Version 1 of Spellcasting by Jim Aikin begins here.
+Version 2 of Spellcasting by Jim Aikin begins here.
 
 "A system for creating magic spells that can be cast anywhere, but that the player must learn before using."
 
@@ -26,7 +26,7 @@ Instead of doing anything when the noun is a magic-spell (this is the pretend th
 	
 [This rule handles the case where the player types 'cast X'. When the intended action is "cast", we want a different error message, not "You can't see any such thing," since one can't see spells. However, if word 1 is "cast" and word 2 is the name of a spell, then we're getting the parser error because something later in the input made no sense, so in this case we DO want "You can't see any such thing."]
 	
-Rule for printing a parser error when parser error is can't see any such thing (this is the new can't see any such thing rule):
+Rule for printing a parser error when the latest parser error is can't see any such thing error (this is the new can't see any such thing rule):
 	let T be indexed text;
 	let T be the player's command;
 	if word number 1 in T is "cast":
@@ -43,7 +43,7 @@ Rule for printing a parser error when parser error is can't see any such thing (
 
 [This rule handles the case where the player tries to cast a spell (learned or unlearned) at an object that is not in scope or does not exist. Without this rule, Inform would reply, "That's not a verb I recognize," which would be misleading if the spell were known. So we need to trap the first word in the input and look at it. If it's a spell, we need to output a different error message.]
 		
-Rule for printing a parser error when parser error is not a verb I recognise (this is the new not a verb I recognise rule):
+Rule for printing a parser error when the latest parser error is not a verb I recognise error (this is the new not a verb I recognise rule):
 	let T be indexed text;
 	let T be the player's command;
 	let W be word number 1 in T;
@@ -158,7 +158,7 @@ Spellcasting ends here.
 
 Section: What it does.
 
-Spellcasting is a simple extension that does the following things. First, we can create words for new magic-spells, such as shazam. Once shazam has been added to a game according to the guidelines below, the player will be able to use the commands "shazam", "cast shazam", "shazam the X", and "cast shazam at the X" (where X is some object in the game).
+Spellcasting is a simple extension (version 2 updated for compatibility with 6G60) that does the following things. First, we can create words for new magic-spells, such as shazam. Once shazam has been added to a game according to the guidelines below, the player will be able to use the commands "shazam", "cast shazam", "shazam the X", and "cast shazam at the X" (where X is some object in the game).
 
 By default, however, the spells we add to a game are unlearned, and thus can't be used by the player. We can declare a spell as learned when we create it (in which case the player will be able to use it from the beginning of the game), or we can create a mechanism (for instance, as part of the action of reading a spell-book) that includes the line "now shazam is learned".
 

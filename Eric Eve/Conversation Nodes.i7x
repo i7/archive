@@ -1,4 +1,4 @@
-Version 5 of Conversation Nodes by Eric Eve begins here.
+Version 6 of Conversation Nodes by Eric Eve begins here.
 "Builds on Conversational Defaults and adds the ability to define particular points in a conversational thread (nodes) at which particular conversational options become available."
 
 Book 1 - Includes
@@ -53,17 +53,18 @@ To say leavenode:
   the node switches in 0 turns from now.
 
 At the time when the node switches:  
-  if the current interlocutor is a person begin;
-    now the node of the current interlocutor is the next-scheduled-node;
-    now the node-timer is the node-time of the current node;
-    follow the node-introduction rules for the current node;
- end if.
+     if the current interlocutor is a person, advance the conversation node.
 
+To advance the conversation node:
+       now the node of the current interlocutor is the next-scheduled-node;
+       now the node-timer is the node-time of the current node;    
+       follow the node-introduction rules for the current node;
 
-To initiate a/-- conversation with (new-speaker - a person) at/in/using/with (new-node - a convnode):
+To initiate a/-- conversation with (new-speaker - a person) at/in/using/with (new-node - a convnode), immediately:
   now the current interlocutor is new-speaker;
   now the next-scheduled-node is new-node;
-  the node switches in 0 turns from now.
+  if immediately, advance the conversation node; 
+  otherwise the node switches in 0 turns from now.
 
 
 Book 3 - Rules
@@ -100,7 +101,9 @@ Before showing something to someone (this is the note showing rule):
 
 
 Every turn when the current node is not the null-node and the current node is open and the node-timer < 1 (this is the node-switching rule):
-  now the node of the current interlocutor is the next-node of the current node.
+ now the next-scheduled-node is the next-node of the current node;
+ the node switches in 0 turns from now.
+
 
 To decide if at-node (cnode - a convnode):
   decide on whether or not the current node is cnode.
@@ -269,19 +272,19 @@ The first of these "[node sarah-furious-node]" switches the node to sarah-furiou
 
 Outside a piece of text to change convnode. 
 
-Note that these phrases don't actually change the convnode straight away, they schedule a change of convnode at the end of the turn (thus preventing any odd effects we might get from a mid-turn convnode switch. They also ensure that certain housekeeping tasks are carrried out that keep the node-switching machinery working smoothly. That's why we should alway use these phrases to change node in mid-conversation rather than trying to change the node of the current interlocutor directly.
+Note that these phrases don't actually change the convnode straight away, they schedule a change of convnode at the end of the turn (thus preventing any odd effects we might get from a mid-turn convnode switch. They also ensure that certain housekeeping tasks are carried out that keep the node-switching machinery working smoothly. That's why we should alway use these phrases to change node in mid-conversation rather than trying to change the node of the current interlocutor directly.
 
 Chapter: Defining Conversation Responses for Conversation Nodes
 
 Section: Ordinary Conversation Responses:
 
-The Conversation Reponses extension included by Conversation Nodes allows you to define conversational responses for an NPC with rules like:
+The Conversation Responses extension included by Conversation Nodes allows you to define conversational responses for an NPC with rules like:
 
 	Response of Bob when asked about "money":
 	Response of Sarah when told about Bob:
 
 
-When defining conversational responses relating to a specific node, we use same the format, but substitute the node name for the name of the NPC. The kinds of rule we can use for definind node-specific conversational response are thus:
+When defining conversational responses relating to a specific node, we use same the format, but substitute the node name for the name of the NPC. The kinds of rule we can use for defined node-specific conversational response are thus:
 
 	Response of my-node when asked about "money":
 	Response of my-node when asked about the gold ring:
@@ -455,7 +458,7 @@ If the current interlocutor is really determined to get an answer, s/he might no
  	if a random chance of 1 in 2 succeeds then
 	say "'Hey! Didn't you hear me?' Sarah demands, 'I asked you if you were seeing another woman - well, are you?'"
 
-Using a random chance is probably a good idea in a node-continuation rule to avoid the mechanical repetiveness of having the NPC nag the player on every conversational turn. We can also avoid such repetiveness, of course, by using the a "[one of]... [or]... [or]... [in random order]" type construction to vary what's said.
+Using a random chance is probably a good idea in a node-continuation rule to avoid the mechanical repetitiveness of having the NPC nag the player on every conversational turn. We can also avoid such repetitiveness, of course, by using the a "[one of]... [or]... [or]... [in random order]" type construction to vary what's said.
 
 Note that a node-continuation rule is only used on non-conversational turns. Conversing sets the global variable conversed-this-turn to true, which tells the node continuation rule (an every turn rule) not to run the node-continuation rules.
 
@@ -488,6 +491,13 @@ For example, we might write:
 	  continue the action.
 
 This sets Sarah as the current interlocutor and schedules sarah-jealous-node as the node to be switched to at the end of this turn. This means that we can use "continue the action" here to have the going to action proceed to print out a room description, and then have Sarah's question (presumably provided by a node-introduction rule) displayed after the room description.
+
+This works when the player character enters the presence of an NPC, but may not work so well when an NPC enters the presence of the player character and needs to initiate the conversation straight away. In this situation you may find that the conversation is being started on the turn after the one you want. If you come across this problem, you can add the phrase option 'immediately' to the 'Initiate a conversation' phrase to ensure that the conversation starts at the node you want right away, for example:
+
+	At the time when Sarah enters:
+	   move Sarah to the hall;
+	   say "Sarah bursts into the hall.";
+	   initiate a conversation with Sarah at sarah-jealous-node, immediately.
 
 Example: * Sarah's Jealous Suspicions - Putting convnodes through their paces.
 

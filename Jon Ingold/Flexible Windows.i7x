@@ -1,9 +1,18 @@
-Version 11 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
+Version 12/110611 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
 
 "An extension for constructing multiple-window interfaces. Windows can be created and destroyed during play. Facilities for per-window character input and hyperlinks are provided."
 
 "with contributions by Erik Temple"
 
+[Changed:
+6/26/10	Made the main-window a text-buffer g-window.
+6/26/10	The built-in text hyperlinks system now doesn't compile if we're using Basic Hyperlinks.
+7/31/10	New rule for allocating rocks.
+7/31/10	New not-for-release section that validates rocks, disallowing duplicates.
+7/31/10	Added documentation for manual setting of rock values.
+7/31/10	Removed out-of-date section on hyperlinking from the documentation.
+21/6/11 Added a "does window exist" check before setting background colour.
+]
 
 Include Glulx Entry Points by Emily Short.
 
@@ -93,7 +102,8 @@ Include
  -).
 
 To set (g - a g-window) rock to (n - a number):
-(-   {g}.rock_value = {n}; -)
+(-   {g}.rock_value = {n};
+-)
 
 
 Section - Validating rock numbers (not for release)
@@ -119,6 +129,7 @@ The rock-value of the main-window is 100.
 To decide if rocks are currently unassigned: 
 	if rock-value of main-window is 100, yes; no.
 
+
 Section - Spawning relations
 
 Spawning relates various g-windows to various g-windows.
@@ -139,6 +150,7 @@ To decide which g-window is the direct-parent of (g - a g-window):
 	begin;
 		if item spawns g, decide on item;
 	end repeat.
+
 
 Section - Test spawning relations (not for release)
 
@@ -502,12 +514,12 @@ To text-clear the/-- (g - a g-window):
 (-    if ({g} has g_present) glk_window_clear({g}.ref_number); -).
 
 To graphics-clear the/-- (g - a g-window):
-(-    if ({g} has g_present) FWBlankWindowToColor({g}); -).
+(-    if ({g} has g_present) BlankWindowToColor({g}); -).
 
 
 Include (-
 
-[ FWBlankWindowToColor g result graph_width graph_height col;
+[ BlankWindowToColor g result graph_width graph_height col;
     col = ColVal(g.back_colour);
     result = glk_window_get_size(g.ref_number, gg_arguments, gg_arguments+WORDSIZE);
                  graph_width  = gg_arguments-->0;
@@ -640,7 +652,7 @@ Include
 				{ 	col = ColVal((+main-window+).back_colour);
 					for (i = 0: i < style_NUMSTYLES : i++)
 					glk_stylehint_set(wintype_TextBuffer, i, stylehint_BackColor, col);
-					glk_window_clear((+main-window+).ref_number);
+					if ((+main-window+).ref_number) glk_window_clear((+main-window+).ref_number);
   glk_stylehint_set(wintype_TextBuffer, style_Emphasized, stylehint_Oblique, 1);
   glk_stylehint_set(wintype_TextBuffer, style_Emphasized, stylehint_weight, 0);
 
@@ -998,13 +1010,13 @@ Should you want to make changes to the styles for the windows, this is also the 
 
 	Section: Rock values
 
-Internally, Glulx windows are dynamic objects, created as they are opened and destroyed as they are closed. Our g-windows, on the other hand, are static objects. When Flexible Windows opens a window, it gives the window a number, called the "rock" value. This value serves as a way for the dynamic Glk/Glulx window object to identify itself as the current instantiation of the static g-window object that shares the same rock.
+Internally, Glulx windows are dynamic objects, created as they are opened. Our g-windows, on the other hand, are static objects. When Flexible Windows opens a window, it gives the window a number, called the "rock" This rock value serves to identify the dynamic Glk/Glulx window object as the current instantiation of the static g-window object that shares the same rock.
 
 Normally, Flexible Windows will set the rock values for all g-windows automatically, and the whole process occurs behind the scenes. There may be times, however, when we want to set a g-window's rock to a particular value. For example, Quixe, the javascript Glulx interpreter, uses rock values to identify windows for styling with CSS. In that system, the CSS for a window with rock value 210 might look like this:
 
 	.WindowRock_210 { background-color: blue; }
 
-Rocks should be numbered 200 and above. It is customary, though not necessary, to skip 10 when adding a new window; that is, for three windows, we'd have 205, 215, and 225. This is how Flexible Windows will assign them if we don't intervene. To ensure that a g-window gets a particular rock value, we can set it like so:
+Rocks should be numbered 200 and above. It is customary, though not necessary, to skip 10 when adding a new window; that is, for three windows, we'd have 200, 210, and 220. In fact, this is how Flexible Windows will assign them if we don't intervene. To ensure that a g-window gets a particular rock value, we can set it like so:
 
 	The rock-value of the graphics-window is 245.
 
@@ -1186,7 +1198,7 @@ Hyperlink replacement commands are defined by the Table of Glulx Hyperlink Repla
 
 If a link ID number has no corresponding text command in the table of replacement commands, nothing will happen when the link is clicked.
 
-To define custom behaviour for a particular link, we write a new rule for the hyperlink processing rulebook. For example, to have a hyperlink simply clear the screen immediately, without pasting any text to the command line:
+To define custom behavior for a particular link, we write a new rule for the hyperlink processing rulebook. For example, to have a hyperlink simply clear the screen immediately, without pasting any text to the command line:
 
 	Hyperlink processing rule when the current hyperlink ID is 1:
 		clear the main-window;
@@ -1199,7 +1211,7 @@ When we use this type of rule, we need not put anything in the Table of Glulx Hy
 Note that Flexible Windows will also register hyperlinks in the status line. We define these like we do any other hyperlink, e.g.:
 
 	When play begins:
-		change the right hand status line to "[set link 1]clear screen[end link]"
+		now the right hand status line is "[set link 1]clear screen[end link]"
 
 
 	Chapter: Echo streams and the transcript
@@ -1243,16 +1255,6 @@ Finally, it is possible to write directly to the echo stream of a window, bypass
 
 
 	Chapter: Change log
-
-Version 11 - 30/10/10
-
-	Updated for 6F95. Now uses no deprecated features.
-
-	To make it easier to assign rock values to windows manually (necessary for CSS styling in Quixe), a slight change was made to FW's automatic rock allocation routine—the author can now set a rock value manually (like this: "The rock-value of the graphics-window is 245"). Flexible Windows now checks for conflicts between manually assigned and automatically assigned rock values, and will throw a warning if it finds any (this code will not run in release versions of the software).
-
-Version 10 - 23/9/10
-	
-	Minor bug-fix to allow compatibility with Emily Short's Simple Graphical Window, as required by the Inventory Window extension. An I6 routine in Flexible Windows has been renamed "FWBlankWindowToColor" from "BlankWindowToColor". This should have no impact on your source code unless you have called this routine directly from an I6 inclusion (which you shouldn't need to do anyway.)
 
 Version 9 - 27/5/10
 
@@ -1341,7 +1343,7 @@ This is enough to set up the graphics panel. Now let's give it some images.
 		say "You tear the letter to shreds." instead.
 
 	To depict (f - a figure-name):
-		change the current image to f;
+		now the current image is f;
 		follow the window-drawing rules for the graphics-window.
 
 Finally, here's the rule and routines to actually get the picture to display.

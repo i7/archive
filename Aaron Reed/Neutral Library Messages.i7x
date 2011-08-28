@@ -1,7 +1,10 @@
-Version 1/110323 of Neutral Library Messages by Aaron Reed begins here.
+Version 2/110709 of Neutral Library Messages by Aaron Reed begins here.
 
 "Replaces the most misleading and narratively-voiced parser messages with more instructive or neutral versions."
 
+[Version history
+2: Fixed bug in misc message 72 to use "the person asked" instead of "the noun"; clarified documentation
+]
 
 [Future work: modify to work with Custom Library Messages, too.]
 
@@ -24,7 +27,7 @@ library-action	library-message-id	library-message-text
 --	16	"[as the parser]Too many words. 'Oops' or 'O' corrects a single misunderstood word in the last command.[as normal]" ["'Oops' can only correct a single word."]
 --	23	"[as the parser]In some stories, you can type CHARACTER, COMMAND to give someone else an order; but I couldn't understand what you said in that context.[as normal]" ["You seem to want to talk to someone, but I can't see whom."]
 --	25	"[as the parser]In some stories, you can type CHARACTER, COMMAND to give someone else an order; but I couldn't understand some of what you said before the comma in that context.[as normal]" ["To talk to someone, try 'someone, hello' or some such."]
---	28	"[as the parser]I can't understand your entire command, although the first part matched the action [ignore library line break]" ["I only understood you as far as wanting to [ignore library line break]] [NOTE: This message is usually (always?) generated now by the special rules in "Section - Only as far as" ]
+--	28	"[as the parser]I can't understand your entire command, although the first part matched the action [ignore library line break]" ["I only understood you as far as wanting to [ignore library line break]" NOTE: This message is usually (always?) generated now by the special rules in "Section - Only as far as" ]
 --	29	"[as the parser]I can't understand your entire command, although the first part matched an action I expected to include a number.[as normal]" ["I didn't understand that number."]
 --	44	"[as the parser][if command includes except]That excludes everything.[otherwise]There is nothing available to [the quoted verb].[as normal]" ["There are none at all available!" <!-- TAKE ALL or TAKE X EXCEPT Y]
 --	67	"[as the parser]Part of your command is not a physical part of the story world, so you can't act on it in that way.[as normal]"  ["You must name something more substantial."]
@@ -80,6 +83,8 @@ touching action	1	"[as the parser]You can't touch [the noun][can't-addendum].[as
 squeezing action	1	"[as the parser]You can't squeeze [the noun][can't-addendum].[as normal]" ["Keep your hands to yourself."]
 Kissing action	1	"[as the parser]You can't kiss [the noun][can't-addendum].[as normal]" ["Keep your mind on the game."]
 Waking action	1	"[as the parser][if noun is player]As far as you know, you're already awake.[otherwise]You can't wake [the noun][can't-addendum].[end if][as normal]" ["That seems unnecessary."]
+--	72	"[as the parser]You can't order [the person asked] to do that[can't-addendum].[as normal]" ["Bob has  better things to do."]
+
 
 To say yourself-or-other: say "[if noun is player]yourself[otherwise]other characters".
 
@@ -104,12 +109,12 @@ answering it that action	1	"You speak." ["There is no reply."]
 
 Section - You Can't See Any Such Thing 
 
- [This famous message has frustrated many. Part of the difficulty is the wide variety of circumstances it can appear under. From the player's perspective, this message appears when she tries to use a verb with
+[This famous message has frustrated many. Part of the difficulty is the wide variety of circumstances it can appear under. From the player's perspective, this message appears when she tries to use a verb with
 	a) something neither mentioned nor implemented (like the sky)
 	b) something mentioned in descriptive text but not implemented
 	c) something implemented but not given the specific word used as a synonym
 	d) a misspelled word
-	e) a word that mistakenly is understood as part of the direct object, rather than a word in the grammar line, as in >TAKE INVENTORY NOW which is matched as {take | inventory now}.
+	e) a word mistakenly understood as part of the direct object, rather than part of the grammar line, as in >TAKE INVENTORY NOW which is matched as {take | inventory now}.
 	f) something that exists but has never been seen and is not in scope
 	g) something previously seen but no longer in scope, perhaps without the player realizing it's no longer available
 
@@ -204,7 +209,7 @@ Verifying the story file action	2	"The story file did not verify as intact, and 
 
 Section - Parser-styled action messages
 
-[Here are the remaining messages not replaced already that should be styled as from the parser. This is a bit of an aesthetic judgment in some cases. ]
+[Here are the remaining messages not replaced already that should be styled as from the parser. Whether a message comes from the parser or the narrator is something of an existential or aesthetic question in some cases: is "But you aren't on the sofa at the moment" a parser objection or a narrator observation? My general rule of thumb here is that the parser deals with commands rejected for logical reasons (as in the prior example), and the narrator with commands rejected for story/character reasons (as well as the successful commands). So "Dropped" or "You hear nothing unexpected" are narrator messages, but "You aren't holding the apple" is a parser message. ]
 
 Table of custom library messages (continued)
 library-action	library-message-id	library-message-text
@@ -284,7 +289,6 @@ library-action	library-message-id	library-message-text
 --	64	"[as the parser]You may not name a second object.[as normal]"
 --	65	"[as the parser]You must supply a second noun.[as normal]"
 --	66	"[as the parser]You may not supply a second noun.[as normal]"
---	72	"[as the parser][The noun] [has-have] better things to do.[as normal]"
 --	73	"[as the parser]That noun did not make sense in this context.[as normal]"
 --	74	"[as the parser]That command asks to do something outside of play, so it can only make sense from you to me. [The person asked] cannot be asked to do this.[as normal]"
 
@@ -578,7 +582,7 @@ This is the Neutral Library Messages report preferring sometimes abbreviated roo
 
 Section - Player Description (in place of Section SR1/11 - People in Standard Rules by Graham Nelson) 
 
-[Authors can easily override the description of the player, but extension authors can't without tromping on the final author's ability to (can't have two "usually" or two "is" lines). Bother. The only line changed is the description of yourself property. ]
+[Authors can easily override the description of the player, but extension authors can't without tromping on the final author's ability to (since you can't have two "usually" or two "is" lines). Bother. The only line changed in this block is the description of yourself property. ]
 
 The specification of person is "Despite the name, not necessarily
 a human being, but anything animate enough to envisage having a
@@ -607,7 +611,7 @@ Include (-
 
 Section - Only as far as
 
-[We want to be careful about using something like "the quoted verb" here, because we might get a message like "I expect you wanted to i" or "I recognized the damn action, but not what came after" or even "the do something to Suzan action" for commands...]
+[We want to be careful about using something like "the quoted verb" here, because we might get a message like "I expect you wanted to i."]
 
 For printing a parser error when the latest parser error is the only understood as far as error (this is the Neutral Library Messages understood as far as rule):
 	parser say "I can't understand your entire command: the first part might be an action I know, but I don't know the word '[misunderstood word]'." 
@@ -755,7 +759,7 @@ Neutral Library Messages ends here.
 
 ---- DOCUMENTATION ----
 
-Every Inform project contains dozens of sentences of text not written by the project's author, which explain the results of actions or refuse to carry out commands that aren't understood or contradict the world model. The default set of these library messages, which have accumulated like barnacles on the interactive fiction community since its maiden voyages in the 1970s, contains many misleading, distracting, or unhelpful texts that experienced players see past but newcomers stumble over. This extension replaces the worst offenders with more neutral or helpful variations.
+Every Inform project contains dozens of sentences of text not written by the project's author, which explain the results of actions or refuse to carry out commands that aren't understood or that contradict the world model. The default set of these library messages, which have accumulated like barnacles on the interactive fiction community since its maiden voyages in the 1970s, contains many misleading, distracting, or unhelpful texts that experienced players see past but newcomers stumble over. This extension replaces the worst offenders with more neutral or helpful variations.
 
 Simply including the extension is all that is necessary. Read on only if you're interested in the gory details.
 
@@ -763,21 +767,38 @@ Section: Rationale
 
 The main complaints levied against the standard library messages are:
 
-	They sometimes imply a certain tone of wry amusement which descends from the Infocom/adventure era, and which is not always appropriate to modern works of IF.
+	They sometimes imply a certain tone of wry amusement which descends from the Infocom/text adventure era, and which is not always appropriate to modern works of IF.
 	
 	There is not a clear distinction between messages narrating story world events and those giving parser refusals, leading to a muddying of the difference between the author's voice and the default system messages.
 	
 	Error messages often do not contain information instructing players how to better restate their command.
 	
-	They can sometimes contradict the story world, as in the assumption "That's plainly inedible," or mislead the player about a course of action, as in "This dangerous action would achieve little."
+	They can sometimes contradict the story world, as in the assumption "That's plainly inedible," or mislead the player about a course of action, as in "This dangerous act would achieve little."
 	
 	Inconsistencies in style, such as whether command examples are given in CAPS or 'quotes', or which messages are wrapped in square brackets and what that signifies.
 
 The extension attempts to address all of these concerns as much as possible. Jokes or insults have been replaced by more neutral messages. Out-of-world messages are given a unique visual style (in a way compatible with the Keyword Interface extension, which allows players to adjust this style). Many error messages have been rephrased to more clearly state what confused the parser or instruct the player towards a better command to try. Messages that make assumptions about the player's intentions or the world model have been softened so as not to appear incongruous with the story. And all command examples are now given in 'quote' format, with all parser messages wrapped in brackets (by default).
 
+Section: Parser versus Narrator
+
+Whether a message comes from the parser or the narrator is something of an existential or aesthetic question in some cases: is "But you aren't on the sofa at the moment" a parser objection or a narrator observation? My general rule of thumb is that the parser deals with anything out of world, including commands rejected for logical reasons (as above), and the narrator with commands rejected for story/character reasons (as well as, of course the successful commands). So "Dropped" or "You hear nothing unexpected" are narrator messages, but "You aren't holding the apple" is a parser message.
+
+Section: Overriding Messages
+
+This extension is based on Default Messages by Ron Newcomb, and all the parser messages it changes can be further changed by authors in the same manner as with that extension. You need to continue the Table of Custom Library Messages, like this:
+
+	Table of custom library messages (continued)
+	library-action	library-message-id	library-message-text
+	--	21	"[as the parser]There's nothing to repeat![as normal]" 
+	dropping action	4	"Okay, you drop it."
+
+Messages from the parser should be wrapped in the [as the parser] and [as normal] tags, as seen in the first line above. Messages from the narrator can omit these tags.
+
+The best way to determine the action and number of a message is to open the extension and search for a few consecutive words in the text. (Keep in mind some words like "You" or "their" may be procedurally generated and thus not searchable.) Doing so will also demonstrate the say statements needed to appropriate generate the right text (such as [Cap That's-They're noun], which prints "That's" or "They're" based on whether the noun in question is singular or plural).
+ 
 Section: You can't see...
 
-Neutral Library Messages makes one possibly controversial change to the standard parser behavior: when the player types a word not in the story's dictionary, the message will explicitly say this is what has happened. The classic argument against this, that sneaky players can use it to figure out the existence of yet-unseen objects, seems less relevant today than it did when puzzles comprised most IF content (besides having something of a nanny-state quality, like a novelist hovering around ensuring you don't flip ahead in his book and see IMPORTANT NOUNS you're not supposed to know about yet). Perhaps a more relevant objection is that messages of this sort can make the parser seem primitive ("I don't know the word 'love.'")
+The message "You can't see any such thing." is traditionally printed in several circumstances, which NLM splits into distinct messages. The most controversial split is that the extension explicitly tells the player if a word they typed is not in the story's dictionary. The classic argument against this, that sneaky players can use it to figure out the existence of yet-unseen objects, seems less relevant today than it did when puzzles comprised most IF content (not to mention having something of a nanny-state quality, like a novelist hovering around ensuring readers don't flip ahead and see IMPORTANT NOUNS they aren't supposed to know about yet). Perhaps a more relevant objection is that messages of this sort can make the parser seem primitive ("I don't know the word 'love.'")
 
 I believe the benefit to players of knowing that a command didn't work because a certain word isn't important (rather than wondering if it's just not in scope, or they misspelled it, or they typed it in the wrong spot in the grammar line) outweighs these concerns, and I've attempted to make the message prescriptive rather than expository: "You don't need to use the word 'love' in that way." However, if you'd like to restore the traditional behavior, you can do so with:
 
@@ -785,7 +806,7 @@ I believe the benefit to players of knowing that a command didn't work because a
 
 Section: Parser style
 
-Messages describing purely out of world results (like saving or restoring) as well as those describing why a player's command can't work ("That can't contain things.") as opposed to why it won't ("It's too dark to look under the [noun].") are styled in italics and wrapped in brackets, by default. To override this, use code like the following:
+By default, parser messages are styled in italics and wrapped in brackets. To override this, use code like the following:
 
 	To say as the parser: say "[bold type]The parser says: '".
 	To say as normal: say "'[roman type]".
@@ -798,14 +819,6 @@ If you don't want parser messages to be styled differently from other library me
 
 	To say as the parser: do nothing.
 	To say as normal: do nothing.
-
-Section: Overriding Parser Messages
-
-...works as described in the documentation for Default Messages by Ron Newcomb, except that you should wrap messages meant to be from the parser in the tags mentioned above:
-
-	Table of custom library messages (continued)
-	library-action	library-message-id	library-message-text
-	--	21	"[as the parser]Ain't nothin' t'repeat.[as normal]" 
 
 Example: * The Ringer - An array of different types of messages, both from the parser and the narrator.
 

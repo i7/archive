@@ -1,8 +1,8 @@
-Version 8/100701 of French by Eric Forgeot begins here.
+Version 9/110414 of French by Eric Forgeot begins here.
 
 "Quelques modifications des regles de base pour supporter le francais : To make French the language of play."
 
-[designed for Inform7 6E59]
+[designed for Inform7 6G60]
 
 
 Part 1 - French specifics
@@ -29,16 +29,16 @@ Use French 3PSPr Language translates as (- Constant French3PSPr; -).
 
 [utilisé pour : vous pouvez voir etc...]
 To say personne du joueur:
-	say "[if using the French 3PSPa Language option or using the French 3PSPr Language option]il[otherwise if using French Language option]vous[otherwise]je[end if]". 
+	say "[if the French 3PSPa Language option is active or the French 3PSPr Language option is active]il[otherwise if the French Language option is active]vous[otherwise]je[end if]". 
 
 To say personne du joueur en capital: [I don't use ''in title case'' because it takes too much memory just for this...]
-	say "[if using the French 3PSPa Language option or using the French 3PSPr Language option]Il[otherwise if using French Language option]Vous[otherwise]Je[end if]". 
+	say "[if the French 3PSPa Language option is active or the French 3PSPr Language option is active]Il[otherwise if the French Language option is active]Vous[otherwise]Je[end if]". 
 
 To say verbe pouvoir du joueur:
-say "[if using the French 3PSPa Language option]pouvait[otherwise if using the French 3PSPr Language option]peut[otherwise if using the French 1PSPa Language option]pouvais[otherwise if using the French 1PSPr Language option]peux[otherwise]pouvez[end if]".
+say "[if the French 3PSPa Language option is active]pouvait[otherwise if the French 3PSPr Language option is active]peut[otherwise if the French 1PSPa Language option is active]pouvais[otherwise if the French 1PSPr Language option is active]peux[otherwise]pouvez[end if]".
 
 
-A thing can be female.
+A thing can be female. A door can be female. [The indefinite article of a door is "la".]
 [ pose pb : A device is always an Inform library supporter.]
 
 [ 1=masculino, 2=femenino,
@@ -54,10 +54,10 @@ A thing has a number called the gender.
   [doesn't work in the french lib, it must be set by the author]
 
 The description of yourself is 
-		"[if using the French 3PSPa Language option]Il était comme d'habitude.
-		[otherwise if using the French 3PSPr Language option]Il est comme d'habitude.
-		[otherwise if using the French 1PSPa Language option]J[']étais comme d'habitude.
-		[otherwise if using the French 1PSPr Language option]Je suis comme d'habitude.
+		"[if the French 3PSPa Language option is active]Il était comme d'habitude.
+		[otherwise if the French 3PSPr Language option is active]Il est comme d'habitude.
+		[otherwise if the French 1PSPa Language option is active]J[']étais comme d'habitude.
+		[otherwise if the French 1PSPr Language option is active]Je suis comme d'habitude.
 		[otherwise]Vous êtes comme d'habitude.
 	[end if]"
 
@@ -293,7 +293,6 @@ Understand the command "purchase" as something new.
 Understand the command "squash" as something new.
 Understand the command "taste" as something new.
 Understand the command "fasten" as something new.
-
 ]
 
 Part 4 - Grammar
@@ -447,13 +446,17 @@ Understand "deposer [things preferably held]" or "deposer [things preferably hel
 Understand "deposer [other things] dans [something]" or "mettre [other things] dans [something]" or "inserer [other things] dans [something]" as inserting it into.
 Understand "deposer [other things] sur [something]" or "mettre [other things] sur [something]" as putting it on.
 
-Understand the command "poser" and "abandonner" and "lacher" and "laisser" and "laisser tomber" and as "deposer". 
+Understand the commands "placer" as "mettre".
+
+Understand the command "poser" and "abandonner" and "lacher" and "laisser" and "laisser tomber"  as "deposer". 
 
 [getting off : utilisé avec DownGoing sans doute]
 
-Understand "retirer [things inside] de/du/des [something]" as removing it from.
+Understand "enlever [things inside] de/du/des [something]" as removing it from.
 
 Understand "enlever [something preferably held]" as taking off.
+
+Understand the command "retirer" and "oter" as "enlever". 
 
 Understand "lancer [something preferably held] sur/vers/contre [something]" or "lancer [something preferably held] en direction de [something]" or "lancer [something preferably held] en direction du [something]" or "lancer [something preferably held] dans [something]" as throwing it at.
 
@@ -470,6 +473,8 @@ Understand "regarder a l'interieur de [something]" as searching.
 Understand "regarder a l'interieur du [something]" as searching.
 Understand "regarder a travers [something]" as searching.
 Understand "regarder sous [something]" as looking under.
+
+
 
 Understand the command "examiner", "decrire", "observer", "r", "v" and "voir" as "regarder".
 
@@ -505,7 +510,7 @@ Understand "read [something]" or "lire [something]" as reading.
  
 
 Carry out reading: 
-	say "[if using the French 3PSPa Language option]Il n[']y avait rien de spécial à lire ici.[otherwise if using the French 1PSPa Language option]Je n'avais rien de spécial à lire ici.[otherwise if using the French 1PSPr Language option]Je n'ai rien de spécial à lire ici.[otherwise]Il n[']y a rien de spécial à lire ici.[end if]".
+	say "[if the French 3PSPa Language option is active]Il n[']y avait rien de spécial à lire ici.[otherwise if the French 1PSPa Language option is active]Je n'avais rien de spécial à lire ici.[otherwise if the French 1PSPr Language option is active]Je n'ai rien de spécial à lire ici.[otherwise]Il n[']y a rien de spécial à lire ici.[end if]".
 
 Understand "consulter [something] sur [text]" or "consulter [something] a [text]" or "consulter [something] a propos de [text]" as consulting it about.
 
@@ -541,7 +546,7 @@ Understand "frotter [something]" as rubbing.
 [-- ajout bibl. fr.]
 Rubbing it with is an action applying to two things.
 Carry out rubbing it with:
-	say "[if using the French 3PSPa Language option]Il n'arriva à rien ainsi.[otherwise if using the French 1PSPa Language option]Je n'arrivai à rien comme ça.[otherwise if using the French 1PSPr Language option]Je n'arrive à rien comme ça.[otherwise]Vous n'arrivez à rien comme ça.[end if]".
+	say "[if the French 3PSPa Language option is active]Il n'arriva à rien ainsi.[otherwise if the French 1PSPa Language option is active]Je n'arrivai à rien comme ça.[otherwise if the French 1PSPr Language option is active]Je n'arrive à rien comme ça.[otherwise]Vous n'arrivez à rien comme ça.[end if]".
 
 Understand "frotter [something] avec [something preferably held]" as rubbing it with.
 Understand "frotter [something preferably held] sur [something]" as rubbing it with (with nouns reversed).
@@ -558,12 +563,12 @@ Understand the command "attacher", "fixer", "connecter" and "brancher" as "nouer
 
 Talking to is an action applying to one thing. 
 Carry out talking to:
-	say "[if using the French 3PSPa Language option]Il ne sut pas quoi dire.[otherwise if using the French 3PSPr Language option]Il ne sait pas quoi dire.[otherwise if using the French 1PSPa Language option]Je ne savais pas quoi dire.[otherwise if using the French 1PSPr Language option]Je ne sais pas quoi dire.[otherwise]Vous ne savez pas quoi dire.[end if]".
+	say "[if the French 3PSPa Language option is active]Il ne sut pas quoi dire.[otherwise if the French 3PSPr Language option is active]Il ne sait pas quoi dire.[otherwise if the French 1PSPa Language option is active]Je ne savais pas quoi dire.[otherwise if the French 1PSPr Language option is active]Je ne sais pas quoi dire.[otherwise]Vous ne savez pas quoi dire.[end if]".
 
 	
-Understand "talk to [someone]" and "greet [someone]" and "speak to [someone]" and "parler ->/à/a/au/aux/avec [someone]" and "interroger [someone]" as talking to.
+Understand "talk to [someone]" and "greet [someone]" and "speak to [someone]" and "parler ->/à/a/au/aux/avec [someone]" and "questionner [someone]" as talking to.
 
-
+Understand "questionner [someone]" as talking to.
 
 Understand "repondre [text] ->/à/a/au/aux [someone]" as answering it that (with nouns reversed).
 [Understand the commands "say", "shout" and "speak" as "answer".]
@@ -571,6 +576,9 @@ Understand "repondre [text] ->/à/a/au/aux [someone]" as answering it that (with
 [todo : Understand "raconter ->/à/a/au/aux [someone] a propos de [text]" as telling it about.]
 
 Understand "questionner [someone] a propos de [text]" or "questionner [someone] à propos de [text]" or "questionner [someone] au sujet de [text]" or "questionner [someone] au sujet du/des [text]" or "questionner [someone] sur [text]" as asking it about.
+
+Understand the command "interroger" as "questionner".
+
 
 Understand "demander [something] ->/à/a/au/aux [someone]" as asking it for (with nouns reversed).  [todo : check reversed]
 
@@ -580,7 +588,7 @@ Understand "saluer" or "saluer avec la main" [or "saluer [someone]" or "saluer [
 Waving hands to is an action applying to one thing. Understand "saluer [someone]" or "saluer [someone] avec la main" as waving hands to. 
 
 Carry out waving hands to:
-	say "[if using the French 3PSPa Language option]Il salua [the noun].[otherwise if using the French 3PSPr Language option]Il salue [the noun].[otherwise if using the French 1PSPa Language option]Je saluai [the noun].[otherwise if using the French 1PSPr Language option]Je salue [the noun].[otherwise]Vous saluez [the noun].[end if]".
+	say "[if the French 3PSPa Language option is active]Il salua [the noun].[otherwise if the French 3PSPr Language option is active]Il salue [the noun].[otherwise if the French 1PSPa Language option is active]Je saluai [the noun].[otherwise if the French 1PSPr Language option is active]Je salue [the noun].[otherwise]Vous saluez [the noun].[end if]".
 	
 
 Understand "agiter [something]" as waving.
@@ -643,7 +651,7 @@ Understand the command "swim" as something new.
 Swimming is an action applying to nothing. Understand "swim" or "dive" or "nager" or "plonger" as swimming. 
 
 Carry out swimming:
-	say "[if using the French 3PSPa Language option]Il n[']y avait pas assez d'eau pour nager dedans.[otherwise if using the French 3PSPr Language option]Il n[']y a pas assez d'eau pour nager dedans.[otherwise if using the French 1PSPa Language option]Il n[']y avait pas assez d'eau pour nager dedans.[otherwise if using the French 1PSPr Language option]Il n[']y a pas assez d'eau pour nager dedans.[otherwise]Il n[']y a pas assez d'eau pour nager dedans.[end if]".
+	say "[if the French 3PSPa Language option is active]Il n[']y avait pas assez d'eau pour nager dedans.[otherwise if the French 3PSPr Language option is active]Il n[']y a pas assez d'eau pour nager dedans.[otherwise if the French 1PSPa Language option is active]Il n[']y avait pas assez d'eau pour nager dedans.[otherwise if the French 1PSPr Language option is active]Il n[']y a pas assez d'eau pour nager dedans.[otherwise]Il n[']y a pas assez d'eau pour nager dedans.[end if]".
 
 
 Understand "fermer [something]" as closing.
@@ -1120,22 +1128,29 @@ Array LanguageNumbers table
     if (n<0)     { print "moins "; n=-n; }
     #Iftrue (WORDSIZE == 4);
     if (n >= 1000000000) {
-        if (f == 1) print ", ";
+        if (f == 1) print " ";
     	print (LanguageNumber) n/1000000000, " milliards"; n = n%1000000000; f = 1;
     }
     if (n >= 1000000) {
-        if (f == 1) print ", ";
+        if (f == 1) print " ";
     	print (LanguageNumber) n/1000000, " millions"; n = n%1000000; f = 1;
     }
 #Endif;
     if (n >= 1000) {
-        if (f == 1) print ", ";
-    	print (LanguageNumber) n/1000, " milles"; n = n%1000; f = 1;
+        if (f == 1) print " ";
+        if (n/1000 == 1) print "mille "; 
+        	else print (LanguageNumber) n/1000, " mille"; 
+        n = n%1000; f = 1;
     }
     if (n>=100)  { 
-        if (f==1) print ", ";
-        print (LanguageNumber) n/100, " cents"; n=n%100; f=1; 
+        if (f == 1) print " ";
+        if (n/100 == 1) print " "; 
+        	else print (LanguageNumber) n/100;
+        	if (n%100 ~= 0) print " cent "; 
+        		else print " cents";
+        n=n%100; f = 1; 
     }
+! TODO : améliorer cette partie.
 
     if (n==0) rfalse;
     switch(n)
@@ -1716,6 +1731,7 @@ Constant THOSET__TX   = "ces choses-là";
 Constant THAT__TX     = "cela";
 Constant OR__TX       = " ou ";
 Constant NOTHING__TX  = "rien";
+Constant NOTHING2__TX    = "Rien"; 
 
 Global IS__TX       = "est ";   ! utilisés par WriteListFrom
 Global ARE__TX      = "sont ";  ! 
@@ -1767,6 +1783,7 @@ Constant THOSET__TX   = "ces choses-là";
 Constant THAT__TX     = "cela";
 Constant OR__TX       = " ou ";
 Constant NOTHING__TX  = "rien";
+Constant NOTHING2__TX    = "Rien"; 
 
 Global IS__TX       = "était ";   ! utilisés par WriteListFrom
 Global ARE__TX      = "étaient ";  ! 
@@ -1823,6 +1840,7 @@ Constant THOSET__TX   = "ces choses-là";
 Constant THAT__TX     = "ça";
 Constant OR__TX       = " ou ";
 Constant NOTHING__TX  = "rien";
+Constant NOTHING2__TX    = "Rien"; 
 
 Global IS__TX       = "était ";   ! utilisés par WriteListFrom
 Global ARE__TX      = "étaient ";  ! 
@@ -1886,6 +1904,7 @@ Constant THOSET__TX   = "ces choses-là";
 Constant THAT__TX     = "ça";
 Constant OR__TX       = " ou ";
 Constant NOTHING__TX  = "rien";
+Constant NOTHING2__TX    = "Rien"; 
 
 Global IS__TX       = "est ";   ! utilisés par WriteListFrom
 Global ARE__TX      = "sont ";  ! 
@@ -1947,6 +1966,7 @@ Constant THOSET__TX   = "ces choses-là";
 Constant THAT__TX     = "cela";
 Constant OR__TX       = " ou ";
 Constant NOTHING__TX  = "rien";
+Constant NOTHING2__TX    = "Rien"; 
 
 Global IS__TX       = "est ";   ! utilisés par WriteListFrom
 Global ARE__TX      = "sont ";  ! 
@@ -2476,12 +2496,16 @@ Burn:           "Je n'ai pas d'intérêt à brûler ceci.";
                7: if (x1 has supporter) "(montant sur ", (the) x1, ")^";
                   if (x1 has container) "(entrant dans ", (the) x1, ")^";
                   "(entrant dans ", (the) x1, ")^";
+		8:	print (The) actor, " gets into ", (the) x1, ".^";
+        9:  print (The) actor, " gets onto ", (the) x1, ".^";
     }
   Examine: switch (n) {
                1: "L'obscurité m'enveloppe de son linceul impénétrable.";
                2: "Rien de particulier concernant ", (the) x1, ".";
                3: print (The) x1, " ", (isorare) x1, " actuellement ";
                   if (x1 has on) "allumé",(es) x1,"."; else "éteint",(es) x1,".";
+                  4:	print (The) actor, " looks closely at ", (the) x1, ".^";  
+               5:  "En dépit de mes efforts, je ne vois rien de particulier dans cette direction.";
     }
   Exit: switch (n) {
               1: "Nulle sortie n'existe ici. ";
@@ -2513,6 +2537,13 @@ Burn:           "Je n'ai pas d'intérêt à brûler ceci.";
 	             print " n'ont pas l'air intéressé";
                   else print " n'a pas l'air intéressé";
                   ".";
+        4:  print (The) x1;
+            if (x1 has pluralname) print " aren't";
+            else print " isn't";
+            " able to receive things.";
+		5:	"You give ", (the) x1, " to ", (the) second, ".";
+		6: print (The) actor, " gives ", (the) x1, " to you.^";
+		7: print (The) actor, " gives ", (the) x1, " to ", (the) second, ".^";
     }
   Go: switch (n) {
                1: print "Je dois d'abord ";
@@ -2527,6 +2558,7 @@ Burn:           "Je n'ai pas d'intérêt à brûler ceci.";
                   if (x1 has pluralname) " ne mènent nulle part.";
                   " ne mène nulle part.";
                 7:	"Vous devez dire quelle direction aller."; ! You'll have to say which compass direction to go in
+                ! TODO le reste
 		8:	print (The) actor, " goes up";
 		9:	print (The) actor, " goes down";
 		10:	print (The) actor, " goes ", (name) x1;
@@ -2547,7 +2579,7 @@ Burn:           "Je n'ai pas d'intérêt à brûler ceci.";
 		25:	print ", pushing ", (the) x1, " in";
 		26:	print ", taking you along";
 		27: print "(first getting off ", (the) x1, ")^"; say__p = 0; return;
-		28: print "(first opening ", (the) x1, ")^"; say__p = 0; return;
+                28: print "(ouvrant tout d'abord ", (the) x1, ")^"; say__p = 0; return;
     }
   Insert: switch (n) {
                1: "Il me faut tenir ", (the) x1,
@@ -2634,7 +2666,7 @@ Burn:           "Je n'ai pas d'intérêt à brûler ceci.";
             WriteListFrom(child(x1),
               ENGLISH_BIT+RECURSE_BIT+PARTINV_BIT+TERSE_BIT+CONCEAL_BIT+WORKFLAG_BIT);
             ".";
-        7:  "En dépit de mes efforts, je ne vois rien de particulier dans cette direction.";
+        7:  "En dépit de mes efforts, je ne vois rien de particulier dans cette direction."; ! normalement obsolète
     }
   LookUnder: switch (n) {
                1: "Impossible, le noir absolu empêchant toute tentative en ce sens. ";
@@ -3094,6 +3126,8 @@ Burn:           "Je n'avais pas d'intérêt à brûler ceci.";
                2: "Rien de particulier concernant ", (the) x1, ".";
                3: print (The) x1, " ", (isorare) x1, " alors ";
                   if (x1 has on) "allumé",(es) x1,"."; else "éteint",(es) x1,".";
+               4:	print (The) actor, " looks closely at ", (the) x1, ".^";  
+               5:  "En dépit de mes efforts, je ne voyais rien de particulier dans cette direction.";
     }
   Exit: switch (n) {
               1: "Nulle sortie n'existait. ";
@@ -3709,6 +3743,8 @@ Tie:  "Cette idée incongrue me désespéra. ";
                2: "Rien de particulier concernant ", (the) x1, ".";
                3: print (The) x1, " ", (isorare) x1, " alors ";
                   if (x1 has on) "allumé",(es) x1,"."; else "éteint",(es) x1,".";
+                  4:	print (The) actor, " looks closely at ", (the) x1, ".^";  
+               5:  "En dépit de ses efforts, il ne voyait rien de particulier dans cette direction.";
     }
   Exit: switch (n) {
               1: "Sortir d'où ?!";
@@ -4301,6 +4337,8 @@ Tie:  "Cette idée incongrue me désespéra. ";
                2: "Rien de particulier concernant ", (the) x1, ".";
                3: print (The) x1, " ", (isorare) x1, " alors ";
                   if (x1 has on) "allumé",(es) x1,"."; else "éteint",(es) x1,".";
+                  4:	print (The) actor, " looks closely at ", (the) x1, ".^";  
+               5:  "En dépit de ses efforts, il ne voit rien de particulier dans cette direction.";
     }
   Exit: switch (n) {
               1: "Sortir d'où ?!";
@@ -4894,6 +4932,8 @@ Tie:  "Cette idée incongrue me désespéra. ";
         2:  "Rien de particulier concernant ", (the) x1, ".";
         3:  print (The) x1, " ", (isorare) x1, " actuellement ";
             if (x1 has on) "allumé",(es) x1,"."; else "éteint",(es) x1,".";
+            4:	print (The) actor, " looks closely at ", (the) x1, ".^";  
+               5:  "En dépit de vos efforts, vous ne voyez rien de particulier dans cette direction.";
     }
     Exit: switch (n) {
         1:  "Sortir d'où ?!";
@@ -5030,7 +5070,7 @@ Tie:  "Cette idée incongrue me désespéra. ";
     }
     LookUnder: switch (n) {
         1:  "Mais il fait noir !";
-        2:  "Ces recherches furent vaines.";
+        2:  "Ces recherches sont vaines.";
         !Cette action n'aboutit à aucune découverte notable.
     }
     Mild:           "Assez.";
@@ -5401,7 +5441,7 @@ Constant LIBRARY_FRENCH;       ! for dependency checking.
 French ends here.
 
 
----- Documentation ----
+---- DOCUMENTATION ----
 
 Inform 7 permet de changer facilement de système de langue comme c'était le cas auparavant avec Inform 6.
 
@@ -5578,7 +5618,7 @@ Example: * Le Roi de Fihnargaia - Un petit exemple de jeu en français.
 				now roi des nains is distracted;
 				now reine des nains is distracted;
 				say "[line break]Le couple royal est très satisfait, la prochaine fête sera une réussite, à n[']en pas douter !";
-				end the game in victory;
+				end the story saying "Vous avez gagné";
 				stop the action;
 			otherwise;
 				continue the action;

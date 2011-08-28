@@ -1,9 +1,10 @@
-Version 13/110320 of Smarter Parser by Aaron Reed begins here.
+Version 14/110802 of Smarter Parser by Aaron Reed begins here.
 
 "Understands a broader range of input than the standard parser, and can direct new players towards proper syntax."
 
 [
 CHANGES:
+ -- Version 14: Added more enthusiastic blank line replacement code that allows for any command to run with time passing as normal. Tweaks to make the unnecessary movement rule more clear and specific; added code so item examples can choose the player's noun even without parsing; removed most references to "compass directions" in deference to down, out etc; clarified text of generic surroundings rule.
  -- Version 13: Added a new final rule to restore the command to its original state, to prevent later rules from looking at modified command text; fixed bug in Stripping Niceties; adjusted stripping interjections.
  -- Version 12: Updated for compatibility with Player Experience Upgrade.
  -- Version 11: Significant update based on statistical analysis of several hundred newbie transcripts. Now supports converting a blank line to look, and understanding a noun alone as examining. Also added sections for "Where can I go?", "Failed communication attempts", "Unnecessary possessives", "Gerunds". Added and refined patterns and message text throughout. 
@@ -185,13 +186,25 @@ Definition: a thing is bestial if it is an animal.
 To say get noun example:
 	let fake_example be false;
 	let noun_example be indexed text;
-	if the number of visible appropriate for taking things which are not enclosed by the player > 0:
-		now noun_example is "[random visible appropriate for taking things which are not enclosed by the player]";
-	otherwise if the number of visible things which are not sp_alive > 0:
-		now noun_example is "[random visible thing which is not sp_alive]";
-	otherwise:
-		now noun_example is "flower";
-		now fake_example is true;
+	[Check to see if the player tried to reference something nearby]
+	let candidate be indexed text;
+	let first misunderstood word be indexed text;
+	now first misunderstood word is word number ( the number of words in the rejected command ) in the rejected command;
+	repeat with item running through things enclosed by location:
+		if item is visible:
+			now candidate is printed name of item in lower case;
+			repeat with wordcounter running from 1 to the number of words in candidate:
+				if word number wordcounter in candidate matches the regular expression "\b[first misunderstood word]":
+					now noun_example is the printed name of item;
+	if noun_example is empty:
+		[Otherwise, choose the most sensible example possible.]
+		if the number of visible appropriate for taking things which are not enclosed by the player > 0:
+			now noun_example is "[random visible appropriate for taking things which are not enclosed by the player]";
+		otherwise if the number of visible things which are not sp_alive > 0:
+			now noun_example is "[random visible thing which is not sp_alive]";
+		otherwise:
+			now noun_example is "flower";
+			now fake_example is true;
 	say "[noun_example in upper case][if fake_example is true] (if one were here)".
 
 To get person example, in normal case:
@@ -272,11 +285,146 @@ Carry out parser-debugging:
 
 Chapter - The Rules
 
-Section - Nothing Entered
-
-[Because blank lines are handled differently than all other kinds of parser errors (see the "Keyboard" routine in Parser.i6t), it's impossible to intervene other than through intercepting the library message (or replacing the whole Keyboard routine, something I'm loathe to do at the risk of reducing compatibility with other extensions). Unfortunately, only the action runs; the regular turn sequence rules do not, which means time will not advance, and if the story contains random events or helpful messages designed to encourage timid players, they will not be seen. I initially thought fiddling with the value of the "meta" variable could address this, but apparently it doesn't. Suggestions on fixing this are welcome.]
+[Because blank lines are handled differently than all other kinds of parser errors (see the "Keyboard" routine in Parser.i6t), it's impossible to intervene other than through intercepting the library message, which creates problems because the parser is in an unusual state at this point, or replace the whole Keyboard routine, which might create compatibility issues with other extensions. Both solutions are offered here.]
 
 Use normal blank lines translates as (- Constant USE_NORMAL_BLANK_LINES; -).
+		
+Section - Nothing Entered Advanced Version
+
+Include (- [ Keyboard  a_buffer a_table  nw i w w2 x1 x2;
+	sline1 = score; sline2 = turns;
+
+	while (true) {
+		! Save the start of the buffer, in case "oops" needs to restore it
+		for (i=0 : i<64 : i++) oops_workspace->i = a_buffer->i;
+	
+		! In case of an array entry corruption that shouldn't happen, but would be
+		! disastrous if it did:
+		#Ifdef TARGET_ZCODE;
+		a_buffer->0 = INPUT_BUFFER_LEN;
+		a_table->0 = 15;  ! Allow to split input into this many words
+		#Endif; ! TARGET_
+	
+		! Print the prompt, and read in the words and dictionary addresses
+		PrintPrompt();
+		DrawStatusLine();
+		KeyboardPrimitive(a_buffer, a_table);
+	
+		! Set nw to the number of words
+		#Ifdef TARGET_ZCODE; nw = a_table->1; #Ifnot; nw = a_table-->0; #Endif;
+	
+		! If the line was blank, get a fresh line
+		!if (nw == 0) {
+		!	@push etype; etype = BLANKLINE_PE;
+		!	players_command = 100;
+		!	BeginActivity(PRINTING_A_PARSER_ERROR_ACT);
+		!	if (ForActivity(PRINTING_A_PARSER_ERROR_ACT) == false) L__M(##Miscellany,10);
+		!	EndActivity(PRINTING_A_PARSER_ERROR_ACT);
+		!	@pull etype;
+		!	continue;
+		!}
+	
+		! Unless the opening word was OOPS, return
+		! Conveniently, a_table-->1 is the first word on both the Z-machine and Glulx
+	
+		w = a_table-->1;
+		if (w == OOPS1__WD or OOPS2__WD or OOPS3__WD) {
+			if (oops_from == 0) { L__M(##Miscellany, 14); continue; }
+			if (nw == 1) { L__M(##Miscellany, 15); continue; }
+			if (nw > 2) { L__M(##Miscellany, 16); continue; }
+		
+			! So now we know: there was a previous mistake, and the player has
+			! attempted to correct a single word of it.
+		
+			for (i=0 : i<INPUT_BUFFER_LEN : i++) buffer2->i = a_buffer->i;
+			#Ifdef TARGET_ZCODE;
+			x1 = a_table->9;  ! Start of word following "oops"
+			x2 = a_table->8;  ! Length of word following "oops"
+			#Ifnot; ! TARGET_GLULX
+			x1 = a_table-->6; ! Start of word following "oops"
+			x2 = a_table-->5; ! Length of word following "oops"
+			#Endif; ! TARGET_
+		
+			! Repair the buffer to the text that was in it before the "oops"
+			! was typed:
+			for (i=0 : i<64 : i++) a_buffer->i = oops_workspace->i;
+			VM_Tokenise(a_buffer,a_table);
+		
+			! Work out the position in the buffer of the word to be corrected:
+			#Ifdef TARGET_ZCODE;
+			w = a_table->(4*oops_from + 1); ! Start of word to go
+			w2 = a_table->(4*oops_from);    ! Length of word to go
+			#Ifnot; ! TARGET_GLULX
+			w = a_table-->(3*oops_from);      ! Start of word to go
+			w2 = a_table-->(3*oops_from - 1); ! Length of word to go
+			#Endif; ! TARGET_
+		
+			! Write spaces over the word to be corrected:
+			for (i=0 : i<w2 : i++) a_buffer->(i+w) = ' ';
+		
+			if (w2 < x2) {
+				! If the replacement is longer than the original, move up...
+				for (i=INPUT_BUFFER_LEN-1 : i>=w+x2 : i-- )
+					a_buffer->i = a_buffer->(i-x2+w2);
+
+				! ...increasing buffer size accordingly.
+				#Ifdef TARGET_ZCODE;
+				a_buffer->1 = (a_buffer->1) + (x2-w2);
+				#Ifnot; ! TARGET_GLULX
+				a_buffer-->0 = (a_buffer-->0) + (x2-w2);
+				#Endif; ! TARGET_
+			}
+		
+			! Write the correction in:
+			for (i=0 : i<x2 : i++) a_buffer->(i+w) = buffer2->(i+x1);
+		
+			VM_Tokenise(a_buffer, a_table);
+			#Ifdef TARGET_ZCODE; nw = a_table->1; #Ifnot; nw = a_table-->0; #Endif;
+		
+			return nw;
+		}
+
+		! Undo handling
+	
+		if ((w == UNDO1__WD or UNDO2__WD or UNDO3__WD) && (nw==1)) {
+			Perform_Undo();
+			continue;
+		}
+		i = VM_Save_Undo();
+		#ifdef PREVENT_UNDO; undo_flag = 0; #endif;
+		#ifndef PREVENT_UNDO; undo_flag = 2; #endif;
+		if (i == -1) undo_flag = 0;
+		if (i == 0) undo_flag = 1;
+		if (i == 2) {
+			VM_RestoreWindowColours();
+			VM_Style(SUBHEADER_VMSTY);
+			SL_Location(); print "^";
+			! print (name) location, "^";
+			VM_Style(NORMAL_VMSTY);
+			L__M(##Miscellany, 13);
+			continue;
+		}
+		return nw;
+	}
+]; -) instead of "Reading the Command" in "Parser.i6t".
+
+The blank line replacement is an indexed text variable.
+The blank line replacement is usually "look".
+
+After reading a command (this is the Smarter Parser advanced replace blank line rule):
+	let T be indexed text;
+	now T is the player's command;
+	if T is "":
+		if the normal blank lines option is inactive:
+			say ">[blank line replacement in upper case][command clarification break]";
+			change the text of the player's command to the blank line replacement;
+		otherwise:
+			issue miscellaneous library message number 10; ["I beg your pardon?"]
+			stop the action.
+
+Section - Nothing Entered - Fallback Version
+
+[Normally this will never be reached, but if the prior section is commented out, then things will fall through to this less intrusive implementation.]
 
 Rule for printing a parser error when the latest parser error is the I beg your pardon error (this is the do something useful with blank lines rule):
 	identify error as do something useful with blank lines rule;
@@ -414,7 +562,7 @@ A smarter parser rule when sp_normal (this is the signs of confusion rule):
 
 Table of Smarter Parser Messages (continued)
 rule name		message
-signs of confusion rule		"[as the parser]Try typing LOOK for a description of your surroundings. Any compass directions indicate exits which you can use by typing [get direction example]. Some of the objects mentioned in the description might be worth a closer look with a command like EXAMINE [get noun example]. You can also TAKE or DROP some things, type INVENTORY to see a list of what you're carrying already, OPEN or CLOSE containers or doors, and so on.[as normal]"
+signs of confusion rule		"[as the parser]Try typing LOOK for a description of your surroundings. Any directions indicate exits which you can use by typing [get direction example]. Some of the objects mentioned in the description might be worth a closer look with a command like EXAMINE [get noun example]. You can also TAKE or DROP some things, type INVENTORY to see a list of what you're carrying already, OPEN or CLOSE containers or doors, and so on.[as normal]"
 
 
 Section - Stripping Niceties
@@ -541,7 +689,7 @@ A smarter parser rule when sp_normal (this is the stripping adverbs rule):
 
 Table of Smarter Parser Messages (continued)
 rule name	message
-stripping adverbs rule	"[as the parser]I didn't understand that. You used a word that ends in 'ly'; if it was an adverb like 'slowly' or 'carefully,' you don't usually need to type those in IF.[as normal]"
+stripping adverbs rule	"[as the parser]I didn't understand that. You used a word that ends in 'ly'; if it was an adverb like 'slowly' or 'carefully,' you don't usually need to be that specific.[as normal]"
 
 
 
@@ -602,7 +750,7 @@ A smarter parser rule when sp_normal (this is the unnecessary movement rule):
 
 Table of Smarter Parser Messages (continued)
 rule name		message
-unnecessary movement rule		"[as the parser]Most IF separates space into a series of locations, each containing a set of objects. If you can see an object, you can usually interact with it without worrying about positioning. [if player is enclosed by something](Since you're in or on something, you may need to type EXIT first.) [end if]Try a command like EXAMINE [get noun example] for a closer look, LOOK to get a new description of this location, or a compass direction like [get direction example] to move to a different location.[as normal]"
+unnecessary movement rule		"[as the parser]If you can see an object, you can usually just interact with it directly without worrying about your position[if player is enclosed by something] (although since you're in or on something, you may need to type EXIT first)[end if]. Try a command like EXAMINE [get noun example] for a closer look at something[if the number of sp_viable directions is at least 1], LOOK to get a new description of this location, or a direction like [get direction example] to move to a different location[otherwise], or LOOK to show the description of this location again.[as normal]"
 
 
 Section - Stripping Vague Words
@@ -672,14 +820,14 @@ A smarter parser rule when sp_normal (this is the generic surroundings rule):
 
 Table of Smarter Parser Messages (continued)
 rule name		message
-generic surroundings rule		"[as the parser]Look for specific nouns or directions in the description you see after typing LOOK; avoid general concepts like the floor and ceiling, or relative directions like left and right.[as normal]"
+generic surroundings rule		"[as the parser]Unless specifically mentioned by the text, avoid general concepts like the floor and ceiling, or relative directions like left and right. Try typing LOOK and then using verbs like TAKE or EXAMINE on the things you see mentioned.[as normal]"
 
 
 
 Section - Stripping Body Parts
 
 [can successfully parse things like "take Phil's arm" or "hit Phil with my hand," and at least prints a recognition of the body part word otherwise. ]
-
+[BUG: >BOB'S FACE reparses to EXAMINE BOB, but the response is on the same line...]
 
 A smarter parser rule when sp_normal (this is the stripping body parts rule):
 	replace the regular expression "\b(eye|head|skull|hair|nose|mouth|ear|cheek|forehead)s?\b" in reborn command with "_body";
@@ -867,9 +1015,17 @@ Here is the default rule set, in order, along with an example of the type of mal
 
 Section: Dealing with Blank Lines
 
-One of the most common forms of new player input, an empty command (just pressing enter at the prompt) normally results in the message "I beg your pardon?" Smarter Parser treats a blank line as if the player had typed LOOK, instead. You can remove this behavior with:
+One of the most common forms of new player input, an empty command (just pressing enter at the prompt) normally results in the message "I beg your pardon?" Smarter Parser treats a blank line as if the player had typed LOOK, instead (under the theory that a player just pressing enter may be at a loss for what to try next, and a fresh room description might refocus them). You can change what text is inserted when a blank line is entered:
+
+	The blank line replacement is "wait".
+
+...or restore the default behavior:
 
 	Use normal blank lines.
+
+(Note that this functionality requires the replacement of the Keyboard routine, which may create compatibility issues with other extensions that replace this routine (such as Undo Output Control by Erik Temple). If you don't want to replace Keyboard, you can fall back on a simpler implementation that will always LOOK, although without the passage of time or firing of every turn rules. To do so simply replace the section with an empty block, like this:)
+
+	Section - revert to simple blank lines (in place of Section - Nothing Entered Advanced Version in Smarter Parser by Aaron Reed)
 
 Section: Reparsing
 
@@ -900,7 +1056,7 @@ The error message for a smarter parser rule can be changed by amending the Table
 	rule name						message
 	the stripping niceties rule		"Your fawning attitude sickens me."
 
-These messages can make use of the phrases [get noun example], to print the name of a visible thing, [get direction example] to print a direction that can be moved in, or [get person example] for a nearby person. All three will print hypothetical backups if no actual match can be found. 
+These messages can make use of the phrases "[get noun example]", to print the name of a visible thing, "[get direction example]" to print a direction that can be moved in, or "[get person example]" for a nearby person. All three will print hypothetical backups if no actual match can be found. 
 
 If you don't like a rule, you can get rid of it with standard rule ordering syntax:
 

@@ -1,4 +1,4 @@
-Version 2/101113 of Undo Output Control by Erik Temple begins here.
+Version 3/110717 of Undo Output Control by Erik Temple begins here.
 
 "In addition to allowing control over UNDO default messages, provides hooks into UNDO processing, including multiple ways to suspend UNDO temporarily, to place limitations on UNDO (such as allowing only one UNDO in a row), and to control when the game state is saved. Using the latter, we can effectively control which turn UNDO returns us to."
 
@@ -428,22 +428,6 @@ Include (-
 -) instead of "Perform Undo" in "OutOfWorld.i6t".
 
 
-Section - End of game undo
-
-Include (-
-
-[ IMMEDIATELY_UNDO_R;
-	if (not_yet_in_play == false) turns++;
-	if (FollowRulebook( (+ before undoing an action rules +) ) && ~~RulebookFailed())
- {
-		Perform_Undo();
-	}
-	if (not_yet_in_play == false) turns--;
-];
-
--) instead of "Immediately Undo Rule" in "OrderOfPlay.i6t".
-
-
 Section - Undo save control
 
 Include (-
@@ -554,6 +538,17 @@ By default, these rules print the message "That action cannot be undone."
 Be warned that if the player types UNDO immediately after you have reinstated it, there may be unexpected behavior, as the game can revert to the suspended state, but in such a way that the report attempt to undo-while-disabled rules do not fire.
 
 
+Section - Removing the option to UNDO at the end of the game
+
+Note that the "before undoing an action rule" is NOT consulted after the game has finished, so we will not be able to use it to block UNDO at that point. Instead, we should simply remove UNDO from the list of options that are presented at the end of the game ("Would you like to RESTART, RESTORE a saved game, QUIT or UNDO the last command?"). We can do so by removing it from the Table of Final Question Options, like this:
+
+	When play begins:
+		choose row with a final response rule of immediately undo rule in the Table of Final Question Options; 
+		delete the final question wording entry.
+
+This can be done conditionally if needed. We just need to delete the table row before the command to end the game.
+
+
 Section - Temporary suspension of game state saving
 
 Each turn, after the player has entered a command but before the command is parsed, Inform saves the state of the game into memory. This is the saved state to which the next UNDO command will revert. We can stop the game from saving the undo state, if desired. Once we've disabled saving, an UNDO typed later will revert back to the last saved state. If there are no saved undo states available, a message will print ("You cannot undo any further" by default).
@@ -596,6 +591,8 @@ The word must be placed within single quotes, and only a single word can be matc
 
 Section - Change log
 
+	v3 - Removed unnecessary check of the "before undoing an action" rulebook at the end of the game. This caused an UNDO typed at the end of the game to fail silently.
+
 	v2 - Added suspension of game state saving and the Breaking Glass and Purgatory examples. Also added the ability to change word constants. Fixed minor bug in operation of undo suspension.
 
 	v1 - Initial release.
@@ -622,7 +619,7 @@ Example: * Mynah Undo - Presents report rules that reproduce Inform's default ou
 		rule succeeds.
 		
 	Report nothing to be undone failure:
-		say "[bracket]You can't [quotation mark]undo[quotation mark] what hasn’t been done![close bracket][line break]";
+		say "[bracket]You can't [quotation mark]undo[quotation mark] what hasn't been done![close bracket][line break]";
 		rule succeeds.
 		
 	
@@ -642,7 +639,7 @@ Example: * Mynah Undo - Presents report rules that reproduce Inform's default ou
 
 Example: ** I Love the Sound of Breaking Glass - This example shows how to rework the output for UNDO using "report undoing an action", as well as how to limit both the total number of UNDOs available and the number of consecutive UNDOs allowed.
 
-Limiting the total number of UNDOs available is simple. After undoing an action, we decrease the number of UNDOs available. Before undoing an action, we check to see whether there are an UNDOs left. However, this method will only work if the player is limited to one UNDO in a row—otherwise, the game state will be turned back another turn and Inform will "forget" that it had decremented the count. (One solution to this for Glulx games might be to write the number of UNDOs available to an external file, where the value can be tracked independently of the game state.)
+Limiting the total number of UNDOs available is simple. After undoing an action, we decrease the number of UNDOs available. Before undoing an action, we check to see whether there are any UNDOs left. However, this method will only work if the player is limited to one UNDO in a row� otherwise, the game state will be turned back another turn and Inform will "forget" that it had decremented the count. (One solution to this for Glulx games might be to write the number of UNDOs available to an external file, where the value can be tracked independently of the game state.)
 
 To limit the player to taking back just one turn, we use a global variable, "current turn undone". We set this variable to true in the "after undoing an action" rules, and then, if the player tries another UNDO, we can stop it with a "before undoing an action when current turn undone is true" rule. In the every turn rules, which run at the end of a normal turn, we reset the current turn undone variable to false, allowing the player to UNDO once again.
 
@@ -708,7 +705,7 @@ Note that Inform saves the game state even for out-of-world actions, so if the p
 
 
 
-Example: ** Purgatory - Illustrates how to suspend and reinstate the saving of undo states. The player is presented with a bottle of poison. If she drinks it, she will die in a certain number of turns. We suspend saving of the undo state on the drinking of the bottle, though, so that the player need type UNDO only once to return to the turn before drinking the poison, no matter how many turns have passed since.
+Example: ** Purgatory - Illustrates how to suspend and reinstate the saving of undo states. The player is presented with a bottle of poison. If she drinks it, she will die within a certain number of turns. We suspend saving of the undo state on the drinking of the bottle, though, so that the player need type UNDO only once to return to the turn before drinking the poison, no matter how many turns have passed since.
 
 Note that we warn the player before allowing her to save during this purgatorial period--restoring the game would discard the saved undo state and effectively doom the PC to death.
 
@@ -727,7 +724,7 @@ Note that we warn the player before allowing her to save during this purgatorial
 		say "[one of]Your cheeks burn[or]Your teeth hurt[or]Your belly twists[or]Your vision fades[the end][stopping]."
 	
 	To say the end:
-		end the game in death.
+		end the story saying "You have died".
 	
 	Before undoing an action when save undo state is false:
 		say "[bracket]Attempting to undo to the moment just before you drank the poison.[close bracket][paragraph break]";

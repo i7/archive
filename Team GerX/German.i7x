@@ -1,10 +1,11 @@
-Version 3/110303 of German by Team GerX begins here.
+Version 3/110621 of German by Team GerX begins here.
 
 "GerX: An extension to make German the language of play, written by Banbury,
 Christian Blümke and Michael Baltes. Designed for I7 releases 6G60 and 6F95."
 
 "based on deform release 6/11 by Martin Oehm"
 
+[v3.29]
 
 Part - I7 additions and replacements
 
@@ -16,6 +17,14 @@ Wert von 16000 der Standard ist.]
 
 Use MAX_LINESPACE of 16000.
 
+
+Section - Activities
+
+Translating a command into Informese is an activity. [32] [09.06.2011]
+
+Include (-
+Constant LANGUAGE_TO_INFORMESE_ACT = (+ translating a command into Informese +);
+-) after "Definitions.i6t".
 
 Section - Use options
 
@@ -51,6 +60,9 @@ Use init property translates as (- Constant DEFORM_INIT_PROPERTY; -).
 
 Use skip libcheck translates as (- Constant SKIP_LIBCHECK; -).
 
+Use in-scope pronoun notice translates as (- Constant IN_SCOPE_PRONOUN_NOTICE; -).
+Use room-related pronoun notice translates as (- Constant ROOMS_PRONOUN_NOTICE; -).
+
 
 Section - Values - The four German cases
 
@@ -71,6 +83,8 @@ To change case to (C - a case)
 	(deprecated)
 	(assignment operation):
 	(- short_name_case = {C}-1; -).
+	
+To set the/-- current case to (C - a case): (- short_name_case = {C}-1; -).
 
 To decide which case is the current case: (- (short_name_case + 1) -).
 
@@ -147,7 +161,7 @@ To write the/-- inventory sublists: (- WriteSublists(4,1); -).
 
 Section - Grammar - Setting suffixes and article mode
 
-To set (AM - an article mode) suffixes from (O - an object) with (C - a case):
+To set the/-- (AM - an article mode) suffixes from (O - an object) with (C - a case):
 	(- indef_mode = {AM} - 2; SetLowStrings({C}-1, Gender({O})); -).
 
 To set the/-- current article mode to (AM - an article mode):
@@ -162,7 +176,7 @@ Section - Grammar - Pronominal adverbs
 The current pronominal adverb is a pronominal adverb.
 To decide what pronominal adverb is the current pronominal adverb: (- pronominal_adverb_flag -).]
 
-To decide whether the/a noun has been supplied by a pronominal adverb: (- (pronominal_adverb_flag) -).
+To decide whether the/a/-- noun has been supplied by a pronominal adverb: (- (pronominal_adverb_flag) -).
 To reset the/-- pronominal adverb: (- pronominal_adverb_flag = false; -).
 
 
@@ -240,7 +254,7 @@ A direction has a direction called an opposite.
 
 Include (-
     with special_article definite, ! *** (09.11.2010): Um den indefinite article "the"
-                                   !     zu "berschreiben", den jede Richtung bekommt.
+                                   !     zu überschreiben", den jede Richtung bekommt.
 	has scenery, ! class CompassDirection,
 -) when defining a direction.
 
@@ -325,6 +339,31 @@ The printed name of inside is "drinnen". Inside is proper-named and neuter.
 
 Understand "raus" or "draussen" as outside.
 The printed name of outside is "drau[ß]en". Outside is proper-named and neuter.
+
+[(12.05.2011) Um in LanguageIsVerb() Richtungen sinnvoll ausgeben zu können,
+zieht IsDirectionVerb() nun zusätzlich diese Tabelle heran, da die Synonyme nicht
+mehr wie in I6 in der name-Property definiert werden.]
+
+Include (-
+Array LanguageDirectionWords table
+!-----------------------------------------------------------------------
+! I7-Richtung   Vokabular                                 Zeilenende = 0
+!-----------------------------------------------------------------------
+(+ north +)     'n//'  'norden'                                        0 
+(+ northeast +) 'ne'   'nordosten'  'no'                               0
+(+ northwest +) 'nw'   'nordwesten'                                    0
+(+ south +)     's//'  'sueden'                                        0
+(+ southeast +) 'se'   'suedosten'  'so'                               0
+(+ southwest +) 'sw'   'suedwesten'                                    0
+(+ east +)      'e//'  'osten'      'o//'                              0
+(+ west +)      'w//'  'westen'                                        0
+(+ up +)        'u//'  'hoch'       'h//' 'rauf'     'hinauf' 'oben'   0
+(+ down +)      'd//'  'runter'     'r//' 'hinunter' 'unten'           0
+(+ inside +)    'rein' 'drinnen'                                       0
+(+ outside +)   'raus' 'draussen'                                      0
+!-----------------------------------------------------------------------
+;
+-) after "Definitions.i6t".
 
 
 Section - Remove most of the English commands
@@ -548,7 +587,6 @@ The Understand token dagegen translates into I6 as "PREP_DAGEGEN_TOKEN".
 
 The Understand token noun hinein translates into I6 as "NOUN_HINEIN_TOKEN".
 The Understand token noun heraus translates into I6 as "NOUN_HERAUS_TOKEN".
-The Understand token noun damit translates into I6 as "NOUN_DAMIT_TOKEN".
 The Understand token noun darauf translates into I6 as "NOUN_DARAUF_TOKEN".
 The Understand token noun darunter translates into I6 as "NOUN_DARUNTER_TOKEN".
 The Understand token noun dahinter translates into I6 as "NOUN_DAHINTER_TOKEN".
@@ -572,11 +610,6 @@ The Understand token implicit up translates into I6 as "IMPLICIT_UP_TOKEN".
 
 
 Section - German commands
-
-[Vor einem Dativ-Token führt die durch Schrägstrich gruppierte Schreibweise
-von Präpositionen ("unter/hinter") zu fehlerhaften Nachfragen des Parsers.
-Deshalb empfiehlt es sich, Satzmuster mit Präpositionen vor einem Dativ-Token
-einzeln anzugeben.]
 
 Understand "punkte" as requesting the score.
 Understand the command "punktestand" and "score" as "punkte".
@@ -607,37 +640,31 @@ Understand the commands "script", "transkript", "transcript", "protokoll" and "m
 Understand "superknapp", "superkurz", "super knapp/kurz" or "sehr knapp/kurz" or "immer knapp/kurz" as preferring abbreviated room descriptions.
 Understand "ausfuehrlich" or "lang" as preferring unabbreviated room descriptions.
 Understand "knapp" or "kurz" as preferring sometimes abbreviated room descriptions.
-Understand "pronomen" or "pronomina" or "fuerwoert" as requesting the pronoun meanings.
+Understand "pronomen", "pronomina", "fuerwoerter" or "fuerwort" as requesting the pronoun meanings.
 
 Understand "nimm [things]" as taking. [Damit NIMM ALLES sich richtig verhält.]
 Understand "nimm [dir] [things]" as taking.
 Understand "nimm [dir] [things] auf/mit" as taking.
 Understand "nimm [a worn thing] ab" as taking off.
 Understand "nimm [things] ab" as taking.
-Understand "nimm [dir] [things inside] aus [dativ] [something] [heraus]" as removing it from.
-Understand "nimm [dir] [things inside] in [dativ] [something] [heraus]" as removing it from.
-Understand "nimm [dir] [things inside] von [dativ] [something] [herunter]" as removing it from.
+Understand "nimm [dir] [things inside] aus/in/von [dativ] [something] [heraus]" as removing it from. [*]
 Understand "nimm [dir] [things inside] [noun heraus]" as removing it from.
 Understand "nimm [dir] [things inside] [noun herunter]" as removing it from.
-Understand "nimm [substantiv] platz auf [dativ] [something]" as entering.
-Understand "nimm auf [dativ] [something] [substantiv] platz" as entering.
-Understand "nimm [substantiv] platz in [dativ] [something]" as entering.
-Understand "nimm in [dativ] [something] [substantiv] platz" as entering.
+Understand "nimm [substantiv] platz auf/in [dativ] [something]" as entering. [*]
+Understand "nimm auf/in [dativ] [something] [substantiv] platz" as entering. [*]
 Understand the commands "nehm" and "hol" as "nimm".
 
-Understand "greif [dir] [things]" or "greif nach [dativ] [things]" as taking.
-Understand "greif [things inside] auf [dativ] [something]" as removing it from.
-Understand "greif [things inside] in [dativ] [something]" as removing it from.
-Understand "greif nach [dativ] [things inside] auf [dativ] [something]" as removing it from.
-Understand "greif nach [dativ] [things inside] in [dativ] [something]" as removing it from.
+Understand "greif [dir] [things]" as taking.
+Understand "greif nach [dativ] [things]" as taking.
+Understand "greif [things inside] auf/in [dativ] [something]" as removing it from. [*]
+Understand "greif nach [dativ] [things inside] auf/in [dativ] [something]" as removing it from. [*]
 Understand "greif [things inside] [noun heraus]" as removing it from.
 Understand "greif an [something] [daran]" as touching.
 Understand "greif [someone alive] an" as attacking.
 Understand "greif [something] an" as touching.
 Understand "greif [someone alive] mit [dativ] [something preferably held] an" as attacking it with.
 Understand "greif mit [dativ] [something preferably held] [someone] an" as attacking it with (with nouns reversed).
-Understand "greif [things inside] von [dativ] [something] [heraus]" as removing it from.
-Understand "greif [things inside] aus [dativ] [something] [heraus]" as removing it from.
+Understand "greif [things inside] aus/von [dativ] [something] [heraus]" as removing it from. [*]
 Understand the commands "fass" and "ergreif" as "greif".
 
 Understand "pack [things]" or "pack [things] ein" as taking.
@@ -654,14 +681,13 @@ Understand "heb [something] an/hoch" as looking under. [*** Hier heißt es in de
 Understand "trag [something preferably held]" as wearing.
 
 Understand "steh" or "steh auf" as exiting.
-Understand "steh auf von [dativ] [something]" as exiting from.
-Understand "steh auf aus [dativ] [something]" as exiting from.
-Understand "steh auf [dativ] [something] [darauf]" or "steh [noun darauf]" as entering.
+Understand "steh auf von/aus [dativ] [something]" as exiting from. [*]
+Understand "steh auf [dativ] [something] [darauf]" as entering.
+Understand "steh [noun darauf]" as entering.
 
 Understand "entfern [a worn thing]" as taking off.
 Understand "entfern [things]" as taking.
-Understand "entfern [things inside] von [dativ] [something]" as removing it from.
-Understand "entfern [things inside] aus [dativ] [something]" as removing it from.
+Understand "entfern [things inside] von/aus [dativ] [something]" as removing it from. [*]
 
 Understand "tu [dich] auf [something]" as entering.
 Understand "tu [dich] in [something]" as entering.
@@ -684,14 +710,11 @@ Understand "steck [something] an" as burning.
 
 [##Empty und ##EmptyT sind in I7 nicht mehr als Standard-Aktionen definiert.]
 
-Understand "lass [dich] auf [dativ] [something] nieder" as entering.
-Understand "lass [dich] in [dativ] [something] nieder" as entering.
+Understand "lass [dich] auf/in [dativ] [something] nieder" as entering. [*]
 Understand "lass [things preferably held]" as dropping.
 Understand "lass [things preferably held] fallen/liegen/hier/ab/aus/los" as dropping.
-Understand "lass [other things] in [dativ] [something]" as inserting it into.
-Understand "lass [other things] unter [dativ] [something]" as inserting it into.
-Understand "lass [other things] auf [dativ] [something]" as putting it on.
-Understand "lass [other things] ueber [dativ] [something]" as putting it on.
+Understand "lass [other things] in/unter [dativ] [something]" as inserting it into. [*]
+Understand "lass [other things] auf/ueber [dativ] [something]" as putting it on. [*]
 
 Understand "wirf [dich] auf [someone]" as attacking.
 Understand "wirf [dich] gegen [something]" as attacking.
@@ -732,7 +755,10 @@ Understand "zeig [something preferably held] [dativ] [someone] vor" as showing i
 Understand "zeig inventar/besitz/eigentum" as taking inventory.
 Understand the commands "praesentier" and "fuehr" as "zeig".
 
-Understand "geh" or "geh umher/weg/fort" as going.
+Understand "geh" or "geh umher" as going.
+Understand "geh weg/fort" as location-leaving.
+Understand "geh weg/fort von hier/da/dort" as location-leaving.
+Understand "geh weg/fort von [a room]" as location-leaving.
 Understand "geh in [something] [hinein]" as entering.
 Understand "geh durch [something] [hindurch]" as entering.
 Understand "geh ueber [something] [hinueber]" as entering.
@@ -747,10 +773,8 @@ Understand "geh rein/hinein/herein" as going into.
 Understand the commands "lauf", "renn", "wander", "fluecht", "flieh", "schreit", and "spazier" as "geh".
 
 Understand "verlass" as location-leaving.
-Understand "verlass [someone alive]" as vaguely going from.
+Understand "verlass [someone alive]" as location-leaving.
 Understand "verlass [something]" as exiting from.
-Understand "verlass ort/raum/platz/standort" as location-leaving.
-Understand "verlass den/dies ort/raum/platz/standort" as location-leaving.
 Understand "verlass [a room]" as location-leaving.
 
 Understand "mach [something] zu" as closing.
@@ -770,19 +794,18 @@ Understand the commands "i", "inv", "besitz" and "eigentum" as "inventar".
 Understand "schau" or "schau [dich] um" or "schau herum/umher" as looking.
 Understand "schau [something]" or "schau [dir] [something] an" as examining.
 Understand "schau nach [dativ] [direction]" as examining.
-Understand "schau in [dativ] [direction]" as examining.
+Understand "schau in [direction]" as examining.
 Understand "schau durch [something] [hindurch]" as searching.
 Understand "schau in [something] [hinein]" as searching.
 Understand "schau aus [something] [heraus]" as searching.
-Understand "schau in [dativ] [something] [nach]" as searching.
-Understand "schau auf [dativ] [something] [nach]" as searching.
-Understand "schau [noun hinein]" or "schau [noun hindurch]" as searching.
-Understand "schau [noun darunter] [nach]" or "schau [noun dahinter] [nach]" as looking under.
-Understand "schau unter [dativ] [something] [nach]" as looking under.
-Understand "schau hinter [dativ] [something] [nach]" as looking under.
+Understand "schau in/auf [dativ] [something] [nach]" as searching. [*]
+Understand "schau [noun hinein]" as searching.
+Understand "schau [noun hindurch]" as searching.
+Understand "schau [noun darunter] [nach]" as looking under.
+Understand "schau [noun dahinter] [nach]" as looking under.
+Understand "schau unter/hinter [dativ] [something] [nach]" as looking under. [*]
 Understand "schau unter [dativ] [something] [darunter]" as looking under.
-Understand "schau nach in [dativ] [something]" as searching.
-Understand "schau nach auf [dativ] [something]" as searching.
+Understand "schau nach in/auf [dativ] [something]" as searching. [*]
 Understand "schau nach [text] in [dativ] [something]" as consulting it about (with nouns reversed).
 Understand "schau in [dativ] [something] unter [text] nach" as consulting it about.
 Understand "schau in [dativ] [something] nach unter [text]" as consulting it about.
@@ -794,12 +817,10 @@ Understand the commands "seh" and "sieh" and "blick" and "lug" and "guck" and "k
 
 Understand "lage" and "l" as looking.
 
-Understand "lern nach/ob/ueber/von [text] in [dativ] [something]" as consulting it about (with nouns reversed).
-Understand "lern nach/ob/ueber/von [text] aus [dativ] [something]" as consulting it about (with nouns reversed).
+Understand "lern nach/ob/ueber/von [text] aus/in [dativ] [something]" as consulting it about (with nouns reversed). [*]
 Understand "lern [text] in [dativ] [something]" as consulting it about (with nouns reversed).
 Understand "lern [text] aus [dativ] [something]" as consulting it about (with nouns reversed).
-Understand "lern in [dativ] [something] nach/ob/ueber/von [text]" as consulting it about.
-Understand "lern aus [dativ] [something] nach/ob/ueber/von [text]" as consulting it about.
+Understand "lern aus/in [dativ] [something] nach/ob/ueber/von [text]" as consulting it about. [*]
 Understand the command "forsch" as "lern".
 
 Understand "konsultier [something] ueber/bezueglich [text]" as consulting it about.
@@ -866,8 +887,7 @@ Understand "leg [other things] [noun darauf]" as putting it on.
 Understand "leg [someone alive] um" as attacking.
 Understand "leg [something preferably held] an/um" as wearing.
 
-Understand "sitz auf [dativ] [something]" as entering.
-Understand "sitz in [dativ] [something]" as entering.
+Understand "sitz auf/in [dativ] [something]" as entering. [*]
 Understand "sitz [noun darauf]" as entering.
 Understand "sitz [noun hinein]" as entering.
 Understand the command "lieg" as "sitz".
@@ -882,13 +902,9 @@ Understand the commands "hinein" and "herein" as "rein".
 
 
 Understand "u [something]" as examining.
-Understand "u ort/raum/platz/standort" as looking.
-Understand "u den/dies ort/raum/platz/standort" as looking.
 Understand "u [implicit up]" as going. [So kann man U für RAUF sagen, ohne dass "u [something]" beeinträchtigt wird.]
 
 Understand "untersuch [something]" as examining.
-Understand "untersuch ort/raum/platz/standort" as looking.
-Understand "untersuch den/dies ort/raum/platz/standort" as looking.
 Understand the commands "b", "x", "betracht", "beschreib", "begutacht", and "inspizier" as "untersuch".
 
 Understand "durchsuch [something]" as searching.
@@ -919,28 +935,22 @@ Understand "ja" or "j" or "jawohl" as saying yes.
 
 Understand "nein" or "nee" or "noe" as saying no.
 
-Understand "verzeih" or "verzeih mir" or "verzeih mir bitt" or "verzeih bitt" as saying sorry.
-Understand the commands "entschuldigung" and "entschuldig" and "pardon" as "verzeih".
+Understand "verzeih", "verzeih mir", "verzeih mir bitt" or "verzeih bitt" as saying sorry.
+Understand the commands "entschuldigung", "entschuldig" and "pardon" as "verzeih".
 
-Understand the commands "scheiss" and "kack" and "arschloch" and "wichser" and "piss" and "verpiss" and "fick" as "fuck".
+Understand the commands "scheiss", "kack", "arschloch", "wichser", "piss", "verpiss" and "fick" as "fuck".
 
-Understand "verdammt" or "mist" or "schiet" or "scheibenkl" or "depp" as swearing mildly.
+Understand "verdammt", "mist", "schiet", "scheibenkleister" or "depp" as swearing mildly.
 
-[Auch bei "such" die in/auf/ab/hinter/neben-Schreibweise aufgelöst, um genauere
-Nachfragen des Parsers zu erhalten.]
-
-Understand "such in [dativ] [something]" as searching.
-Understand "such auf [dativ] [something]" as searching.
-Understand "such hinter [dativ] [something]" as searching.
-Understand "such neben [dativ] [something]" as searching.
-
-Understand "such [something] ab" as searching.
+Understand "such in/auf [dativ] [something]" as searching. [*]
+Understand "such hinter/neben [dativ] [something]" as searching. [*]
 Understand "such unter [dativ] [something]" as looking under.
-Understand "such hinter [dativ] [something]" as looking under.
-Understand "such [noun darunter]" or "such [noun dahinter]" as looking under.
+Understand "such [something] ab" as searching.
+Understand "such [noun darunter]" as looking under.
+Understand "such [noun dahinter]" as looking under.
 Understand "such in [dativ] [something] nach [text]" as consulting it about.
 Understand "such nach [text] in [dativ] [something]" as consulting it about (with nouns reversed).
-Understand the commands "steober" and "wuehl" as "such".
+Understand the commands "stoeber" and "wuehl" as "such".
 
 Understand "wink" as waving hands.
 Understand "wink mit [dativ] [something]" as waving.
@@ -950,13 +960,14 @@ Understand "wink mit haende" or "wink mit den haende" as waving hands.
 Understand "stell [dich] hin" as exiting.
 Understand "stell [dich] auf [something] [darauf]" as entering.
 Understand "stell [dich] in [something] [hinein]" as entering.
-Understand "stell [dich] [noun hinein]" or "stell [dich] [noun darauf]" as entering.
-
+Understand "stell [dich] [noun hinein]" as entering.
+Understand "stell [dich] [noun darauf]" as entering.
 Understand "stell [something]" as setting it.
 Understand "stell [other things] in [something] [hinein]" as inserting it into.
 Understand "stell [other things] auf [something] [darauf]" as putting it on.
 Understand "stell [other things] [noun hinein]" as inserting it into.
-Understand "stell [something] auf [text] ein" or "stell [something] auf [text]" as setting it to.
+Understand "stell [something] auf [text] ein" as setting it to.
+Understand "stell [something] auf [text]" as setting it to.
 Understand "stell [something switchable] an/ein" as switching on.
 Understand "stell [something switchable] ab/aus" as switching off.
 Understand "stell [things preferably held] ab/weg/hin" as dropping.
@@ -979,8 +990,10 @@ Understand "reiss [other things] aus [something] [heraus]" as removing it from.
 Understand "reiss [other things] [noun heraus]" as removing it from.
 Understand the commands "zerr", "zupf", and "rupf" as "reiss".
 
-Understand "kleid [someone alive]" or "kleid [something]" as dressing.
-Understand "kleid [someone alive] an" or "kleid [something] an" as dressing.
+Understand "kleid [someone alive]" as dressing.
+Understand "kleid [something]" as dressing.
+Understand "kleid [someone alive] an"  as dressing.
+Understand "kleid [something] an" as dressing.
 Understand "kleid [dich] an mit [dativ] [something preferably held]" as wearing.
 Understand "kleid [dich] mit [dativ] [something preferably held] an" as wearing.
 Understand "kleid [dich] in [something preferably held]" as wearing.
@@ -992,15 +1005,18 @@ Understand "drueck [something]" as pushing.
 Understand "drueck [something] [weg]" as pushing.
 Understand "drueck [noun hinein]" and "drueck [noun dagegen]" as pushing.
 Understand "drueck gegen [something]" as pushing.
-Understand "drueck [something] [direction]" or "drueck [something] nach/richtung [direction]" as pushing it to.
+Understand "drueck [something] [direction]" as pushing it to.
+Understand "drueck [something] nach/richtung [direction]" as pushing it to.
 Understand "drueck [something] aus/zusammen" as squeezing.
 Understand "drueck [other things] in [something] [hinein]" as inserting it into.
 Understand "drueck [something] auf" as opening.
 Understand "drueck [something] zu" as closing.
-Understand "drueck [something] hoch/hinauf/rauf" or "drueck [something] nach oben" as looking under.
+Understand "drueck [something] hoch/hinauf/rauf" as looking under.
+Understand "drueck [something] nach oben" as looking under.
 Understand the commands "press", "beweg", "schieb" and "verschieb" as "drueck".
 
-Understand "dreh [something]" or "dreh an [dativ] [something]" as turning.
+Understand "dreh [something]" as turning.
+Understand "dreh an [dativ] [something]" as turning.
 Understand "dreh [something switchable] an/ein" as switching on.
 Understand "dreh [something switchable] ab/aus" as switching off.
 Understand "dreh [something] an/ein" as switching on.
@@ -1045,7 +1061,8 @@ Understand "schlag [something preferably held] gegen [something]" as attacking i
 Understand "schlag [something] auf" as opening.
 Understand "schlag [something] zu" as closing.
 Understand "schlag nach in [dativ] [something]" as examining.
-Understand "schlag in [dativ] [something] [text] nach" or "schlag in [dativ] [something] ueber/unter/zu [text] nach" as consulting it about.
+Understand "schlag in [dativ] [something] [text] nach" as consulting it about.
+Understand "schlag in [dativ] [something] ueber/unter/zu [text] nach" as consulting it about.
 Understand "schlag [force nach in] ueber/unter/zu [text] nach in [dativ] [something]" as consulting it about (with nouns reversed).
 Understand "schlag [force nach in] [text] nach in [dativ] [something]" as consulting it about (with nouns reversed).
 Understand "schlag [force nach] [text] in [dativ] [something] nach" as consulting it about (with nouns reversed).
@@ -1060,7 +1077,8 @@ Understand "hau in [something] [hinein]" as attacking.
 Understand "hau mit [dativ] [something preferably held] gegen [something]" as attacking it with (with nouns reversed).
 Understand "hau [something preferably held] gegen [something]" as attacking it with (with nouns reversed).
 
-Understand "brich [something]" or "brich [something] ab/auseinander" as attacking.
+Understand "brich [something]" as attacking.
+Understand "brich [something] ab/auseinander" as attacking.
 Understand "brich [something] ab/auseinander mit [dativ] [something preferably held]" as attacking it with.
 Understand the command "brech" as "brich".
 
@@ -1072,7 +1090,7 @@ Understand "toet [someone alive]" as attacking.
 Understand "toet [someone alive] mit [dativ] [something preferably held]" as attacking it with.
 Understand "toet [something]" as attacking.
 Understand "toet [something] mit [dativ] [something preferably held]" as attacking it with.
-Understand the commands "attackier" and "ermord" and "mord" and "bekaempf" and "folter" and "quael" and "pruegel" as "toet".
+Understand the commands "attackier", "ermord", "mord", "bekaempf", "folter", "quael" and "pruegel" as "toet".
 
 Understand "kaempf mit [dativ] [someone alive]" as attacking.
 Understand "kaempf mit [dativ] [something]" as attacking.
@@ -1095,19 +1113,14 @@ Understand "antwort [text] zu [dativ] [something]" as answering it that (with no
 Understand the commands "sag" and "schrei" and "beantwort" as "antwort".
 
 Understand "red" as vaguely communicating.
-Understand "red zu [dativ] [someone alive] ueber [text]" as telling it about.
-Understand "red mit [dativ] [something] ueber [text]" as telling it about.
-Understand "red zu [dativ] [something] ueber [text]" as telling it about.
-Understand "red mit [dativ] [someone alive]" as telling it about.
-Understand "red zu [dativ] [someone alive]" as telling it about.
-Understand "red mit [dativ] [something]" as telling it about.
-Understand "red zu [dativ] [something]" as telling it about.
+Understand "red mit/zu [dativ] [someone alive] ueber [text]" as telling it about. [*]
+Understand "red mit/zu [dativ] [something] ueber [text]" as telling it about. [*]
+Understand "red mit/zu [dativ] [someone alive]" as telling it about. [*]
+Understand "red mit/zu [dativ] [something]" as telling it about. [*]
 Understand "red [someone alive] ueber [text] an" as telling it about.
 Understand "red [something] ueber [text] an" as telling it about.
-Understand "red ueber [text] mit [dativ] [someone alive]" as telling it about (with nouns reversed).
-Understand "red ueber [text] zu [dativ] [someone alive]" as telling it about (with nouns reversed).
-Understand "red ueber [text] mit [dativ] [something]" as telling it about (with nouns reversed).
-Understand "red ueber [text] zu [dativ] [something]" as telling it about (with nouns reversed).
+Understand "red ueber [text] mit/zu [dativ] [someone alive]" as telling it about (with nouns reversed). [*]
+Understand "red ueber [text] mit/zu [dativ] [something]" as telling it about (with nouns reversed). [*]
 Understand the commands "sprech" and "sprich" and "schwatz" and "schwaetz" as "red".
 
 Understand "erzaehl" as vaguely communicating.
@@ -1175,7 +1188,8 @@ Understand "schwing [dich] auf [something] [darauf]" as swinging.
 Understand "schwing [dich] in [something] [hinein]" as swinging.
 Understand "schwing auf/an [something]" as swinging.
 Understand "schwing [dich] [noun darauf]" as swinging.
-Understand "schwing [something]" or "schwing mit [dativ] [something]" as waving.
+Understand "schwing [something]" as waving.
+Understand "schwing mit [dativ] [something]" as waving.
 Understand "schwing mit hand" or "schwing mit der hand" as waving hands.
 Understand "schwing mit haende" or "schwing mit den haende" as waving hands.
 Understand the commands "schwenk", "wedel", "wedle", "baumle", and "baumel" as "schwing".
@@ -1194,26 +1208,33 @@ Understand "denk nach ueber [text]" as thinking about it.
 Understand "denk an [text]" as thinking about it.
 
 Understand "riech" as smelling.
-Understand "riech [something]" or "riech an [dativ] [something]" as smelling.
+Understand "riech [something]" as smelling.
+Understand "riech an [dativ] [something]" as smelling.
 Understand "riech [noun daran]" as smelling.
 Understand the commands "schnueffl" and "schnueffel" and "schnupper" and "beschnupp" and "beschnuef" as "riech".
 
 Understand "hoer" as listening to.
-Understand "hoer [something]" or "hoer an [dativ] [something]" or "hoer [dativ] [something] zu" as listening to.
+Understand "hoer [something]" as listening to.
+Understand "hoer an [dativ] [something]" as listening to.
+Understand "hoer [dativ] [something] zu" as listening to.
 Understand "hoer [noun daran]" as listening to.
 Understand the commands "horch" and "lausch" and "belausch" as "hoer".
 
-Understand "schmeck [something]" or "schmeck an [dativ] [something]" as tasting.
+Understand "schmeck [something]" as tasting.
+Understand "schmeck an [dativ] [something]" as tasting.
 Understand "schmeck [noun daran]" as tasting.
 Understand the commands "leck" and "kost" and "probier" as "schmeck".
 
 Understand "beruehr [something]" as touching.
 Understand the commands "ertast" and "befuehl" and "betast" as "beruehr".
 
-Understand "fuehl [something]" or "fuehl an/ueber/nach [dativ] [something]" or "fuehl [something] an" as touching.
+Understand "fuehl [something]" as touching.
+Understand "fuehl an/ueber/nach [dativ] [something]" as touching.
+Understand "fuehl [something] an" as touching.
 Understand the command "tast" as "fuehl".
 
-Understand "wisch [something]" or "wisch an [dativ] [something]" as rubbing.
+Understand "wisch [something]" as rubbing.
+Understand "wisch an [dativ] [something]" as rubbing.
 Understand "wisch [something] mit [dativ] [something preferably held] [ab]" as rubbing it with.
 Understand "wisch mit [dativ] [something preferably held] [something] [ab]" as rubbing it with.
 Understand the commands "reinig" and "putz" and "reib" and "schrubb" and "saeuber" and "polier" and "glaett" and "schmirgel" and "buerst" as "wisch".
@@ -1682,7 +1703,6 @@ For printing a locale paragraph about a thing (called the item)
 
 Section - New actions and rules
 
-
 [Inventar als Liste oder als Satz]
 
 Invstyle is a kind of value. The invstyles are wide inventory and tall inventory.
@@ -1782,12 +1802,6 @@ Check going into
 
 The specification of the going into action is "This action converts to the going action on the inside when commands like GEH REIN or TRITT EIN are used."
 
-Vaguely going from is an action applying to one thing.
-Check vaguely going from (this is the block vaguely going from rule):
-	issue library message going action number 7.
-
-The specification of the vaguely going from action is "This action fires when an actor tries to go away from a person, e.g. VERLASS SCARLETT."
-
 Vaguely communicating is an action applying to nothing.
 Check vaguely communicating (this is the block vaguely communicating rule):
 	say "Bitte gib auch an, was [du] sagen oder fragen möchtest."
@@ -1827,13 +1841,8 @@ Carry out location-leaving (this is the leave current location rule):
 
 The specification of the location-leaving action is "This action enables the player to leave the current location by using the verb 'verlass'  if there is only one exit."
 
-After deciding the scope of the player while location-leaving or examining (this is the location visibility rule):
-	place the location in scope;
-
-Instead of examining a room (this is the convert examine a room into looking rule):
+Instead of examining a room (this is the convert examining a room into looking rule):
 	try looking.
-
-[------------------------------------------------------------------------------]
 
 
 [Die korrekte Priorisierung der [dich]-Token funktioniert nicht immer, da die
@@ -1894,6 +1903,20 @@ when a noun has been supplied by a pronominal adverb
 			try removing the noun from P;
 			rule fails;
 
+			
+Section - Special room features
+
+Understand "Ort [m]", "Platz [m]", "Raum [m]", "Standort [m]" and "Umgebung [f]" as "[basic-room-synonyms]".
+Understand "[basic-room-synonyms]" as a room.
+
+Examining is allowing wide scope.
+Location-leaving is allowing wide scope.
+Smelling is allowing wide scope.
+
+After deciding the scope of the player while allowing wide scope (this is the location visibility rule):
+	place the location in scope.
+
+
 Section - Compound Heads and Compound Tails
 
 Table of Compound Heads
@@ -1906,9 +1929,6 @@ text	a number
 
 
 Section - German Final Question (in place of Section SR3/2 - Final Question in Standard Rules by Graham Nelson)
-
-[The German print the final question rule is listed instead of
-the print the final question rule in before handling the final question.]
 
 This is the print the final question rule:
 	let named options count be 0;
@@ -1933,9 +1953,6 @@ This is the print the final question rule:
 						say " oder ";
 					otherwise:
 						say ", ".
-
-[The German standard respond to final question rule is listed instead of
-the standard respond to final question rule in the for handling the final question rules.]
 
 This is the standard respond to final question rule:
 	repeat through the Table of Final Question Options:
@@ -1989,6 +2006,14 @@ When play begins (this is the perform initial libcheck rule):
 Table of blessed verb forms
 Verb
 "ausgaenge"
+"beide"
+
+When play begins (this is the initialise auxiliary synonyms rule):
+	initialise the auxiliary synonyms.
+	
+To initialise the/-- auxiliary synonyms: (- InitialiseLanguageSynonyms2(); -).
+
+The initialise auxiliary synonyms rule is listed first in the when play begins rulebook.
 
 
 Section - Tables of special vocabulary
@@ -2007,7 +2032,6 @@ Verben beginnen, werden auf jeden Fall in die Infinitiv-Prüfung geschickt.]
 Table of verb-noun collisions
 Verb
 ""
-
 
 
 Section - German assembly components workaround
@@ -2115,12 +2139,8 @@ Understand the command "ride" as something new.
 Understand the command "mount" as something new.
 
 Understand "besteig [something]" as mounting.
-Understand "fahr in [dativ] [something]" as mounting.
-Understand "fahr auf [dativ] [something]" as mounting.
-Understand "fahr mit [dativ] [something]" as mounting.
-Understand "reit auf [dativ] [something]" as mounting.
-Understand "reit in [dativ] [something]" as mounting.
-Understand "reit mit [dativ] [something]" as mounting.
+Understand "fahr in/auf/mit [dativ] [something]" as mounting. [*]
+Understand "reit auf/in/mit [dativ] [something]" as mounting. [*]
 
 The German can't dismount when not mounted rule is listed instead of
 the can't dismount when not mounted rule in the check dismounting rules. [']
@@ -2864,9 +2884,16 @@ Global short_name_case;
 ];
 #endif; ! CAPITAL_YOU
 
-
-
 [ LanguageInitialise    obj;
+
+    ! *** (27.09.2010) Wörterbuch-Variablen für Glulx setzen. Für Z wird das
+    !     in VM_Initialise gemacht.
+    
+    #ifdef TARGET_GLULX;
+    dict_start = #dictionary_table + WORDSIZE;
+    dict_entry_size = DICT_WORD_SIZE + 7;
+    dict_end = dict_start + #dictionary_table-->0 * dict_entry_size;
+    #endif;
 
     ! *** (21.09.2010) Genus-Definitionen der Objekte, die mit "some" definiert
     !     wurden, bereinigen:
@@ -2878,16 +2905,6 @@ Global short_name_case;
 	    give obj ~female;
     }
     
-    ! *** (27.09.2010) Wörterbuch-Variablen für Glulx setzen. Für Z wird das
-    !     in VM_Initialise gemacht.
-
-    
-    #ifdef TARGET_GLULX;
-    dict_start = #dictionary_table + WORDSIZE;
-    dict_entry_size = DICT_WORD_SIZE + 7;
-    dict_end = dict_start + #dictionary_table-->0 * dict_entry_size;
-    #endif;
-
 #ifdef DIALECT_SWISS;
     string 30 "ss";
 #ifnot;
@@ -3037,12 +3054,55 @@ Array LanguageDescriptors table
 
 #endif;
 
+#ifdef DEBUG;
+! *** In dem LanguageSynonyms-Array stehen im DEBUG-Modus statt Vokabeln Strings, 
+!     weil Vokabeln in einem Array von Haus aus als Objektsynonyme
+!     gekennzeichnet werden, und das wollen wir eben nicht. Dies
+!     soll erst durch den (fehlerhaften) Gebrauch durch den Autor
+!     geschehen, sodass der Libcheck hierzu eine entsprechende Warnung
+!     herausgeben kann. (Die Vokabeln werden im DEBUG-Modus als
+!     Verben definiert, siehe Section - Libcheck.)
+!
+!     Zur schnellen Prüfung der Vokabeln im DEBUG-Modus wird bei Spielbeginn eine
+!     Kopie von LanguageSynonyms (LanguageSynonyms2) angelegt, die
+!     statt der Strings die Vokabeln enthält, also genau so aussieht, wie
+!     LanguageSynonyms beim Release.
+
+Array LanguageSynonyms table
+	"am"        "an dem"
+	"ans"       "an das"
+	"aufs"      "auf das"
+	"beim"      "bei dem"
+	"durchs"    "durch das"
+	"fuers"     "fuer das"
+	"hinterm"   "hinter dem"
+	"hinters"   "hinter das"
+	"im"        "in dem"
+	"ins"       "in das"
+	"nebens"    "neben das"
+	"uebers"    "ueber das"
+	"ueberm"    "ueber dem"
+	"unters"    "unter das"
+	"unterm"    "unter dem"
+	"vom"       "von dem"
+	"vors"      "vor das"
+	"vorm"      "vor dem"
+	"zum"       "zu dem"
+	"zur"       "zu der"
+	"darin"     "in ihm/r"
+	"damit"     "mit ihm/r"
+	"beide"     "zwei"
+	;
+	
+Array LanguageSynonyms2 -->48;
+#ifnot;
 Array LanguageSynonyms table
     'am'        "an dem"
     'ans'       "an das"
     'aufs'      "auf das"
     'beim'      "bei dem"
     'durchs'    "durch das"
+    'fuers'     "fuer das"
     'hinterm'   "hinter dem"
     'hinters'   "hinter das"
     'im'        "in dem"
@@ -3059,10 +3119,9 @@ Array LanguageSynonyms table
     'zur'       "zu der"
     'darin'     "in ihm/r"
     'damit'     "mit ihm/r"
-
-    'beide'	    "zwei"
-    'jede'	    "all"
+    'beide'     "zwei"
     ;
+#endif;
 
 Array LanguageTwins table
     'bis' 'auf'     "ausser"
@@ -3251,9 +3310,26 @@ Array UmlautAux -> 12;
 
 [ CUmlautAddress i; UmlautAddress(i, true); ];
 
-[ IsDirectionWord w    obj;
+[ IsDirectionWord w    obj i index;
     objectloop (obj in Compass) {
         if (WordInProperty(w, obj, name)) return obj;
+        
+        #ifdef LanguageDirectionWords;
+        
+        ! *** (12.05.2011) Wenn die Synonyme nicht in der name-Property
+		!     stehen (was sehr wahrscheinlich ist), wird das Feld
+		!     LanguageDirectionWords herangezogen (wenn vorhanden):
+		
+		for (i = 1 : i <= LanguageDirectionWords-->0 : i++) {
+			if (LanguageDirectionWords-->i ~= obj) continue;
+			index = i + 1;
+			while (LanguageDirectionWords-->index) {
+			    if (LanguageDirectionWords-->index == w) return obj;
+			    index++;
+			}
+		}
+		
+		#endif;
     }
     rfalse;
 ];
@@ -3278,48 +3354,53 @@ Array UmlautAux -> 12;
     return ch;
 ];
 
-[ AddressInTable i tab start_row col       start n length1 length2 index match;
+[ AddressMatchesText a s     i length1 length2 start match;
+
+    ! *** (04.05.2011) Eine Vokabel a mit einem String s vergleichen.
+    !     Als Hilfsarrays werden UmlautAux und HLAuxBuffer2
+    !     wiederverwendet.
+    !
+    !     UmlautAux enthält die Zeichenkette der Vokabel a, in
+    !     HLAuxBuffer2 wird der String s geschrieben.
+     
+	#ifdef TARGET_GLULX;
+	length1 = Glulx_PrintAnyToArray(UmlautAux, 24, a);
+	start = 0;
+	#ifnot;
+	@output_stream 3 UmlautAux;
+	print (address) a;
+	@output_stream -3;
+	length1 = UmlautAux-->0;
+	start = 2;
+	#endif;
+	
+	length2 = VM_PrintToBuffer(HLAuxBuffer2, 24, s);
+
+	if (length1 == length2) {
+		for (i = 0 : i < length1 : i++) {
+			if (UmlautAux->(i + start) ~= HLAuxBuffer2->(i + WORDSIZE))
+				break;
+		}
+		if (i == length1) rtrue;
+	}
+	rfalse;
+];
+
+[ AddressInTable i tab start_row col       n index;
 
     ! *** Hier wird eine Vokabel i mit Text-Einträgen in einer I7-Tabelle
     !     tab verglichen. Wenn ein passendes Wort gefunden wurde, wird
     !     die Zeilennummer des gefundenen Wortes zurückgegeben. Wird keine
-    !     Übereinstimmung festgestellt, ist das Ergebnis NULL.
-
-    ! Vokabel auf Hilfsfeld schreiben
-    #ifdef TARGET_GLULX;
-    length1 = Glulx_PrintAnyToArray(UmlautAux, 24, i);
-    start = 0;
-    #ifnot;
-    @output_stream 3 UmlautAux;
-    print (address) i;
-    @output_stream -3;
-    length1 = UmlautAux-->0;
-    start = 2;
-    #endif;
+    !     Übereinstimmung festgestellt, ist das Ergebnis 0.
     
     if (start_row == 0) start_row = 1;
     if (col == 0) col = 1;
     
     n = TableRows(tab);
 
-    ! *** Die Tabelle tab nach der Vokabel i, deren Inhalt in das Hilfsfeld
-    !     UmlautAux kopiert wurde, durchsuchen: Als Hilfsarray für die
-    !     Tabelleneinträge wird HLAuxBuffer2 wiederverwendet, das auch für
-    !     die Erzeugung der deutschen Default-Headline benutzt wird. 
-    !     Erst wenn die Länge der Vokabel mit einem Tabelleneintrag 
-    !     übereinstimmt, folgt ein Vergleich der einzelnen Zeichenketten.
-
     for (index = start_row : index <= n : index++) {
-	    match = 0;
-        length2 = VM_PrintToBuffer(HLAuxBuffer2, 24, TableLookUpEntry(tab, col, index));
-        if (length1 == length2) {
-            for (i = 0 : i < length1 : i++) {
-                if (UmlautAux->(i + start) ~= HLAuxBuffer2->(i + WORDSIZE))
-                    break;
-                match++;
-            }
-            if (match == length1) return index;
-        }
+		if (AddressMatchesText(i, TableLookUpEntry(tab, col, index)) )
+			return index;
     }
     return 0;
 ];
@@ -3567,12 +3648,17 @@ Global number_matched;              ! How many items in it?  (0 means none)
             VM_Tokenise(b, p);
             return p-->i;
         }
-        ! *** oder nach einem 't' gucken
+        ! *** ... oder nach einem 't' gucken
+        !     (04.04.2011) ... oder nach einem 'et' (wie in VERBINDET) ...
+        !     (Plural-Imperativformen (GEHT) werden verstanden, die höfliche
+        !     Form (GEHEN SIE) allerings nicht.)
         else {
-            if (wa->(wl-1) == 't') {
-                i = DictionaryLookup(wa, wl - 1);
+            zs = 0;
+            if (wa->(wl-1) == 't') zs++;
+            if (wa->(wl-2) == 'e') zs++; 
+            if (zs > 0) {
+                i = DictionaryLookup(wa, wl - zs);
                 if (i && (i->#dict_par1 & 1)) {
-                    ! imperative_form = IMP_IHR; ! *** vorerst nicht nötig
                     return i;
                 }
             }
@@ -3741,7 +3827,7 @@ Array SynonymBuffer string 24;
     #endif;
 ];
 
-[ CheckSynonym w s   i n wd start length newlength offset;
+[ CheckSynonym w s     i n wd start length newlength offset;
     wn = w; wd = NextWord(); if (~~wd) return;
     #ifdef TARGET_ZCODE;
     offset = WORDSIZE;
@@ -3753,6 +3839,7 @@ Array SynonymBuffer string 24;
     n = (s-->0);
     for (i = 1 : i<=n : i = i + 2) {
         if (wd ~= s-->i) continue;
+        
         start = WordAddress(w);
         length = WordLength(w);
         newlength = printSynonymBuffer(s-->(i+1));
@@ -4002,7 +4089,11 @@ Array SynonymBuffer string 24;
         #ifdef Synonyms;
         CheckSynonym(i + 1, Synonyms);
         #endif;
+        #ifdef DEBUG;
+        CheckSynonym(i + 1, LanguageSynonyms2);
+        #ifnot;
         CheckSynonym(i + 1, LanguageSynonyms);
+        #endif;
         #ifdef TARGET_ZCODE;
         ze = parse->1;
         #ifnot; ! TARGET_GLULX
@@ -4361,16 +4452,14 @@ Include (-
 
 #ifdef TARGET_ZCODE;
     entry_size = 2;
-    num_words = parse->1;
 #ifnot;
     entry_size = 3;
-    num_words = parse-->0;
 #endif;
-    
+    num_words = NumberOfWords();
     for (i=0 : i < num_words: i++) {
        w = parse-->(i*entry_size + 1);
        if ( w == 'auf' or 'in' && (w->#dict_par1 & 8) )
-                                   ! $1000 (8) ist das Flag für Präpositionen
+                                   ! $1000 (8) ist das Bit für Präpositionen
            { print (address) w; return; }
     }
     print (auf) obj;
@@ -4763,8 +4852,13 @@ Include (-
         38: if (ExplicitError()) return;
             "Ich habe dieses Verb nicht verstanden.";
         39: "Damit brauchst @20 @22 in diesem Spiel nicht zu beschäftigen.";
-        40: "Du siehst ~", (address) pronoun_word, "~ (", (den) pronoun_obj,
-            ") hier im Moment nicht.";
+        40: #ifdef ROOMS_PRONOUN_NOTICE;
+            if (pronoun_obj has mark_as_room)
+				"Der Ort ~", (WithoutArt) pronoun_obj, "~ ist momentan
+				nicht in Sicht.";
+			#endif;
+			"Du siehst ~", (address) pronoun_word, "~ (", (den) pronoun_obj,
+			") hier im Moment nicht.";
         41: "Das Satzende habe ich leider nicht verstanden.";
         42: if (x1 == 0) print "Nichts "; else print "Nur ", (number) x1;
             ! *** bei 1 "es" mit ausgeben, sonst würde es "Nur ein davon".
@@ -5253,6 +5347,17 @@ Include (-
 ];
 
 [ PronounNotice obj x bm;
+    # ifdef IN_SCOPE_PRONOUN_NOTICE;
+    ! *** (27.03.2011) Per Use-Option "in-scope pronoun notice"
+    !     kann bewirkt werden, dass die Pronomen nur für
+    !     Objekte gesetzt werden, die in Sicht sind.
+    if (TestScope(obj, actor)==false) return;
+    # endif;
+
+    #ifndef ROOMS_PRONOUN_NOTICE;
+    if (obj has mark_as_room) return;
+    #endif;
+
     if (obj == player) return;
 
     ! Hier den changing_gender in einem Aufwasch miterledigen.
@@ -5970,10 +6075,7 @@ Include (-
 
 -) instead of "Parse Token Letter A" in "Parser.i6t".
 
-
-[ PARSE TOKEN LETTER C. ]
-[ MEx__WDs durch |is_me_word()| ersetzen, damit alle deutschen
-  Me-Wörter benutzt werden können ]
+[PARSE TOKEN LETTER C]
 
 Include (-
     ! We expect to find a list of objects next in what the player's typed.
@@ -6024,6 +6126,65 @@ Include (-
   .TryAgain2;
 -) instead of "Parse Token Letter C" in "Parser.i6t".
 
+
+[Parse Token Letter E]
+
+Include (-
+    ! Object(s) specified now: is that the end of the list, or have we reached
+    ! "and", "but" and so on?  If so, create a multiple-object list if we
+    ! haven't already (and are allowed to).
+
+  .NextInList;
+
+    o = NextWord();
+    
+    ! *** (04.04.2011) An dieser Stelle wird nun geprüft, ob das nächste Token
+    !     im Satzmuster ein AND-Wort oder ein BUT-Wort ist. Ist dies der Fall,
+    !     wird kein Multi-Objekt verstanden und das nächste Wort wie eine
+    !     Präposition behandelt.
+    !
+    !     So können auch Kommandos, die 'und' & Co. enthalten, z.B.
+    !
+    !         Understand "misch [something] und [something]" as mixing.
+    !
+    !     korrekt geparst werden.
+
+    AnalyseToken(line_token-->pcount); ! *** wir sind aktuell bei pcount-1
+    j = true;
+    if (found_ttype == PREPOSITION_TT
+        && (is_and_word(o) || is_but_word(o))
+        && PrepositionChain(o, pcount) ~= -1)
+            j = false;
+
+    if (j && (is_and_word(o) || is_but_word(o)|| o == comma_word) ) {
+
+        #Ifdef DEBUG;
+        if (parser_trace >= 3) print "  [Read connective '", (address) o, "']^";
+        #Endif; ! DEBUG
+
+        if (~~token_allows_multiple) {
+            if (multiflag) jump PassToken; ! give UPTO_PE error
+            etype=MULTI_PE;
+            jump FailToken;
+        }
+
+        if (is_but_word(o)) and_parity = 1-and_parity;
+
+        if (~~many_flag) {
+            multiple_object-->0 = 1;
+            multiple_object-->1 = single_object;
+            many_flag = true;
+            #Ifdef DEBUG;
+            if (parser_trace >= 3) print "  [Making new list from ", (the) single_object, "]^";
+            #Endif; ! DEBUG
+        }
+        dont_infer = true; inferfrom=0;           ! Don't print (inferences)
+        jump ObjectList;                          ! And back around
+    }
+
+    wn--;   ! Word marker back to first not-understood word
+-) instead of "Parse Token Letter E" in "Parser.i6t".
+
 [ Parser Letter A ]
 Include (-
 if (held_back_mode == 1) {
@@ -6050,14 +6211,27 @@ if (held_back_mode == 1) {
 
     num_words = WordCount();
     wn = 1;
+    
+    ! *** (12.05.2011) pcount und pcount2 zurücksetzen, da es sonst Probleme
+    !      mit PrintCommand() geben kann. So gab etwa PrintCommand() für >SÜDEN
+    !      das Objekt des vorigen Kommandos mit an: "den Tisch nach Süden gehen".
+    
+    pcount = 0; pcount2 = 0;
 
     max_wn = -1; ! *** max_wn schon hier initialisieren (siehe Parser Letter E)
     pronominal_adverb_flag = false;
+    
+    ! *** (11.06.2011) LanguageToInformese ist jetzt die I7-Activity
+    !     "translating a command to Informese"
 
     #Ifdef LanguageToInformese;
-    LanguageToInformese();
-    ! Re-tokenise:
-    VM_Tokenise(buffer,parse);
+    BeginActivity(LANGUAGE_TO_INFORMESE_ACT);
+    if (ForActivity(LANGUAGE_TO_INFORMESE_ACT)==false) {
+		LanguageToInformese();
+		! Re-tokenise:
+		VM_Tokenise(buffer,parse);
+    }
+    EndActivity(LANGUAGE_TO_INFORMESE_ACT);    
     #Endif; ! LanguageToInformese
 
     num_words = WordCount();
@@ -6973,7 +7147,7 @@ Include (-
     if (w=='undo') rtrue;
     if (w=='rueckgaengig') rtrue;                  ! 'rueckgaen'
     if (w=='rueckgängig') rtrue;                   ! 'rueckg...'
-    if (w=='rückgaengig') rtrue;                   ! 'rckga'
+    if (w=='rückgaengig') rtrue;                   ! 'rückga'
     if (w=='rückgängig') rtrue;                    ! 'rückg...'
     if (w=='zurueck') rtrue;
     if (w=='zurück') rtrue;
@@ -6983,6 +7157,7 @@ Include (-
 [ Is_all_word w;
     if (w=='alles') rtrue;
     if (w=='all') rtrue;
+    if (w=='jede') rtrue;
     if (w=='saemtlich') rtrue;
     rfalse;
 ];
@@ -7089,7 +7264,18 @@ Include (-
     ! Das schreibt ein Fragewort, das nach einem indirekten Objekt fragt,
     ! wie das namengebende Womit, oder Woraus, Wonach, Worein. Das wird
     ! zusammen mit PrintCommand benutzt: "Woran möchtest du ziehen?"
-
+    
+    ! *** (05.04.2011) Dadurch, dass jetzt auch AND- und BUT-Words in
+    !     Satzmustern erlaubt sind (siehe Parse Token Letter E), kommt
+    !     es hier möglicherweise zu Problemen, da auch unsinnige Wörter wie
+    !     "Worund" erzeugt werden könnten. Also müssen wir uns hier etwas
+    !     einfallen lassen. Das "Womit" für die AND-Worte ist ein fauler
+    !     Kompromiss, der den Spieler zu einer falschen Eingabe verleitet,
+    !     wenn der Autor 'mit' nicht im Satzmuster vorgesehen hat.
+    
+    if (is_but_word(w)) { print "Ohne was"; return; }
+    if (is_and_word(w)) { print "Womit"; return; }
+    
     print "Wo";
 
     if (w=='in') {
@@ -7097,7 +7283,7 @@ Include (-
         else             print "rein";
         rtrue;
     }
-
+    
     #ifdef TARGET_ZCODE;
     if (standard_interpreter ~= 0) {
         StorageForShortName-->0 = 16;
@@ -7114,53 +7300,65 @@ Include (-
     print (address) w;
 ];
 
-[ PrintWomitCommand      x1 prep;
+[ PrintWomitCommand      x1 prep offset;
     x1 = pcount;
-    if (pattern-->(pcount - 1) == PATTERN_NULL) pcount--;
-        if (pattern-->(pcount - 1) > REPARSE_CODE) {
-            ! Wenn das letzte Element eines unvollständigen Satzes eine
-            ! Präposition, also eine Vokabel anstatt eines Objekts ist,
-            ! dann soll sie als Fragewort ("Womit" usw. ) benutzt werden.
-            ! pcount muss nachher wieder zurückgesetzt werden, damit die
-            ! Antwort richtig analysiert werden kann.
-            
-            ! *** In Z-Code werden die Wörter im Satzmuster pattern durch ihre
-            !     Record-Nummer repräsentiert und müssen erst einmal in eine
-            !     Adresse umgewandelt werden, die an GWomit() übergeben werden
-            !     kann.
-            
-            prep = VM_NumberToDictionaryAddress(pattern-->(pcount-1)-REPARSE_CODE);
-            
-            ! *** In GWomit() das Dativ-Token berücksichtigen, damit "worin"
-            !     und "worein" unterschieden werden können.
-            
-            GWomit(prep, IsToken(pcount-1, DATIVE_TOKEN)); print " ";
-            
-            pcount--;
-        } else print "Was ";
-        if (actor ~= player) print "soll ", (der) actor, " ";
-        else { L__M(##Miscellany, 97); print " "; } ! *** "willst du"
-        PrintCommand(); print "?^";
-        pcount = x1;
+
+    !if (pattern-->(pcount - 1) == PATTERN_NULL) pcount--;
+    
+    !*** (15.05.2011) mit gruppierten Präpositionen gab's Probleme vor
+    !    dem Dativ-Token, deshalb muss an den Anfang der Präpositionen-Kette
+    !    zurückgegangen werden (while statt if).
+    !    offset dient dazu, ein evtl. vorhandenes Dativ-Token zu lokalisieren.
+    
+    while (pattern-->(pcount - 1) == PATTERN_NULL) { pcount--; offset++; }
+    if (offset) offset--;
+	if (pattern-->(pcount - 1) > REPARSE_CODE) {
+		! Wenn das letzte Element eines unvollständigen Satzes eine
+		! Präposition, also eine Vokabel anstatt eines Objekts ist,
+		! dann soll sie als Fragewort ("Womit" usw. ) benutzt werden.
+		! pcount muss nachher wieder zurückgesetzt werden, damit die
+		! Antwort richtig analysiert werden kann.
+		
+		! *** In Z-Code werden die Wörter im Satzmuster pattern durch ihre
+		!     Record-Nummer repräsentiert und müssen erst einmal in eine
+		!     Adresse umgewandelt werden, die an GWomit() übergeben werden
+		!     kann.
+		
+		prep = VM_NumberToDictionaryAddress(pattern-->(pcount-1)-REPARSE_CODE);
+		
+		! *** In GWomit() das Dativ-Token berücksichtigen, damit "worin"
+		!     und "worein" unterschieden werden können.
+		
+		GWomit(prep, IsToken(pcount-1 + offset, DATIVE_TOKEN)); print " ";
+		
+		pcount--;
+	} else print "Was ";
+	if (actor ~= player) print "soll ", (der) actor, " ";
+	else { L__M(##Miscellany, 97); print " "; } ! *** "willst du"
+	PrintCommand(); print "?^";
+	pcount = x1;
 ];
 
-[ PrintWemCommand x1;
+[ PrintWemCommand x1  offset;
     x1 = pcount;
-        if (pattern-->(pcount - 1) == PATTERN_NULL) pcount--;
-        if (pattern-->(pcount - 1) > REPARSE_CODE) {
-            ! Siehe Erklärung unter PrintWomitCommand.
-            ! *** Großbuchstabe am Anfang
-            CUmlautAddress(VM_NumberToDictionaryAddress(pattern-->(pcount-1)-REPARSE_CODE));
-            print " wem ";
-            pcount--;
-        } else {
-            if (IsToken(pcount-1, DATIVE_TOKEN)) print "Wem ";
-            else print "Wen ";
-        }
-        if (actor ~= player) print "soll ", (der) actor, " ";
-        else { L__M(##Miscellany, 97); print " "; }
-        PrintCommand(); print "?^";
-        pcount = x1;
+	!if (pattern-->(pcount - 1) == PATTERN_NULL) pcount--;
+	! *** (15.05.2011) siehe PrintWomitCommand()
+	while (pattern-->(pcount - 1) == PATTERN_NULL) { pcount--; offset++; }
+	if (offset) offset--;
+	if (pattern-->(pcount - 1) > REPARSE_CODE) {
+		! Siehe Erklärung unter PrintWomitCommand.
+		! *** Großbuchstabe am Anfang
+		CUmlautAddress(VM_NumberToDictionaryAddress(pattern-->(pcount-1)-REPARSE_CODE));
+		print " wem ";
+		pcount--;
+	} else {
+		if (IsToken(pcount-1 + offset, DATIVE_TOKEN)) print "Wem ";
+		else print "Wen ";
+	}
+	if (actor ~= player) print "soll ", (der) actor, " ";
+	else { L__M(##Miscellany, 97); print " "; }
+	PrintCommand(); print "?^";
+	pcount = x1;
 ];
 
 ! *** 27.03.2010: In |PrintInferredCommand| wird jetzt das Dativ-Token
@@ -7293,7 +7491,6 @@ Section - Time
 Include (-
 [ PrintTimeOfDay t h aop;
     if (t<0) { print "<keine Uhrzeit>"; return; }
-    !if (t >= TWELVE_HOURS) { aop = "pm"; t = t - TWELVE_HOURS; } else aop = "am";
     h = t/ONE_HOUR; !if (h==0) h=12;
     print h, ":";
     if (t%ONE_HOUR < 10) print "0"; print t%ONE_HOUR; !, (string) aop;
@@ -9041,7 +9238,8 @@ Include (-
         1: if (w == 'hinein' or 'rein' or 'darein' or 'herein') flag = -1;
         2: if (w == 'heraus' or 'hinaus' or 'raus' or 'daraus') flag = -1;
         3: if (w == 'hinweg' or 'weg' or 'fort' or 'ab') flag = -1;
-        4: if (w == 'damit') flag = -1;
+        ! *** (16.05.2011) 'damit' wird vom Synonym-Mechanismus ersetzt, deshalb auskommentiert
+        !4: if (w == 'damit') flag = -1;
         5: if (w == 'darauf' or 'drauf' or 'herauf' or 'rauf' or 'hinauf') flag=-1;
         6: if (w == 'darunter' or 'drunter') flag=-1;
         7: if (w == 'dahinter') flag=-1;
@@ -9093,7 +9291,6 @@ Include (-
 
 [ NOUN_HINEIN_TOKEN;   return parse_pronomial_adverb(1, 1); ];
 [ NOUN_HERAUS_TOKEN;   return parse_pronomial_adverb(2, 1); ];
-[ NOUN_DAMIT_TOKEN;    return parse_pronomial_adverb(4, 1); ];
 [ NOUN_DARAUF_TOKEN;   return parse_pronomial_adverb(5, 1); ];
 [ NOUN_DARUNTER_TOKEN; return parse_pronomial_adverb(6, 1); ];
 [ NOUN_DAHINTER_TOKEN; return parse_pronomial_adverb(7, 1); ];
@@ -9223,7 +9420,9 @@ Array LibcheckIgnoreVerbs table
 
 [ PerformLibcheckAll s i;
     if (~~s) ShowDictStat();
-    XLibcheck(s, i); YLibcheck(s, i);
+    XLibcheck1(s, i);
+    XLibcheck2(s, i);
+    XLibcheck3();
     LibcheckAnnounce(2);
 ];
 
@@ -9300,7 +9499,7 @@ Array LibcheckIgnoreVerbs table
                     jederzeit während des Spiels ausgeführt werden. Mit der
                     Option ~Use skip libcheck.~ wird der automatische Libcheck
                     bei Spielbeginn übersprungen.
-                     ^^
+                    ^^
                     LIBCHECK ENDE.^^";
             }
     }
@@ -9369,7 +9568,16 @@ Array LibcheckIgnoreVerbs table
          Präpositionen gekennzeichnet.^^";
 ];
 
-[ XLibCheck silent ignore_lib_verbs     o n errors i j synonyms_listed dict_entries
+[ CheckIgnoreLists word ignore_lib_verbs        n j;
+    if (ignore_lib_verbs == false) rfalse;
+	for (n = 1 : n <= LibcheckIgnoreVerbs-->0 : n++ )
+		  if (LibcheckIgnoreVerbs-->n == word) { j = -1; break; }
+	if (j==-1) rtrue;
+	if (AddressInTable(word, (+ Table of blessed verb forms +) )) rtrue;
+	rfalse;
+];
+	
+[ XLibcheck1 silent ignore_lib_verbs     o n errors i j synonyms_listed dict_entries
                                         a gender_error;
 
     say__p = 1;
@@ -9387,12 +9595,8 @@ Array LibcheckIgnoreVerbs table
 	    ! *** Adresse berechnen
 	    i = dict_start + a*dict_entry_size;
         
-	    j = 0;      
-        if (ignore_lib_verbs) {
-                for (n = 1 : n <= LibcheckIgnoreVerbs-->0 : n++ )
-                      if (LibcheckIgnoreVerbs-->n == i) { j = -1; break; }
-                if (j==-1) continue; ! for a
-        }
+	    if (CheckIgnoreLists(i, ignore_lib_verbs)) continue;
+	    
         if (UmlautCheck(i)) {
             errors++;
             if (errors == 1) {
@@ -9429,25 +9633,23 @@ Array LibcheckIgnoreVerbs table
                 
     errors = 0;
 
-    objectloop (o ofclass Object) {
-       if (o ofclass (+ room +)
-         || o ofclass (+ thing +)
-         || o ofclass (+ direction +)) {
-            n = 0;
-            if (o has male) n++;
-            if (o has female) n++;
-            if (o has neuter) n++;
-            if (o has pluralname) n++;
+    objectloop (o has mark_as_room || o has mark_as_thing || o in Compass) {
+       
+		n = 0;
+		if (o has male) n++;
+		if (o has female) n++;
+		if (o has neuter) n++;
+		if (o has pluralname) n++;
 
-            if (n ~= 1) {
-                LibcheckAnnounce(1);
-                print "Objekt ", o, " (", (der) o, ") hat ";
-                if (n) print "keine eindeutige Genus/Numerus-Definition.^";
-                else print "keine Angabe zum Genus/Numerus.^";
-                errors++;
-                gender_error = true;
-            }
-        }
+		if (n ~= 1) {
+			LibcheckAnnounce(1);
+			print "Objekt ", o, " (", (der) o, ") hat ";
+			if (n) print "keine eindeutige Genus/Numerus-Definition.^";
+			else print "keine Angabe zum Genus/Numerus.^";
+			errors++;
+			gender_error = true;
+		}
+
 
         ! *** Vokabeln mit Umlauten und 'ß' in der name-Property eines
         !     Objekts identifizieren
@@ -9501,7 +9703,7 @@ Array LibcheckIgnoreVerbs table
     }
 ];
 
-[ YLibcheck silent ignore_lib_verbs   i j k last last2 mode warnings dict_entries
+[ XLibcheck2 silent ignore_lib_verbs   i j k last last2 mode warnings dict_entries
                                       a suffix_warning;
     say__p = 1;
         
@@ -9518,19 +9720,7 @@ Array LibcheckIgnoreVerbs table
         j = i->#dict_par1;
         if (j & 1) {
 
-            ! *** Verben in der Tabelle LibcheckIgnoreVerbs nur ignorieren,
-            !     wenn ignore_lib_verbs wahr ist (ist es im Normalfall).
-
-	        if (ignore_lib_verbs) {
-                for (k = 1 : k <= LibcheckIgnoreVerbs-->0 : k++ )
-                      if (LibcheckIgnoreVerbs-->k == i) j=-1;
-                if (j==-1) continue; ! for i
-            }
-
-            ! *** Verbformen aus der I7-Tabelle "Table of blessed verb forms"
-            !     immer ignorieren
-
-            if (AddressInTable(i, (+ Table of blessed verb forms +) )) continue;
+	        if (CheckIgnoreLists(i, ignore_lib_verbs)) continue;
 
             last = LastCharacterAddress(i);
             last2 = LastCharacterAddress(i, 1);
@@ -9596,15 +9786,95 @@ Array LibcheckIgnoreVerbs table
       }   
 ];
 
-       
+[ XLibcheck3        n index par errors word orig syn;
+    say__p = 1;
+    n = LanguageSynonyms2-->0;
+    
+    for (index = 1 : index < n : index = index + 2) {
+		word = LanguageSynonyms2-->index;
+	    par = word->#dict_par1;
+	    if (~~(par & $$10001000)) continue;
+        
+		errors++;
+		orig = LanguageSynonyms2-->index;
+		syn = LanguageSynonyms2-->(index+1);
+		if (errors == 1) {
+			LibcheckAnnounce(1,1);
+			print "^Folgende Wörter in Understand-Definitionen können niemals verstanden werden:^^";
+		}
+		print errors, ": ", (address) word;
+		if (par & $$00001000) print " [Bestandteil eines oder mehrerer Satzmuster]";
+		if (par & $$10000000) print " [Bestandteil eines oder mehrerer Objekt-Synonyme]";
+		print " [Korrekturvorschlag: ~", (PrintText) syn, "~]^";
+    }
+    if (errors) {
+        print "^Hintergrund: Einige Wörter in der Spielereingabe werden
+            vor der Analyse durch anderen Text ersetzt. Dies
+            sind vor allem Verschmelzungen von Präpositionen und Artikeln,
+            wie z.B. ~im~, ~zum~ usw. Vor der Satzanalyse werden sie in ihre Bestandteile
+            zerlegt und durch ~in dem~, ~zu dem~ usw. ersetzt. Deshalb können Objektsynonyme
+            und Satzmuster, in denen diese Wörter als Vokabeln vorkommen,
+            unter keinen Umständen verstanden werden.^^";
+            
+        print "Tipp: Die Understand-Definitionen sollten gemäß
+            der Korrekturvorschläge angepasst werden. Nur so werden die
+            ursprünglichen und die ersetzten Formen (z.B. ~",
+            (address) orig, "~ und ~", (PrintText) syn, "~)
+            gleichermaßen verstanden.^^";
+    }
+];
+ 
+#endif; ! DEBUG
+-).
 
-#Endif; ! DEBUG
+Include (-
+#ifdef DEBUG;
+
+! *** (06.05.2011) Für den Synonym-Libcheck (XLibcheck3) müssen die Worte,
+!     die vor dem Parsen durch Synonym-Strings ersetzt werden, als
+!     Vokabeln im Wörterbuch vorhanden sein. Aber: Damit überprüft werden
+!     kann, ob der Autor sie als Objekt-Synonym verwendet hat, tarnen
+!     wir die früheren Vokabeln aus dem Array LanguageSynonyms zunächst
+!     als Verben.
+!
+!     Dass die Vokabeln ursprünglich Verben sind, ist kein Problem:
+!     Versucht der Spieler z.B. >DURCHS, kann das Wort niemals als
+!     Verb verstanden werden, weil der Befehl für den Parser >DURCH DAS
+!     lautet.
+
+Verb meta 'am' 'ans' 'aufs' 'beim' 'durchs' 'fuers' 'hinterm' 'hinters' 'im' 'ins'
+     'nebens' 'uebers' 'ueberm' 'unters' 'unterm' 'vom' 'vors' 'vorm'
+     'zum' 'zur' 'darin' 'damit' 'beide'
+     
+     * -> SynonymLibcheckDummy
+     ;
+[ SynonymLibcheckDummySub; return L__M(##Miscellany, 10); ];
+
+#endif;
+-) before "Flex.i6t".
+
+
+Include (-
+#ifdef DEBUG;
+[ InitialiseLanguageSynonyms2 n index word;
+	! *** (18.05.2011) Spielbeginn: Kopie von LanguageSynonyms erstellen, allerdings
+	!     mit Vokabeln statt Strings.
+	
+	n = LanguageSynonyms2-->0 = LanguageSynonyms-->0;
+	for (index = 1 : index < n : index = index + 2) { 
+		word = LanguageSynonyms-->index; ! Ein String ...
+		VM_PrintToBuffer(buffer, 24, word);
+		VM_Tokenise(buffer, parse);
+		word = parse-->1; ! ... und jetzt ein Wörterbuch-Eintrag (eine Vokabel)!
+		LanguageSynonyms2-->index = word;
+		LanguageSynonyms2-->(index+1) = LanguageSynonyms-->(index+1);
+	}
+];
+#endif;
 -).
 
 
 [Section - Temporary bug fixes]
-
-
 
 
 German ends here.
@@ -9680,13 +9950,15 @@ Chapter: Vokabeln
 
 Section: Was sind Vokabeln?
 
-Vokabeln sind die Wörter im Lexikon eines Spiels, die mit der Spieler-Eingabe abgeglichen werden, um das Kommando zu verstehen. Dies sind zum einen die vordefinierten Verben, aber auch die vom Autor neu definierten Kommandos und Synonyme für Objekte. Damit auf Deutsch möglichst viele verschiedene Formen (Imperativ oder Infinitv für Verben, Adjektive und Substantive mit Endungen) verstanden werden können, wird die Eingabe des Spielers vor der Auswertung aufbereitet.
+Vokabeln sind die Wörter im Lexikon eines Spiels, die mit der Spieler-Eingabe abgeglichen werden, um das Kommando zu verstehen. Dies sind zum einen die vordefinierten Verben, aber auch die vom Autor neu definierten Kommandos und Synonyme für Objekte. Damit auf Deutsch möglichst viele verschiedene Formen (Imperativ oder Infinitv für Verben, Adjektive und Substantive mit Endungen) verstanden werden können, wird die Eingabe des Spielers vor der Auswertung informisiert, d.h. sie wird von Deutsch nach "Informesisch", der Muttersprache des Parsers, übersetzt. (Siehe hierzu auch Kap. 8.1: Die Informisierung der Spielereingabe.)
 
-Zunächst wandelt der Parser die Umlaute (ä, ö, ü) nach "ae", "oe" und "ue" um; das Eszett (ß) wird zu "ss". Deshalb müssen sämtliche Vokabeln (Verben, Substantive, Adjektive, Präpositionen usw.) vom Autor ohne ä, ö, ü oder ß angegeben werden, wobei für Umlaute die Umschreibungen "ae", "oe" und "ue", für das Eszett "ss" zu verwenden sind. Vokabeln, die Umlaute enthalten, werden vom Spiel nicht verstanden.
+Zunächst werden die Umlaute (ä, ö, ü) in "ae", "oe" und "ue" umgewandelt; das Eszett (ß) wird zu "ss". Deshalb müssen sämtliche Vokabeln (Verben, Substantive, Adjektive, Präpositionen usw.) vom Autor ohne ä, ö, ü oder ß angegeben werden, wobei für Umlaute die Umschreibungen "ae", "oe" und "ue", für das Eszett "ss" zu verwenden sind. Vokabeln, die Umlaute enthalten, werden vom Spiel nicht verstanden.
 
-Diese Einschränkung für das Definieren von Vokabeln wie "Baeume" ist leider nicht besonders intuitiv, sie hat aber den Vorteil, dass der Spieler sowohl "Bäume" als auch "Baeume" in seiner Anweisung schreiben kann. Mit der Testfunktion libcheck kann man prüfen, ob versehentlich Vokabeln mit Umlauten definiert wurden (s. Kap. 5.13: Überprüfen der Vokabel- und Genusdefinitionen).
+Nach der Umschreibung der Umlaute werden sämtliche Flexionsendungen in der Eingabe so weit wie möglich abgeschnitten. Das heißt, der Parser beschneidet die einzelnen Wörter so lange, bis eine Wortform vorliegt, die im Lexikon des Spiels existiert. Deshalb empfiehlt es sich, Vokabeln per Understand-Definitonen immer auf Informesisch (ohne Umlaute und Endungen) zu definieren, damit möglichst viele Varianten verstanden werden können.
 
-Nach der Umwandlung der Umlaute werden sämtliche Flexionsendungen in der Eingabe so weit wie möglich abgeschnitten. Das heißt, der Parser beschneidet die einzelnen Wörter so lange, bis eine Wortform vorliegt, die im Lexikon des Spiels existiert. Deshalb empfiehlt es sich, bei der Definition von Vokabeln immer die knappste Form ohne Endungen zu wählen, damit möglichst viele Varianten verstanden werden können.
+Die Einschränkungen für das Definieren von Vokabeln wie "Baeume" sind leider nicht besonders intuitiv, sie haben aber den Vorteil, dass der Spieler sowohl "Bäume" als auch "Baeume" mitsamt aller möglicher Endungen ("Bäumen", "Baeumen") in seiner Anweisung schreiben kann. Es ist also möglich, das Spiel auch auf einer Tastatur ohne deutsche Umlaute zu spielen. Außerdem wird das Definieren von Vokabeln auf diese Weise viel übersichtlicher, da nur die Grundform eines Wortes angegeben werden muss.
+
+Mit der Testfunktion LIBCHECK kann man prüfen, ob versehentlich Vokabeln mit Umlauten oder Endungen definiert wurden (s. Kap. 5.13: "Überprüfen der Vokabel- und Genusdefinitionen").
 
 Intern werden nur die ersten 9 Zeichen einer Vokabel verarbeitet. Dies ist ein Relikt aus speicherarmen Zeiten und kann bei langen Wörtern zu Problemen führen. Zwei Möglichkeiten, wie man lange Vokabeln behandeln kann, sind beschrieben in Section 7.1: Wortköpfe und -schwänze (Compound Heads und Compound Tails) von langen Wörtern abtrennen.
 
@@ -10437,7 +10709,7 @@ Listen mit vorangestelltem "ist"/"sind":
 	"[is-are list of <description> with <case>]" (ohne Artikel)
 	"[is-are the list of <description> with <case>]" (bestimmt)
 
-Die Listen mit vorangestelltem "ist"/"sind" machen nur Sinn, wenn sie im Nominativ ausgegeben werden. Deshalb wird unabhängig vom angegebenen Fall der Nominativ zum Ausgeben der Liste herangezogen, womit sich die Phrasen genauso verhalten wie die Original-Phrasen ohne Kasus. Der Vollständigkeit halber werden die Phrasen mit Kasus aber trotzdem mit angeboten.
+Die Listen mit vorangestelltem "ist"/"sind" können nur sinnvoll im Nominativ ausgegeben werden. Deshalb wird unabhängig vom angegebenen Fall der Nominativ zum Ausgeben der Liste herangezogen, womit sich die Phrasen genauso verhalten wie die Original-Phrasen ohne Kasus. Der Vollständigkeit halber werden die Phrasen mit Kasus aber trotzdem mit angeboten.
 
 Section: Listen mit Objektinhalt
 
@@ -10499,6 +10771,34 @@ Die Standard-Fehlermeldung "So etwas kannst du hier nicht sehen." wird durch exp
 
 	>BETRACHTE ZETTEL BEUTEL
 	Ich verstehe das Wort "beutel" in diesem Zusammenhang nicht.
+	
+Section: Pronomen nur für sichtbare Objekte setzen
+
+	*: Use in-scope pronoun notice.
+	
+Ist diese Option aktiviert, werden Pronomen nur mit Objekten verknüpft, die in Sicht ("in scope") sind. Dies kann nützlich sein, wenn bestimmte Aktionen Objekte benutzen, die sich nicht im Spiel befinden.
+
+Ohne die aktivierte Option könnte Folgendes passieren:
+
+	>DENKE AN JILL
+	Du denkst an Jill, die nicht anwesend ist.
+	
+	>KÜSSE SIE
+	Du siehst "sie" (Jill) hier im Moment nicht.
+	
+Mit aktivierter "in-scope pronoun notice"-Option sieht es so aus:
+
+	>DENKE AN JILL
+	Du denkst an Jill, die immer noch nicht anwesend ist.
+	
+	>KÜSSE SIE
+	Du küsst Juliette, die schon die ganze Zeit neben dir steht.
+	
+Section: Pronomen für angesprochene Räume setzen
+
+	*: Use room-related pronoun notice.
+	
+Standardmäßig werden Pronomen für Räume nicht gesetzt. Diese Option setzt die Pronomen auch für Räume, wenn man einen Raum im Kommando angesprochen hat. Nur mit Vorsicht zu genießen, weil die meisten Aktionen nicht für Räume gemacht sind. Zudem platziert unsere "location visibility rule" den aktuellen Raum nur bei bestimmten Aktionen (derzeit location-leaving, looking und smelling) in den sichtbaren Bereich (in scope).
 
 Section: Manuelles Setzen der Pronomen
 
@@ -10575,18 +10875,66 @@ Section: Die deform-Eigenschaft init benutzen
 Ermöglicht die Benutzung der deform-Eigenschaft init zum Initialisieren von Objekten mittels Einbindung von I6-Code.
 
 
-Chapter: Neue oder erweiterte Standard-Aktionen und -Kommandos
+Chapter: Neue Standard-Aktionen, -Aktivitäten und -Kommandos
 
-Section: Einen Raum verlassen (room-leaving)
+Section: Die Informisierung der Spielereingabe
 
-Viele Spieler versuchen intuitiv, den aktuellen Standort mit >VERLASSE RAUM oder ähnlichen Kommandos zu verlassen, was naheliegend ist. Trotzdem ist dies kein Standardverhalten des Inform-Weltmodells. In GerX ist das Verlassen eines Raums auf diese Weise möglich. Die neue Aktion, die dieses Verhalten bewirkt, heißt "room-leaving".
+Der deform/GerX-Parser versteht kein natürliches Deutsch, auch wenn es für den Spieler oft so aussieht. In Wirklichkeit spricht der Parser eine simplifizierte Sprache, die "Informesisch" (engl. "Informese") genannt wird. In Informesisch gibt es keine Umlaute, kein Eszett und keine Endungen. Auch Verschmelzungen von Präposition und bestimmtem Artikel, wie z.B. "im" oder "am", existieren in Informesisch nicht. Im englischen Original-Inform wird ebenfalls Informesisch gesprochen, doch aufgrund der formalen Ähnlichkeit zwischen Englisch und Informesisch fällt dieser Umstand nur sehr selten ins Gewicht.
+
+Damit der Parser die Spielereingabe analysieren kann, muss sie zuvor ins Informesische übersetzt werden. Als Dolmetscher tritt dazu die Inform-6-Routine LanguageToInformese (LTI) in Aktion, die in GerX durch eine Aktivität (activity) mit dem Namen
+
+	translating a command into Informese
+
+repräsentiert wird. In LTI werden die Umlaute ä, ö und ü sowie ß durch ihre Umschreibungen ae, oe, ue und ss ersetzt; die Flexionsendungen werden so weit abgeschnitten, bis eine Wortform vorliegt, die im Wörterbuch des Spiels existiert; zudem werden bestimmte Wortformen wie Kontraktionen von Präposition und Artikel aufgelöst, z.B. wird "im" zu "in dem". Bestimmte Zwei-Wort-Kombinationen (Zwillinge) werden ebenfalls ersetzt; standardmäßig sind das zurzeit "nur nicht" und "bis auf", die zu "ausser" werden. 
+
+Die informisierte Eingabe kann man sich mit der Trace-Funktion ab Trace-Level 2 ausgeben lassen. Für jedes Token  (Satzelement) wird die Zeichenkette der Spielereingabe in Anführungszeichen und die entsprechende Vokabel (? = unbekannte Vokabel) angezeigt, genau so, wie der Parser sie zu sehen bekommt:
+
+	>TRACE 2
+	Parser tracing set to level 2.
+
+	>BETRACHTE DAS LOCH IM KLEINEN SCHWEIZER KÄSE
+	"betracht" betracht / "das" das / "loch" loch / "in" in / "dem" dem / "klein" klein / "schweizer" ? / "kaese" kaese
+	...
+	
+Der gesamte Vorgang der Umwandlung wird auch "Informisierung" genannt. Die Informisierung ist der Grund dafür, warum alle Vokabeln in Understand-Definitionen auf Informesisch angegeben werden müssen (siehe Kap. 3.1 Was sind Vokabeln?).
+
+
+Section: Sicheres Manipulieren der Spielereingabe nach der Informisierung
+
+Inform lässt Manipulationen der Spielereingabe mittels "after reading a command" zu. Diese Methode hat den großen Nachteil, dass direkt nach der Activity "reading a command" die Spielereingabe noch nicht "informisiert" wurde und deshalb immer alle möglichen Formen mit Endungen und Umlauten berücksichtigt werden müssen. Das ist extrem fehleranfällig und der Libcheck gibt obendrein grundlos Warnungen aus.
+
+Sicherer ist es hingegen, die Spielereingabe nach der GerX-Activity "translating a command into Informese" abzufragen und zu verändern.
+
+	*: After translating a command into Informese:
+
+Beispiel:
+
+	After translating a command into Informese:
+		if the player's command includes "gruenlich", replace the matched text with "gruen".
+		
+Wie üblich bei der Definition von Vokabeln, gilt es auch hier, keine Umlaute und keine Endungen zu verwenden.
+
+Das Standardverhalten der Activity "translating a command into Informese" LTI kann zusätzlich, wie bei jeder anderen Activity auch, mittels Before-Regel ergänzt und/oder mit einer For-Regel komplett ausgehebelt werden. (Das ist wohl mehr etwas was für experimentierfreudige Parser-Bastler und für normale Anwendungen nicht zu empfehlen.)
+
+Section: Den aktuellen Raum verlassen (location-leaving)
+
+Viele Spieler versuchen intuitiv, den aktuellen Standort (location) mit >VERLASSE RAUM oder ähnlichen Kommandos zu verlassen, was naheliegend ist. Trotzdem ist dies kein Standardverhalten des Inform-Weltmodells. In GerX ist das Verlassen eines Raums auf diese Weise möglich. Die neue Aktion, die dieses Verhalten bewirkt, heißt "location-leaving".
 
 	>VERLASS
-	>VERLASS (DEN/DIESEN) ORT/RAUM/PLATZ/STANDORT
+	>VERLASS (DEN/DIE/DIESEN) <RAUM>
+	>GEH WEG/FORT
+	>GEH WEG/FORT VON HIER/DA/DORT
+	>GEH WEG/FORT VON <RAUM>
 	
-Wenn ein Raum nur einen einzigen offensichtlichen Ausgang hat, wird ein Gehen in die entsprechende Richtung versucht. Gibt es mehrere Richtungen, in die man gehen kann, fragt das Spiel nach und bittet um genauere Richtungsangaben.
+Wenn der aktuelle Raum nur einen einzigen offensichtlichen Ausgang hat, wird ein Gehen in die entsprechende Richtung versucht. Gibt es mehrere Richtungen, in die man gehen kann, fragt das Spiel nach und bittet um genauere Richtungsangaben.
 
-Der aktuelle Raum kann auch mit seinen Synonymen angesprochen werden. Dazu muss das Vokabular für den Raum definiert werden.
+Für jeden Raum sind die Synonyme "Ort [m]", "Platz [m]", "Raum [m]", "Standort [m]" und "Umgebung [f]" vordefiniert; sie werden durch das Understand-Token "[basic-room-synonyms]" repräsentiert. Das Basisvokabular für Räume kann folgendermaßen erweitert werden:
+
+	Understand "Umwelt [f]" as "[basic-room-synonyms]".
+	
+Bei der Definition von allgemeinem Raumvokabular empfiehlt es sich, den Genus des Synonyms als Changing-Gender-Attribut ("[f]") mit anzugeben, weil Räume unterschiedliche Genera bekommen können.
+
+Der aktuelle Raum kann auch mit weiteren Synonymen angesprochen werden, wenn zusätzliches Vokabular für den einzelnen Raum definiert wird:
 
 	The Lab is a neuter room. The printed name is "Labor". Understand "Labor" and "Laboratorium" as the Lab.
 	
@@ -10595,6 +10943,36 @@ Nun kann man das Labor auch per
 	>VERLASS LABOR/LABORATORIUM
 	
 verlassen.
+
+
+Section: Den aktuellen Raum betrachten
+
+Die Raumbeschreibung des aktuellen Standortes (location) kann man sich normalerweise mit den Befehlen SCHAU, SCHAU DICH UM, SCHAU HERUM/UMHER, LAGE und der Abkürzung L erneut anzeigen lassen. Intuitiv versuchen Spieler aber auch, den aktuellen Raum mit Kommandos wie BETRACHTE RAUM zu erkunden. In GerX ist das möglich.
+
+Der Raum kann wie jedes andere sichtbare Objekt untersucht werden, wobei die Vokabeln "Ort [m]", "Platz [m]", "Raum [m]", "Standort [m]" und "Umgebung [f]" als Understand-Token "[basic-room-synonyms]" für jeden Raum vordefiniert sind. Zusätzliches Vokabular kann per Understand-Definitionen angelegt werden, um den Raum mit weiteren Synonymen anzusprechen.
+
+Das Untersuchen eines Raumes wird in der "convert examining a room into looking rule" von der Aktion "examining" zur Aktion "looking" umgeleitet.
+
+
+Section: Die Sichtbarkeit des aktuellen Raums
+
+Der aktuelle Raum (location) ist standardmäßig nicht sichtbar, das heißt, er kann in Kommandos nicht als Objekt genannt werden. Für die Aktionen "location-leaving", "examining" und "smelling" wird der Raum jedoch in den sichtbaren Bereich (in scope) platziert. Die Regel, die dafür zuständig ist, heißt "location visibility rule" und greift "after deciding the scope of the player".
+
+Soll der aktuelle Raum niemals ansprechbar sein, kann die Regel komplett entfernt werden:
+
+	*: The location visibility rule is not listed in any rulebook.
+	
+Wenn der Standort im Zusammenhang mit weiteren Aktionen ansprechbar sein soll, kann man das mit folgender Phrase erreichen:
+
+	*: <ACTION> is allowing wide scope.
+	
+Mit "wide scope" ist gemeint, dass nicht nur der Inhalt des aktuellen Raumes sichtbar ist, sondern auch der Raum (als Objekt) selbst angesprochen werden kann.
+	
+Pronomen werden für einen im Kommando genannten Raum standardmäßig nicht gesetzt, da der aktuelle Standort für die meisten Aktionen nicht "in scope" ist. Sollen dennoch Räume beim Setzen der Pronomen berücksichtigt werden, muss die Option
+
+	*: Use room-related pronoun notice.
+	
+aktiviert werden.
 
 
 Section: Inventar als Satz anzeigen
@@ -10678,22 +11056,24 @@ Die deform-Arrays Twins und Synonyms lassen sich bislang nur als I6-Code einbind
 		;
 
 		Array Synonyms table
-		'fuers'				"fuer das"
+		'gegens'				"gegen das"
 		'vorsichtig' 		"";
 	-) after "Definitions.i6t".
 
-Wichtig ist in den I6-Arrays, dass die/das Ausgangswort/e in einfachen Hochkommas angegeben wird, das Zielwort jedoch in Anführungsstrichen.
+Wichtig ist in den I6-Arrays, dass die/das Ausgangswort/e in einfachen Hochkommas angegeben wird, das Zielwort jedoch in Anführungsstrichen. Umlaute, Eszetts und Endungen sind, wie immer bei Vokabeln, tabu.
 
-Es gibt aber eine I7-Alternative:
+Es gibt aber eine I7-Alternative, die erst nach der Informisierung greift:
 
-	After reading a command:
-	if the player's command includes "mc kenzie", replace the matched text with "mckenzie".
+	After translating a command into Informese:
+		if the player's command includes "mc kenzie", replace the matched text with "mckenzie".
 
-	After reading a command:
-	if the player's command includes "fuers":
-		replace the matched text with "fuer das";
-	otherwise:
-		if the player's command includes "vorsichtig", cut the matched text.
+	After translating a command into Informese:
+		if the player's command includes "gegens":
+			replace the matched text with "gegen das";
+		if the player's command includes "vorsichtig":
+			cut the matched text.
+
+Auch hier gelten die Grundregeln zur Definition von Vokabeln: Keine Umlaute, keine Endungen. Zur Activity "translating a command into Informese" siehe auch Abschnitt Section 8.1: Die Informisierung der Spielereingabe.
 
 
 Section: Englische Richtungsabkürzungen verbieten
@@ -10765,29 +11145,18 @@ Jetzt fragt das Spiel:
 
 	>PUDDING
 	Du stocherst in dem Pudding herum.
+	
+Bei der Verwendung von verketteten (mit Schrägstrich gruppierten) Präpositionen wird die erste Präposition der Kette zur Ausgabe der Parser-Frage herangezogen:
 
-Vor dem Dativ-Token stehen oft Präpositionen. Um fehlerhafte oder unsinnige Parser-Nachfragen zu vermeiden, sollten mit Schrägstrich gruppierte Präpositionen aufgelöst werden. Ein Beispiel aus den vordefinierten Verben:
-
-Die Defininition mit gruppierten Präpositionen:
-
-	Understand "nimm platz auf/in [dativ] [something]" as entering.
-
-	Im Spiel:
-
-	>NIMM PLATZ
-	Was willst du platz aufnehmen?
-
-	>HÄ?
-
-Korrekt ist es bei der Definition mit aufgelösten Präpositionen:
-
-	Understand "nimm [substantiv] platz auf [dativ] [something]" as entering.
-	Understand "nimm [substantiv] platz in [dativ] [something]" as entering.
-
-	Im Spiel:
-
-	>NIMM PLATZ
-	Worauf willst du Platz nehmen?
+	Understand "stocher in/unter [dativ] [something] herum" as poking.
+	
+	>STOCHER
+	Worin willst du stochern?
+	
+	Understand "stocher unter/in [dativ] [something] herum" as poking.
+	
+	>STOCHER
+	Worunter willst du stochern?
 
 Section: Ein Satzelement als Substantiv kennzeichnen (Substantiv-Token)
 
@@ -10876,7 +11245,6 @@ Weitere Pronomen:
 	"[noun daran]"
 	"[noun darum]"
 	"[noun darauf]"
-	"[noun damit]"
 	"[noun herunter]"
 	"[noun hindurch]"
 	"[noun hinein]"
@@ -10893,11 +11261,11 @@ Pronomen erzwingen:
 
 Dieses Token kann in Verbindung mit Präpositionen verwendet werden; so ist z.B.
 
-	Understand "spiel [force pronoun] damit" as playing.
+	Understand "spiel [force pronoun] darauf" as playing.
 
 gleichbedeutend mit
 
-	Understand "spiel [noun damit]" as playing.
+	Understand "spiel [noun darauf]" as playing.
 	
 Neue, nicht vordefinierte, Pronominaladverbien können damit realisiert werden, wie z.B. "davor":
 
@@ -11114,3 +11482,5 @@ Example: * John Malkovichs Toilette - Eine Übersetzung des Beispiels "John Malk
 	The onyx key unlocks the oval door. It is in the Bedroom. The onyx key is male. "Auf dem Boden liegt kantig und schwarz von der Sonne beleuchtet [ein onyx key]." The printed name of the onyx key is "Onyxschlüssel". Understand "Schluessel", "Schluessel aus Onyx" and "Onyxschluessel" as the onyx key.
 
 	Test me with " u badezimmertür / schließ ovale tür auf / schließ badezimmertür auf / g / gehe durch badezimmertür / nimm schlüssel / schließ badezimmertür ab / schließ badezimmertür / s / schließ badezimmertür mit dem onyxschlüssel ab / w"
+	
+	

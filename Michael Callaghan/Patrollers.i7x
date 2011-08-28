@@ -1,4 +1,4 @@
-Version 10 of Patrollers by Michael Callaghan begins here.
+Version 11 of Patrollers by Michael Callaghan begins here.
 
 "Allows a non player character to follow routes defined by rooms, directions, random journeys, the player's location or to a destination."
 
@@ -120,6 +120,10 @@ Reporting is a Reporting Status that varies.  Reporting is usually Individual.
 Arrival List is a list of Patrollers that varies.
 Departure List is a list of Patrollers that varies.
 
+Section 1.17 - Flag to trap  best route returning nothing as a value
+
+RouteAvailable is a truth state that varies.
+
 Chapter 2 -  Patrolling Activity
 
 Section 2.1 - Initialize Room Led Patrollers
@@ -167,6 +171,7 @@ Section 3.2 - Before rules for the patrolling activity
 
 Before Patrolling something (called the Bod) (this is the set current room for patrollers rule):
 	if the Bod is a Patroller:
+		now RouteAvailable is true;
 		now the CurrentRoom is the location of the Bod.
 
 Before Patrolling something (called the Bod) (this is the set room-led patrollers rule):
@@ -176,7 +181,11 @@ Before Patrolling something (called the Bod) (this is the set room-led patroller
 		[Set the NextRoom from the room table.]
 		now the NextRoom is the TargetRoom entry;
 		[Calculate the route to the next room.]
-		now the Way is the best route from the CurrentRoom to the NextRoom, using even locked doors.
+		let tempWay be the best route from the CurrentRoom to the NextRoom, using even locked doors;
+		if tempWay is nothing:
+			now RouteAvailable is false;
+		otherwise:
+			now the Way is tempWay.
 
 Before Patrolling something (called the Bod) (this is the set direction-led patrollers rule):
 	if the Bod is a DirectionLed Patroller:
@@ -213,18 +222,30 @@ Before Patrolling something (called the Bod) (this is the set aimless patrollers
 			[if there are no exits, setting the Next Room as the current room will ensure that Way is returned as nothing.]
 			now NextRoom is the CurrentRoom;
 		[Set the new direction to the way to the room.]
-		now Way is the best route from the CurrentRoom to the NextRoom, using even locked doors.
+		let tempWay be the best route from the CurrentRoom to the NextRoom, using even locked doors;
+		if tempWay is nothing:
+			now RouteAvailable is false;
+		otherwise:
+			now the Way is tempWay.
 
 Before Patrolling something (called the Bod) (this is the set following patrollers rule):
 	if the Bod is Following Patroller:
-		now the Way is the best route from the CurrentRoom to the location of the player, using even locked doors.
+		let tempWay be the best route from the CurrentRoom to the location of the player, using even locked doors;
+		if tempWay is nothing:
+			now RouteAvailable is false;
+		otherwise:
+			now the Way is tempWay.
 
 Before Patrolling something (called the Bod) (this is the set targeted patrollers rule):
 	if the Bod is Targeted Patroller:
-		now the Way is the best route from the CurrentRoom to the Destination of the Bod, using even locked doors.
+		let tempWay be the best route from the CurrentRoom to the Destination of the Bod, using even locked doors;
+		if tempWay is nothing:
+			now RouteAvailable is false;
+		otherwise:
+			now the Way is tempWay.
 
 Before Patrolling something (called the Bod) (this is the test obstacles for patrollers rule):
-	if the Bod is a Patroller and the Way is not nothing:
+	if the Bod is a Patroller and RouteAvailable is true:
 		let Target be the room-or-door the Way from the CurrentRoom;
 		if the Target is a door:
 			now Obstacle is the Target;
@@ -270,7 +291,7 @@ Before Patrolling something (called the Bod) (this is the try opening doors for 
 Section 3.3 - Carry out moving the Patroller
 
 For Patrolling something (called the Bod) (this is the move patrollers rule):
-	if the Bod is a Patroller and the Way is not nothing:
+	if the Bod is a Patroller and RouteAvailable is true:
 		unless the NextRoom is off-limits to the Bod:
 			try the Bod going the Way;
 		if the location of the Bod is not the CurrentRoom:
@@ -472,6 +493,10 @@ Patrollers is an extension that enables us to define routes for a non-player cha
 
 Chapter: What's new
 
+Section: Version 11
+
+- Fixes  a bug that crashed Patrollers where the best route function returned nothing as its value.
+
 Section: Version 10
 
 - the statuses Active and Inactive have been renamed to On Patrol and Off Patrol to prevent a clash with the use of these adjectives in version 6E59 of Inform 7.
@@ -496,7 +521,7 @@ Section: Version 6
 
 - Solves a bug that caused active patrollers out of world or in rooms with no exits to crash the extension.
 
-- Updated for compatability with version 5T13.
+- Updated for compatibility with version 5T13.
 
 Section: Version 5
 
@@ -798,7 +823,7 @@ To change any of these, we create our own "To report..." rule using the same syn
 
 Section: Moving the patroller - Collective Reporting:
 
-The arrival and departure of patrollers collectively is handled by two reporting phraises.   We can use our own phrases to replace the built in reporting rules.
+The arrival and departure of patrollers collectively is handled by two reporting phrases.   We can use our own phrases to replace the built in reporting rules.
 
 To report arrivals: 	say "[Arrival List] arrive[if the number of entries in the arrival list is 1]s[end if]."
 
@@ -851,7 +876,7 @@ To create our own restrictions on a patroller's movement, we add the following l
 		other conditions to bar or allow access;
 			decide yes or no;
 		any further conditions to bar or allow access;
-			decide year or no;
+			decide yes or no;
 		decide no.
 
 The code should always end with an unconditional "decide no." to ensure that the default position for any room / patroller combinations that fall outside our conditions is to allow access to the room.
@@ -901,7 +926,7 @@ To restrict a patroller to a region:
 To prevent a patroller entering a region:
 
 	To decide if (R - a Room) is off-limits to (P - a Patroller):
-		if P is the traunt:
+		if P is the truant:
 			if the map region of R is the School Complex:
 				decide yes;
 			decide no;

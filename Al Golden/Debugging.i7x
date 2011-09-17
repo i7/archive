@@ -1,8 +1,4 @@
-Version 7 of Debugging by Al Golden begins here.
-
-"Adds the recording and replay features of Inform 6 which have not been included in Inform 7. 
-Also allows the author to do some extened debugging
-such as listing rooms, objects, NPCs,backdrops and containers." 
+Version 8 of Debugging by Al Golden begins here.
 
 Include (- 
 Verb meta 'recording' *          -> CommandsOn 
@@ -168,6 +164,14 @@ report backdropping:
 	repeat with bd running through backdrops:
 		say "[bd] [line break]"
 
+regeing is an action applying to nothing.
+understand "regions" as regeing.
+
+report regeing:
+	say "list of regions in the game. [line break]";
+	repeat with r running through regions:
+		say "[r] [line break]"
+
 conting is an action applying to nothing.
 understand "containers" as conting.
 
@@ -209,6 +213,10 @@ To see Male NPCs: type "MEN" or "MALES"
 To see Female NPCs: type "WOMEN" or "FEMALES" 
 
 To see containers: type "CONTAINERS"
+
+To see backdrops: type "BACKDROPS"
+
+To see regions: type "REGIONS"
 
 Example: ** Debug Test - a small program for testing the extension.
 

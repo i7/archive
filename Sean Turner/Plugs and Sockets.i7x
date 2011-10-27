@@ -1,4 +1,4 @@
-Version 2 of Plugs and Sockets by Sean Turner begins here.
+Version 3 of Plugs and Sockets by Sean Turner begins here.
 
 "System for handling plugs and sockets."
 
@@ -38,7 +38,7 @@ To decide what number is the count of occupied connectors of the (item - a thing
 Definition: A thing is a PS-receiver if it incorporates a PS-socket, and it is not a PS-socket.
 Definition: A thing is a PS-inserter if it incorporates a PS-plug, and it is not a PS-plug.
 Definition: A thing (called the test-item) is attached:
-	if the count of occupied connectors of the test-item is 0 then decide no;
+	if the count of occupied connectors of the test-item is 0, decide no;
 	decide yes.
 
 Connect listing is a truth state that varies.
@@ -108,18 +108,17 @@ After printing the name of a something (called the item) while listing contents 
 		say " ([inserter status of the item])".
 
 
-A PS-connector is a kind of thing. It has an object called the attachment. It has some text called the type. The type is usually "standard". A PS-connector can be unknown, male or female (this is its gender property).
+A PS-connector is a kind of thing. It has an object called the attachment. It has some text called the type. The type is usually "standard". A PS-connector can be PS-unknown, PS-male or PS-female (this is its gender property).
 
 Instead of examining a PS-connector (called the item):
-	say "It is a [gender] [type] connector of [the holder of the noun]. It ";
-	if the item is male:
-		say "is [if the attachment of the noun is nothing]unplugged[else]plugged into [the holder of the attachment of the noun][end if].";
+	if the item is PS-male:
+		say "It is a male [type] connector of [the holder of the noun]. It is [if the attachment of the noun is nothing]unplugged[else]plugged into [the holder of the attachment of the noun][end if].";
 	else:
-		say "has [if the attachment of the noun is nothing]nothing[else][the holder of the attachment of the noun][end if] plugged into it.".
+		say "It is a female [type] connector of [the holder of the noun]. It has [if the attachment of the noun is nothing]nothing[else][the holder of the attachment of the noun][end if] plugged into it.".
 
-A PS-plug is a kind of PS-connector. It is always male.
+A PS-plug is a kind of PS-connector. It is always PS-male.
 
-A PS-socket is a kind of PS-connector. It is always female.
+A PS-socket is a kind of PS-connector. It is always PS-female.
 
 Before an actor going to somewhere (this is the leaving room whilst attached to fixed things rule):
 	repeat with item running through the attached carried things:
@@ -177,8 +176,8 @@ Check an actor plugging a PS-plug into something (this is the plugging-a-plug ru
 			say "[The noun] [is-are] already plugged into [the holder of the attachment of the noun].";
 		stop the action;
 	else:
-		change the candidate plug to the noun;
-		change the candidate inserter to the holder of the noun.
+		now the candidate plug is the noun;
+		now the candidate inserter is the holder of the noun.
 
 The plugging-a-plug rule is listed last in the check plugging it into rulebook.
 		
@@ -188,8 +187,8 @@ Check an actor plugging something that is not a PS-plug into something (this is 
 			say "[The noun] [has-have] no plug.";
 		stop the action;
 	else:
-		change the candidate plug to nothing;
-		change the candidate inserter to the noun.
+		now the candidate plug is nothing;
+		now the candidate inserter is the noun.
 	
 The plugging-something-other-than-a-plug rule is listed last in the check plugging it into rulebook.
 
@@ -199,8 +198,8 @@ Check an actor plugging something into a PS-socket (this is the plugging-into-a-
 			say "[The second noun] already has [the holder of the attachment of the second noun] plugged into it.";
 		stop the action;
 	else:
-		change the candidate socket to the second noun;
-		change the candidate receiver to the holder of the second noun.
+		now the candidate socket is the second noun;
+		now the candidate receiver is the holder of the second noun.
 		
 The plugging-into-a-socket rule is listed last in the check plugging it into rulebook.
 
@@ -210,8 +209,8 @@ Check an actor plugging something into something that is not a PS-socket (this i
 			say "[The second noun] [has-have] no socket.";
 		stop the action;
 	else:
-		change the candidate socket to nothing;
-		change the candidate receiver to the second noun.
+		now the candidate socket is nothing;
+		now the candidate receiver is the second noun.
 	
 The plugging-into-something-other-than-a-socket rule is listed last in the check plugging it into rulebook.
 
@@ -227,13 +226,13 @@ Check an actor plugging something into something (this is the plug-unknown-socke
 	if the candidate plug is nothing, and the candidate socket is not nothing:
 		repeat with test-plug running through the PS-plugs which are part of the candidate inserter:
 			if the attachment of the test-plug is nothing, and the type of the test-plug is the type of the candidate socket:
-				change the actual plug to the test-plug;
+				now the actual plug is the test-plug;
 				break;
 		if the actual plug is nothing:
 			if the actor is the player:
 				say "[The candidate inserter] [has-have] no free plugs that match [the candidate socket].";
 			stop the action;
-		change the actual socket to the candidate socket.
+		now the actual socket is the candidate socket.
 
 The plug-unknown-socket-known rule is listed last in the check plugging it into rulebook.
 
@@ -241,13 +240,13 @@ Check an actor plugging something into something (this is the plug-known-socket-
 	if the candidate plug is not nothing, and the candidate socket is nothing:
 		repeat with test-socket running through the PS-sockets which are part of the candidate receiver:
 			if the attachment of the test-socket is nothing, and the type of the test-socket is the type of the candidate plug:
-				change the actual socket to the test-socket;
+				now the actual socket is the test-socket;
 				break;
 		if the actual socket is nothing:
 			if the actor is the player:
 				say "[The candidate receiver] [has-have] no free sockets that match [the candidate plug].";
 			stop the action;
-		change the actual plug to the candidate plug.
+		now the actual plug is the candidate plug.
 
 The plug-known-socket-unknown rule is listed last in the check plugging it into rulebook.
 
@@ -256,7 +255,7 @@ Check an actor plugging something into something (this is the plug-unknown-socke
 		let matching connection type be "";
 		repeat with test-plug running through the PS-plugs which are part of the candidate inserter:
 			if the attachment of the test-plug is nothing:
-				change the actual plug to the test-plug;
+				now the actual plug is the test-plug;
 				repeat with test-socket running through the PS-sockets which are part of the candidate receiver:
 					if the attachment of the test-socket is nothing, and the type of the test-plug is the type of the test-socket:
 						if matching connection type is not "":
@@ -265,8 +264,8 @@ Check an actor plugging something into something (this is the plug-unknown-socke
 									say "There are multiple types of matching plugs and sockets available for [the candidate inserter] and [the candidate receiver]. Try specifying which plug or socket you wish to use.";
 								stop the action;
 						else:
-							change the matching connection type to the type of the test-plug;
-							change the actual socket to the test-socket;
+							now the matching connection type is the type of the test-plug;
+							now the actual socket is the test-socket;
 		if the actual plug is nothing:
 			if the actor is the player:
 				say "[The candidate inserter] [has-have] no free plugs available.";
@@ -284,8 +283,8 @@ Check an actor plugging something into something (this is the plug-known-socket-
 			if the actor is the player:
 				say "[The candidate plug] and [the candidate socket] are not of the same type.";
 			stop the action;
-		change the actual plug to the candidate plug;
-		change the actual socket to the candidate socket.
+		now the actual plug is the candidate plug;
+		now the actual socket is the candidate socket.
 
 The plug-known-socket-known rule is listed last in the check plugging it into rulebook.
 
@@ -494,7 +493,7 @@ It becomes more complex when considering some things may contain several differe
 	An HMDI cable is here. Incorporated by it are two HDMI plugs.
 	The amplifier incorporates an HDMI socket.
 
-The amplifier now has two different types of socket. This isn't so bad because if we try "PLUG HDMI CABLE INTO AMPLIFIER" the game will know, without ambiquity, which socket to use.
+The amplifier now has two different types of socket. This isn't so bad because if we try "PLUG HDMI CABLE INTO AMPLIFIER" the game will know, without ambiguity, which socket to use.
 
 Similarly, we could define an adapter cable that has a 3.5mm audio plug at one end and a pair of RC audio connectors at the other. If we attempted to plug this into something with only one type of socket (say an iPhone), it would automatically plug in the correct matching plug.
 
@@ -518,7 +517,7 @@ The extension also supports actors other than the player. For example, "GEORGE, 
 
 There are currently three major limitations to the extension:
 1) You cannot plug an item into another item multiple times. There is a rule which explicitly forbids it (although it could be delisted). It creates problems with listing attachments and ambiguity and wasn't really necessary.
-2) You cannot name a plug or socket when unplugging. Once again, it would have added compexity and I didn't believe it is needed.
+2) You cannot name a plug or socket when unplugging. Once again, it would have added complexity and I didn't believe it is needed.
 3) Plugs and sockets has not been tested for multi-layered situations. That is, a plug or socket must be a part of a parent object, not a part of a part. For example, lets say we have an "entertainment system" which has a "DVD player" as a part. The "DVD player" could then have a plug as a part of it. However this may cause problems when trying to "PLUG" it into things. 
 
 One final point: a value called PS-leaving can be either PS-denied or PS-allowed. It is PS-denied by default. When it is PS-denied and the player attempts to leave a location whilst carrying something attached to something not carried, a message will be displayed and the action prevented. If this variable is set to PS-allowed, the action will be okay but all the relevant connections for those things carried will be broken.
@@ -625,7 +624,7 @@ Example: ** Home Theatre - Plugging a variety of components with different conne
 				now power flowing is false;
 		if power flowing is true, and the audio is connected, and the video is connected:
 			say "Ahh. Now you can relax and watch the movie.";
-			end the game in victory;
+			end the story saying "You have won.";
 		else:
 			if the receiver is powered, and the DVD is powered, and the audio is connected:
 				say "You can hear the movie but you can't see any picture!".

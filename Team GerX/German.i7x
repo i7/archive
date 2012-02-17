@@ -1,11 +1,11 @@
-Version 3/110621 of German by Team GerX begins here.
+Version 3/111222 of German by Team GerX begins here.
 
 "GerX: An extension to make German the language of play, written by Banbury,
 Christian Blümke and Michael Baltes. Designed for I7 releases 6G60 and 6F95."
 
 "based on deform release 6/11 by Martin Oehm"
 
-[v3.29]
+[v3.33]
 
 Part - I7 additions and replacements
 
@@ -91,7 +91,8 @@ To decide which case is the current case: (- (short_name_case + 1) -).
 
 Section - Gender
 
-A thing can be female. A thing can be male. A thing can be neuter.
+[---- ALT ----]
+[A thing can be female. A thing can be male. A thing can be neuter.
 A thing is usually neuter.
 A male thing is never neuter. A female thing is never neuter.
 A plural-named thing is never neuter.
@@ -101,7 +102,30 @@ A room is usually neuter.
 A male room is never neuter. A female room is never neuter. A plural-named room is never neuter.
 
 A man is never female. A man is never neuter. A man is never plural-named.
-A woman is never male. A woman is never neuter. A woman is never plural-named. 
+A woman is never male. A woman is never neuter. A woman is never plural-named.]
+[------------]
+
+[---- NEU 29.11.2011 ----]
+A thing can be female. A thing can be male. A thing can be neuter.
+
+A thing is usually neuter.
+
+A male thing is never neuter. A male thing is never female. A male thing is never plural-named.
+A female thing is never neuter. A female thing is never male. A female thing is never plural-named.
+A neuter thing is never male. A neuter thing is never female. A neuter thing is never plural-named.
+A plural-named thing is never neuter. A plural-named thing is never male. A plural-named thing is never female.
+
+A room can be female. A room can be male. A room can be neuter. A room can be plural-named.
+A room is usually neuter.
+
+A male room is never neuter. A male room is never female. A male room is never plural-named.
+A female room is never neuter. A female room is never male. A female room is never plural-named.
+A neuter room is never male. A neuter room is never female. A neuter room is never plural-named.
+A plural-named room is never neuter. A plural-named room is never male. A plural-named room is never female.
+
+A man is never female. A man is never neuter. A man is never plural-named.
+A woman is never male. A woman is never neuter. A woman is never plural-named.
+[------------------------]
 
 The male property translates into I6 as "male".
 
@@ -111,6 +135,105 @@ The genders are Mehrzahl, männlich, weiblich, and sächlich.
 The specification of gender is "Gender represents genders of a thing as one
 of the values männlich, weiblich, sächlich, and Mehrzahl in addition to the
 properties female, male, neuter, and plural-named."
+
+Section - Grammatical Gender
+
+[The grammatical gender can be used as an alternative for setting the
+gender of an object. The tradional way is to use attributes (male, female,
+neuter, or plural-named).]
+
+A grammatical gender is a kind of value. The grammatical genders are
+masculine-gender [1], feminine-gender [2], neuter-gender [3], and no-specified-gender [4]. 
+
+[Damit das herkömmliche Verfahren mit Attributen weiterhin funktioniert,
+bekommt jedes Objekt zunächst einmal einen Default-Wert no-specified gender,
+der anzeigt, dass der Autor den grammatical gender (noch) nicht für
+ein Objekt festgelegt hat.]
+
+An object has a grammatical gender. The grammatical gender of an object is usually no-specified-gender.
+
+The grammatical gender property translates into I6 as "grammatical_gender".
+
+Include (-
+Property grammatical_gender;
+-) after "Definitions.i6t".
+
+
+Section - Alternative Gender Definitions
+
+[von Martin Oehm, 02.12.2011]
+
+[The grammatical gender of an object can be defined in the printed name, by
+adding one of the text substitutions m, f, n, or p directly after the name.]
+
+Use alternative gender definitions translates as (- Constant ALTERNATIVE_GENDER; -).
+
+An object can be marked for alternative genderisation.
+
+To say m:
+	Now the previously named noun is marked for alternative genderisation;
+	Now the grammatical gender of the previously named noun is masculine-gender.
+
+To say f:
+	Now the previously named noun is marked for alternative genderisation;
+	Now the grammatical gender of the previously named noun is feminine-gender.
+
+To say n:
+	Now the previously named noun is marked for alternative genderisation;
+	Now the grammatical gender of the previously named noun is neuter-gender.
+
+To say p:
+	Now the previously named noun is marked for alternative genderisation;
+	Now the grammatical gender of the previously named noun is no-specified-gender;
+	Now the previously named noun is not neuter;
+	Now the previously named noun is plural-named.
+
+Include (- 
+
+#ifdef ALTERNATIVE_GENDER;
+Array gobble_buffer->256;
+
+[ Gobble s length;
+    SetPreviouslyNamedNoun(s);
+    #ifdef TARGET_GLULX;
+    length = Glulx_PrintAnyToArray(gobble_buffer, 253, der, s);
+    #ifnot;
+    @output_stream 3 gobble_buffer;
+    der(s);
+    @output_stream -3;
+    length = gobble_buffer-->0;
+    if (gobble_buffer->(256 - 1) ~= 0) print "[*** Gobble: buffer overflow! ***]";
+    #endif;
+];
+#ifnot;
+[ Gobble s length; rfalse; ];
+#endif;
+-).
+
+To gobble (o - an object): (- gobble({o}); -).
+
+[The printee is an object that varies.
+Before printing the name of an object (called the item)
+(this is the set printee rule): now the printee is the item.]
+				
+To genderise (sexless - an object):
+	if the alternative gender definitions option is active and the sexless is not the player:
+		now the grammatical gender of the sexless is no-specified-gender;
+		gobble sexless;
+		if the sexless is marked for alternative genderisation:
+			if the grammatical gender of sexless is no-specified-gender:
+				now sexless is not neuter;
+				now sexless is plural-named;
+			otherwise:
+				now sexless is not plural-named.
+				
+When play begins (this is the genderise everything rule):
+	if the alternative gender definitions option is active:
+		Repeat with item running through things:
+			genderise the item;
+		Repeat with item running through rooms:
+			genderise the item.
+
 
 Section - Values - Gender
 
@@ -137,7 +260,7 @@ Section - Values - The Changing Gender (CG)
 
 To decide what gender is the changing gender of (something - an object):
 	(- (Gender({something}, true) + 1) -).
-
+	
 
 Section - Values - Article mode
 
@@ -183,19 +306,12 @@ To reset the/-- pronominal adverb: (- pronominal_adverb_flag = false; -).
 
 Section - Special articles
 
-Special article is a kind of value.
-The special articles are definite article, yours, no article, and pending.
+Special indefinite article is a kind of value.
+The special indefinite articles are definite article, yours, no article, and pending.
 
-A thing has a special article called special indefinite article.
-The special indefinite article of a thing is usually pending.
+An object has a special indefinite article.
+The special indefinite article of an object is usually pending.
 The special indefinite article property translates into I6 as "special_article".
-
-The specification of special article is "Only applies when the name of a thing
-is printed with an indefinite article: by setting the special indefinite
-article for a thing its name can be printed either with a definite article,
-with the possesive article 'dein' ('your') or with no article at all, letting
-things appear to be proper-named without really being it. The pending value
-can be used to apply this property without defining a value right away."
 
 
 Section - People (in place of Section SR1/11 - People in Standard Rules by Graham Nelson)
@@ -759,7 +875,17 @@ Understand "geh" or "geh umher" as going.
 Understand "geh weg/fort" as location-leaving.
 Understand "geh weg/fort von hier/da/dort" as location-leaving.
 Understand "geh weg/fort von [a room]" as location-leaving.
-Understand "geh in [something] [hinein]" as entering.
+
+[(11.11.2011) Das folgende Satzmuster muss ebenfalls mit einem
+Krücken-Adjektiv priorisiert werden, damit es bei einer Parser-Nachfrage nicht
+heißt:
+
+    >geh in
+    Worichtung willst du ingehen?]
+
+Definition: A thing is dummy-enterable: yes.
+Understand "geh in [something dummy-enterable] [hinein]" as entering.
+
 Understand "geh durch [something] [hindurch]" as entering.
 Understand "geh ueber [something] [hinueber]" as entering.
 Understand "geh auf [something] [darauf]" as entering.
@@ -806,20 +932,22 @@ Understand "schau [noun dahinter] [nach]" as looking under.
 Understand "schau unter/hinter [dativ] [something] [nach]" as looking under. [*]
 Understand "schau unter [dativ] [something] [darunter]" as looking under.
 Understand "schau nach in/auf [dativ] [something]" as searching. [*]
-Understand "schau nach [text] in [dativ] [something]" as consulting it about (with nouns reversed).
+Understand "schau [force nach in] nach [text] in [dativ] [something]" as consulting it about (with nouns reversed).
 Understand "schau in [dativ] [something] unter [text] nach" as consulting it about.
 Understand "schau in [dativ] [something] nach unter [text]" as consulting it about.
 Understand "schau in [dativ] [something] ueber/ob/zu [text] nach" as consulting it about.
 Understand "schau in [dativ] [something] [text] nach" as consulting it about.
 Understand "schau [force nach in] [text] nach in [dativ] [something]" as consulting it about (with nouns reversed).
 Understand "schau [force nach] [text] in [dativ] [something] nach" as consulting it about (with nouns reversed).
+Understand "schau ueber/unter/bezueglich [force nach] [text] in [something] nach" as consulting it about (with nouns reversed). [**] [22.10.2011: Vorschlag von Bushin]
+Understand "schau ueber/unter/bezueglich [force nach in] [text] nach in [something dummy-consultable]" as consulting it about (with nouns reversed). [**] [22.10.2011]
+
 Understand the commands "seh" and "sieh" and "blick" and "lug" and "guck" and "kuck" as "schau".
 
 Understand "lage" and "l" as looking.
 
 Understand "lern nach/ob/ueber/von [text] aus/in [dativ] [something]" as consulting it about (with nouns reversed). [*]
-Understand "lern [text] in [dativ] [something]" as consulting it about (with nouns reversed).
-Understand "lern [text] aus [dativ] [something]" as consulting it about (with nouns reversed).
+Understand "lern [text] aus/in [dativ] [something]" as consulting it about (with nouns reversed). [*]
 Understand "lern aus/in [dativ] [something] nach/ob/ueber/von [text]" as consulting it about. [*]
 Understand the command "forsch" as "lern".
 
@@ -916,18 +1044,19 @@ Understand "lies in [dativ] [something]" as examining.
 Understand "lies in [dativ] [something] nach" as examining.
 Understand "lies nach in [dativ] [something]" as examining.
 Understand "lies nach in [dativ] [something] ueber/von [text]" as consulting it about.
-Understand "lies nach ueber [text] in [dativ] [something]" as consulting it about (with nouns reversed).
-Understand "lies nach von [text] in [dativ] [something]" as consulting it about (with nouns reversed).
-Understand "lies [force in] in [dativ] [something] ueber [text] [nach]" as consulting it about.
-Understand "lies [force in] in [dativ] [something] von [text] [nach]" as consulting it about.
-Understand "lies [force in] in [dativ] [something] nach ueber [text]" as consulting it about.
-Understand "lies [force in] in [dativ] [something] nach von [text]" as consulting it about.
-Understand "lies [force in] ueber [text] in [dativ] [something] [nach]" as consulting it about (with nouns reversed).
-Understand "lies [force in] von [text] in [dativ] [something] [nach]" as consulting it about (with nouns reversed).
-Understand "lies [force nach in] ueber [text] nach in [dativ] [something]" as consulting it about (with nouns reversed).
-Understand "lies [force nach in] von [text] nach in [dativ] [something]" as consulting it about (with nouns reversed).
+Understand "lies nach ueber/von [text] in [dativ] [something]" as consulting it about (with nouns reversed).
+Understand "lies [force nach] in [dativ] [something] ueber/von [text] nach" as consulting it about.
+Understand "lies [force in] in [dativ] [something] nach ueber/von [text]" as consulting it about.
+Understand "lies [force in] in [dativ] [something] ueber/von [text]" as consulting it about.
+Understand "lies [force in] ueber/von [text] in [dativ] [something] [nach]" as consulting it about (with nouns reversed).
+
+[16.10.2011: Um das folgende Satzmuster zu priorisieren, benutzen wir ein überflüssiges, weil für alle
+Objekte zutreffendes, Adjektiv (usually-consultable), um dem System einen Spezialfall vorzugaukeln.]
+Definition: An object is dummy-consultable: yes.
+Understand "lies [force nach in] ueber/von [text] nach in [dativ] [something dummy-consultable]" as consulting it about (with nouns reversed).[**]
+
 Understand "lies [force nach in] [text] nach in [dativ] [something]" as consulting it about (with nouns reversed).
-Understand "lies [force nach] [text] in [dativ] [something] nach" as consulting it about (with nouns reversed).
+Understand "lies [force nach] [text] in [dativ] [something] [nach]" as consulting it about (with nouns reversed).
 Understand "lies [force in] [text] in [dativ] [something]" as consulting it about (with nouns reversed).
 Understand the command "les" as "lies".
 
@@ -1107,8 +1236,10 @@ Understand "harr aus" as waiting.
 
 Understand "antwort" as vaguely communicating.
 Understand "antwort [dativ] [someone alive] [text]" as answering it that.
+Understand "antwort zu [dativ] [someone alive] [text]" as answering it that. [04.12.2011]
 Understand "antwort [text] zu [dativ] [someone alive]" as answering it that (with nouns reversed).
 Understand "antwort [dativ] [something] [text]" as answering it that.
+Understand "antwort zu [dativ] [something] [text]" as answering it that. [04.12.2011]
 Understand "antwort [text] zu [dativ] [something]" as answering it that (with nouns reversed).
 Understand the commands "sag" and "schrei" and "beantwort" as "antwort".
 
@@ -1203,9 +1334,9 @@ Understand "kuess [someone]" as kissing.
 Understand the commands "umarm" and "lieb" and "streichel" and "streichle" and "knutsch" and "liebkos" as "kuess".
 
 Understand "denk" or "denk nach" as thinking.
-Understand "denk ueber [text] nach" as thinking about it.
-Understand "denk nach ueber [text]" as thinking about it.
-Understand "denk an [text]" as thinking about it.
+Understand "denk ueber [text] nach" as thinking about.
+Understand "denk nach ueber [text]" as thinking about.
+Understand "denk an [text]" as thinking about.
 
 Understand "riech" as smelling.
 Understand "riech [something]" as smelling.
@@ -1317,7 +1448,7 @@ To say (obj - an object) unbestimmt im (K - a Kasus): (- WithoutArt({obj}, {K}-1
 
 Section - Saying - Personal pronouns
 
-The previously named noun is a thing that varies.
+The previously named noun is an object that varies.
 The previously named noun variable translates into I6 as "pnn".
 
 [Die I6-Variable pnn (previously named noun in I7) wird in |STANDARD_NAME_PRINTING_R|,
@@ -1808,11 +1939,11 @@ Check vaguely communicating (this is the block vaguely communicating rule):
 
 The specification of the vaguely communicating action is "This action fires when the player enters communication-related commands missing the interlocutor and/or the topic, e.g. FRAG, REDE, ANTWORTE."
 
-Thinking about it is an action applying to one topic.
-Check thinking about it (this is the block thinking about it rule):
+Thinking about is an action applying to one topic.
+Check thinking about (this is the block thinking about rule):
 	say "Dir fällt jetzt nichts dazu ein.".
 
-The specification of the thinking about it action is "This action fires when an actor tries to think of or remember a topic, e.g. DENKE AN DEN LETZTEN URLAUB."
+The specification of the thinking about action is "This action fires when an actor tries to think of or remember a topic, e.g. DENKE AN DEN LETZTEN URLAUB."
 
 [------------------------------------------------------------------------------]
 
@@ -1915,7 +2046,7 @@ Smelling is allowing wide scope.
 
 After deciding the scope of the player while allowing wide scope (this is the location visibility rule):
 	place the location in scope.
-
+    
 
 Section - Compound Heads and Compound Tails
 
@@ -2036,8 +2167,10 @@ Verb
 
 Section - German assembly components workaround
 
+A thing can be s-terminated.
+
 Rule for printing the name of a thing (called the item)
-when the item is part of a person and the item is proper-named
+when the item is part of a person [and the item is proper-named]
 (this is the German printing the name of a body part rule):
 	let C be the current case;
 	if the holder of the item is the player:
@@ -2071,7 +2204,9 @@ when the item is part of a person and the item is proper-named
 	otherwise:
 		if the holder of the item is proper-named:
 			set bare-mode suffixes from the item with C;
-			say "[holder of item]s [printed name of item]";
+			say "[holder of item][if holder of item is not s-terminated]s[otherwise]['][end if] ";
+			now the previously named noun is the item;
+			say "[printed name of item]";
 		otherwise:
 			set definite-mode suffixes from the item with C;
 			say "[printed name of item] [des holder of item]";
@@ -2894,6 +3029,7 @@ Global short_name_case;
     dict_entry_size = DICT_WORD_SIZE + 7;
     dict_end = dict_start + #dictionary_table-->0 * dict_entry_size;
     #endif;
+    
 
     ! *** (21.09.2010) Genus-Definitionen der Objekte, die mit "some" definiert
     !     wurden, bereinigen:
@@ -4262,6 +4398,17 @@ Global CG_pointer;
     }
 ];
 
+[ HasGrammaticalGender obj;
+
+    ! *** (08.12.2011) Hier wird festgestellt, ob für ein Objekt
+    !     der grammatical gender zur Genusdefinition genutzt wird,
+    !     also ob sein Wert nicht no-specified-gender (4) ist.
+     
+    if (obj provides grammatical_gender
+        && obj.grammatical_gender ~= 4) rtrue;
+    rfalse;
+];
+
 [ Gender obj flag   g;
 
     if (obj == nothing) return;
@@ -4281,6 +4428,12 @@ Global CG_pointer;
 
     ! Genus zurücksetzen
     if (~~printing_command) GenderNotice(obj, 0);
+    
+    ! *** (30.11.2011) Grammatical Gender benutzt?
+    if (HasGrammaticalGender(obj)) {
+		if (obj has pluralname) return 0;
+		return obj.grammatical_gender;
+	}
 
     ! Übliches Verfahren nach Attributen
     if (obj has pluralname) return 0;
@@ -4338,7 +4491,7 @@ Include (-
 ! *** Die Printed Inflections aus dem Original wurden komplett gestrichen
 !     und durch neue Routinen ersetzt.
 
-[ SetPreviouslyNamedNoun obj;
+[ SetPreviouslyNamedNoun obj; !!!print "{* ", obj, " *}";
     ! *** nur I7/GerX: Für Textersetzungen, die sich auf das zuletzt genannte
     !     Objekt beziehen (z.B. [ist], [hat], [wird] usw.).
     pnn = obj;
@@ -4698,7 +4851,7 @@ Include (-
         3:  print "Folgendes bei @21:^";
         4:  print " bei @21.";
         5:  print (GDer) x1, " durchsuch", (___t) x1, " ";
-            if (x1 has pluralname || x1 has female) print "ihre";
+            if (Gender(x1) == 0 or 2) print "ihre";
             else print "seine"; print " Habe.^";
     }
   Jump:     "Du springst etwas motivationslos auf der Stelle.";
@@ -5298,18 +5451,37 @@ Include (-
 
 [ GetGNAOfObject obj case gender;
     if (obj hasnt animate) case = 6;
-    if (obj has male) gender = male;
-        else if (obj has female) gender = female;
-                 else if (obj has neuter) gender = neuter;
-    if (gender == 0) {
-        if (case == 0) gender = LanguageAnimateGender;
-        else gender = LanguageInanimateGender;
-    }
+    
+    ! *** (07.12.2011) Den grammatical gender berücksichtigen, wenn vorhanden.
+    !     Das muss hier gemacht werden, damit bei Verwendung der Objekteigenschaft
+    !     grammatical gender die Pronomen richig gesetzt werden.
+    
+    if (HasGrammaticalGender(obj)) {
+		switch (obj.grammatical_gender) {
+			1: gender = male;
+			2: gender = female;
+			default: gender = neuter;
+		}
+	}
+	
+	! *** Ansonsten greift das herkömmliche Verfahren über Attribute.
+	else {
+		if (obj has male) gender = male;
+			else if (obj has female) gender = female;
+					 else if (obj has neuter) gender = neuter;
+	}
+	if (gender == 0) {
+			if (case == 0) gender = LanguageAnimateGender;
+			else gender = LanguageInanimateGender;
+	}
     if (gender == female)   case = case + 1;
     if (gender == neuter)   case = case + 2;
     if (obj has pluralname) case = case + 3;
     return case;
 ];
+
+
+
 -) instead of "Gender" in "Parser.i6t".
 
 Include (-
@@ -6518,48 +6690,6 @@ Include (-
 
 -) instead of "Parser Letter C" in "Parser.i6t".
 
-[ Parser Letter E ]
-Include (-
-
-    line_address = syntax + 1;
-
-    for (line=0 : line<=num_lines : line++) {
-
-        for (i=0 : i<32 : i++) {
-            line_token-->i = ENDIT_TOKEN;
-            line_ttype-->i = ELEMENTARY_TT;
-            line_tdata-->i = ENDIT_TOKEN;
-        }
-
-        ! Unpack the syntax line from Inform format into three arrays; ensure that
-        ! the sequence of tokens ends in an ENDIT_TOKEN.
-
-        line_address = UnpackGrammarLine(line_address);
-
-        #Ifdef DEBUG;
-        if (parser_trace >= 1) {
-            if (parser_trace >= 2) new_line;
-            print "[line ", line; DebugGrammarLine();
-            print "]^";
-        }
-        #Endif; ! DEBUG
-
-        ! We aren't in "not holding" or inferring modes, and haven't entered
-        ! any parameters on the line yet, or any special numbers; the multiple
-        ! object is still empty.
-
-        inferfrom = 0;
-        parameters = 0;
-        nsns = 0; special_word = 0;
-        multiple_object-->0 = 0;
-        multi_context = 0;
-        etype = STUCK_PE;
-
-        ! Put the word marker back to just after the verb
-
-        wn = verb_wordnum+1;
-
--) instead of "Parser Letter E" in "Parser.i6t".
 
 [ Parser Letter G ]
 Include (-
@@ -7297,7 +7427,8 @@ Include (-
     first = StorageForShortName->0;
     #endif;
     if (first == 'a' or 'e' or 'i' or 'o' or 'u') print "r";
-    print (address) w;
+    !print (address) w;
+    print (UmlautAddress) w; ! *** (10.11.2011) Damit es "worüber" und nicht "worueber" lautet.
 ];
 
 [ PrintWomitCommand      x1 prep offset;
@@ -7450,7 +7581,8 @@ Include (-
         if (spacing_flag && ~~prep_before) print (char) ' ';
         i = verb_word;
         if (LanguageVerb(i) == 0)
-            if (PrintVerb(i) == 0) print (address) i;
+            !if (PrintVerb(i) == 0) print (address) i; ! *** (10.11.2011) Umlaute im Verb ausgeben
+            if (PrintVerb(i) == 0) print (UmlautAddress) i;
         from++;
     }
     printing_command = false;
@@ -7919,6 +8051,7 @@ Include (-
 #Endif;
 
 [ PrefaceByArticle o acode pluralise capitalise  g s;
+    SetPreviouslyNamedNoun(o);
     ! acode ist die von Inform vorgesehene Art des Artikels
     ! 0 "The ", 1 "the ", 2, "a(n) ". Das dieses System in deform
     ! abgeschafft ist, müssen wir uns was anderes überlegen.
@@ -7963,6 +8096,7 @@ Include (-
 Include (-
 [ IndefArt obj k    i g     art;
     if (obj == 0) return PrintNothing(k);
+    SetPreviouslyNamedNoun(obj);
     i = indef_mode; indef_mode = true;
     g = Gender(obj);
     short_name_case = k;
@@ -8017,7 +8151,14 @@ Include (-
 
 [ DefArt obj k    i g;
     if (obj == 0) return PrintNothing(k);
+    SetPreviouslyNamedNoun(obj);
     i = indef_mode; indef_mode = false;
+    
+    !*** (30.11.2011) Adjektive in Proper-Objekten werden im "bare mode" dekliniert,
+    !    wie z.B. in "Bernds kleines Auto"
+    
+    if (obj has proper) indef_mode = -1;
+    
     g = Gender(obj);
     short_name_case = k;
     SetLowStrings(k, g);
@@ -8039,6 +8180,8 @@ Include (-
 ];
 
 [ WithoutArt obj k mode   i g;
+    SetPreviouslyNamedNoun(obj);
+    
     i = indef_mode;
 
     ! *** AUFGEBOHRT:
@@ -9404,9 +9547,13 @@ Array LibcheckIgnoreVerbs table
 !     auf 'e' oder 'en' enden. Diese werden beim Verben-Libcheck ignoriert,
 !     damit nur die vom Autor neu hinzugefügten Verben geprüft werden.
 
-    'baumle'    'durchstoeber' 'ende'    'klettre'     'konsultier'
+! *** (14.11.2011) 'fuerwoerter' und 'scheibenkleister' hinzugefügt,
+!      um bei Vokabellängen von 10, 11 und 15 Einträgen falsche
+!      Meldungen des Libchecks zu verhindern.
+
+    'baumle'    'durchstoeber' 'ende'    'fuerwoerter' 'klettre' 'konsultier'
     'lage'      'meldungen'    'nee'     'noe'         'oeffne'
-    'pronomen'  'punkte'       'restore' 'save'        'schnueffel'
+    'pronomen'  'punkte'       'restore' 'save'        'scheibenkleister' 'schnueffel'
     'scope'     'score'        'showme'  'streichle'   'superbrief'
     'trace'     'tree'         'verbose' 'verschliess' 'wedle'
     'durchschneid'             'praesentier'           'zertruemmer'
@@ -9640,6 +9787,9 @@ Array LibcheckIgnoreVerbs table
 		if (o has female) n++;
 		if (o has neuter) n++;
 		if (o has pluralname) n++;
+		
+		if (o provides grammatical_gender
+		    && o.grammatical_gender < 4 && o has pluralname) n++;
 
 		if (n ~= 1) {
 			LibcheckAnnounce(1);
@@ -9674,10 +9824,15 @@ Array LibcheckIgnoreVerbs table
     else if (errors) print "^", errors;
     if (LC_notice_printed || errors || (errors==0 && ~~silent) ) {
         print " Fehler bei den Objektdefinitionen.";	
-        if (gender_error) { print "^Achtung: Mehrdeutige oder fehlende
-            Genus-Definitionen sollten bei der ausschließlichen Verwendung
-            von Inform-7-Code nicht vorkommen. Die Ursachen dafür könnten
-            in eingebundenem Inform-6-Code liegen oder ein Fehler in
+        if (gender_error) { print "^^Achtung: Mehrdeutige oder fehlende
+            Genus-Definitionen sollten nicht vorkommen.
+            Möglicherweise wurde das Attribut ~plural-named~ zusätzlich
+            zu einem ~grammatical gender~ vergeben oder der Genus
+            als Attribut einer Klasse (Kind) zugewiesen, anstatt ihn direkt
+            beim Objekt zu definieren.
+            ^^
+            Die Ursachen dafür könnten
+            aber auch in eingebundenem Inform-6-Code liegen oder ein Fehler in
             GerX sein.^";
         }
         else {
@@ -10109,14 +10264,13 @@ Section: Angabe des grammatischen Geschlechts (Genus)
 
 Für die drei Genera (Maskulinum, Femininum, Neutrum) stehen die Adjektive male, female und neuter zur Verfügung. Der Numerus eines Objekts ist standardmäßig Singular (singular-named). Für Objekte mit Namen im Plural ("die Wolken") ist das Adjektiv plural-named zu verwenden.
 
-
 Personen werden wie gewohnt als man oder woman deklariert (man kann aber auch male person bzw. female person schreiben). Auch Räume können ein Geschlecht zugewiesen bekommen, was dann sinnvoll ist, wenn der Raumname mit Artikel in einem Say-Text ausgegeben werden soll.
 
-	The Garten is a male room. The Bibliothek is female.
+	The garden is a male room. The library is female.
 
 	The Kutsche is here. It is female.
 
-	The Schreibtisch is a male supporter in the Büro, fixed in place.
+	The desk is a male supporter in the office, fixed in place.
 
 	The Pergamonmuseum is a neuter backdrop in Berlin-Mitte.
 
@@ -10150,18 +10304,18 @@ Oder noch unangenehmer:
 	Du kannst die Birne nicht anziehen!
 
 
-Um das zu vermeiden und die Pronomen korrekt zu setzen, kann man einzelnen Synonymen eines von vier Attributen folgen lassen, die das abweichende Geschlecht der Vokabel kennzeichnen. Diese Attribute sind:
+Um das zu vermeiden und die Pronomen korrekt zu setzen, kann man einzelnen Synonymen einen von vier Attribut-Satzbausteinen folgen lassen, die das abweichende Geschlecht der Vokabel kennzeichnen. Diese Satzbausteine (understand tokens) heißen:
 
 	"[m]" (Maskulinum, männlich)
 	"[f]" (Femininum, weiblich)
 	"[n]" (Neutrum, sächlich)
-	"[p]" (Plural)
+	"[p]" (Plural, Mehrzahl)
 
-Das Attribut wird nach der Vokabel, die gekennzeichnet werden soll, angegeben:
+Das Token wird nach der Vokabel, die gekennzeichnet werden soll, angegeben. Zwischen Vokabel kann ein Leerzeichen stehen, muss es aber nicht:
 
 	The Anorak is a male wearable thing in the dressing room. The description is "Eine richtig dicke Winterjacke. Ein Erbstück."
 
-	Understand "Parka", "Jacke [f]", "Winterjacke [f]" and "Erbstueck [n]" as the Anorak.
+	Understand "Parka", "Jacke[f]", "Winterjacke [f]" and "Erbstueck[n]" as the Anorak.
 
 Nun sieht der Dialog so aus:
 
@@ -10187,7 +10341,7 @@ Das Geschlecht eines Objekts lässt sich direkt durch die Adjektive male, female
 	if the person asked is male ...
 	if the Kleidungsstück is plural-named ...
 
-Möchte man aber den Genus als Wert benutzen, bietet sich die Phrase "the gender of" an. Die Werte der Genera sind "Mehrzahl", "männlich", "weiblich", "sächlich".
+Möchte man aber das Genus als Wert benutzen, bietet sich die Phrase "the gender of" an. Die Werte der Genera sind "Mehrzahl", "männlich", "weiblich", "sächlich".
 
 	if the gender of the noun is Mehrzahl, ...
 	if the gender of the noun is männlich, ...
@@ -10196,7 +10350,7 @@ Möchte man aber den Genus als Wert benutzen, bietet sich die Phrase "the gender
 
 Die Phrase "the gender of" kann auch in Say-Texten verwendet werden:
 
-	say "Der Genus von [dem noun] ist [the gender of the noun]."
+	say "Das Genus von [dem noun] ist [the gender of the noun]."
 
 Um den geänderten Genus (Changing Gender) einen Zug lang zu befragen, gibt es die Phrase "the changing gender of":
 
@@ -10205,6 +10359,58 @@ Um den geänderten Genus (Changing Gender) einen Zug lang zu befragen, gibt es d
 Auch diese Phrase kann in Say-Texten verwendet werden:
 
 	say "Der geänderte Genus von [dem noun] ist [the changing gender of the noun]."
+	
+	
+Section: Alternative Angabe des Objekt-Genus im printed name
+
+Seit Dezember 2011 gibt es in GerX eine zusätzliche, von Martin Oehm vorgeschlagene, Methode zum Angeben des Objektgenus. Um bei Verwendung dieser Methode alle Objekte korrekt bei Spielbeginn zu initialisieren, muss die Option
+
+	*: Use alternative gender definitions.
+	
+aktiviert sein.
+
+Anstatt die herkömmlichen Attribute female, male, neuter und plural-named festzulegen, kann man nun das Genus direkt im printed name mit einer Textersetzung, die als Kennzeichnung dient, angeben. Das Genus im printed name zu setzen ist praktisch, weil sich das Objekt-Genus ohnehin immer nach dem printed name richtet; so können auch mögliche Diskrepanzen zwischen Objekt-Genus und -Namen schneller entdeckt werden.
+
+Für jedes Objekt, das auf diese Weise gekennzeichnet werden soll, muss also gesondert ein printed name angegeben werden. Für Autoren, die die "einsprachige" Privately-Named-Methode (siehe Section 4.3) benutzen, bedeutet das allerdings keinen besonderen Mehraufwand, da der printed name und das Vokabular ohnehin explizit definiert werden müssen.
+
+Die alternative Printed-name-Methode und das herkömmliche Verfahren mit Attributen können in einem Quelltext nebeneinander verwendet werden.
+
+Die Genus-Textersetzungen entsprechen den Genus-Satzbausteinen (understand tokens) beim Changing Gender:
+
+	"[m]" (Maskulinum, männlich)
+	"[f]" (Femininum, weiblich)
+	"[n]" (Neutrum, sächlich)
+	"[p]" (Plural, Mehrzahl)
+	
+Wichtig ist, dass die Textersetzung ohne ein zusätzliches Leerzeichen im printed name steht. 
+	
+Beispiele:
+
+	A thing is usually privately-named. A room is usually privately-named.
+	
+	The lab is a room. "Du bist hier im geheimen Labor des Doktor Saratow.". The printed name is "Labor[n]". Understand "Labor[n]" as the lab.
+	
+	The apple is a thing in the lab. The printed name is "Apfel[-s][m]". Understand "Apfel" as the apple.
+
+	The pear is a thing in the lab. The printed name is "Birne[f]". Understand "Birne" as the pear.
+	
+	The peculiar item is in the lab. The printed name is "eigenartig[^] Ding[n], das Du irgendwo schon einmal gesehen hast". Understand "eigenartig", "Ding" as the peculiar item.
+	
+Das Genus kann auch während des Spiels geändert werden, indem ein neuer printed name angegeben wird. Danach muss das neue Geschlecht des Objekts dem System mitgeteilt werden, und zwar mit dem Befehl
+
+	genderise <OBJECT>;
+	
+Beispiel:
+	
+	The girl is a woman in the lab. "[Ein girl] ist hier." The printed name is "Mädchen[n]". Understand "Anna[f]" and "Maedchen[n]" as the girl.
+	
+	After examining the girl when the girl is not proper-named:
+		say "Das Mädchen sagt: 'Ich heiße übrigens Anna.'";
+		now the printed name of the girl is "Anna[f]";
+		now the girl is proper-named;
+		genderise the girl.
+		
+Hinweis: Genus und Numerus werden bei dieser Methode unterschiedlich repräsentiert. Der Plural wird weiterhin als Attribut "plural-named" hinterlegt; für das grammatische Geschlecht ist die Objekteigenschaft (property) "grammatical gender" relevant. Die Werte des "grammatical gender" sind: masculine-gender, feminine-gender, neuter-gender und no-specified-gender (Default-Wert).
 
 
 Section: Sonderformen des unbestimmten Artikels: DEFINITE ARTICLE, YOURS, NO ARTICLE und PENDING
@@ -10213,13 +10419,13 @@ Bei der Ausgabe des Objektnamens mit unbestimmtem Artikel, z.B. per "[Ein <Objek
 
 Man kann Objektnamen statt mit einem unbestimmten Artikel mit einem bestimmten Artikel anzeigen lassen:
 
-	The special indefinite article of the Spaßmobil is DEFINITE ARTICLE.
+	The special indefinite article of the mirth mobile is DEFINITE ARTICLE.
 
 	"Du siehst hier das Spaßmobil."
 
 Dinge, die der Spielerfigur gehören, können bei der Ausgabe mit unbestimmtem Artikel mit dem korrekt flektierten Possessivartikel "dein" angezeigt werden:
 
-	The special indefinite article of the Brieftasche is YOURS.
+	The special indefinite article of the wallet is YOURS.
 
 	"Du siehst hier deine Brieftasche."
 
@@ -10271,12 +10477,24 @@ Der Inform-Compiler erzeugt nun automatisch eine Nase für jede Person im Spiel,
 
 Nun fehlt noch das deutsche Vokabular, um die Nasen entsprechend ihrer Besitzer ansprechen zu können:
 
-	Understand "Nase von/des/der [something related by reversed incorporation]" as a Nase.
-	Understand "Nase [something related by reversed incorporation]" as a Nase.
-	Understand "[something related by reversed incorporation] Nase" as a Nase.
-	Understand "dein/mein/unser/euer Nase" or "Nase von dir/mir/uns/euch" as your Nase.
+	Understand "Nase[f]" and "Zinken [m]" as "[Nase]".
+
+	Understand "[Nase] von/des/der [something related by reversed incorporation]" as a Nase.
+	Understand "[Nase] [something related by reversed incorporation]" as a Nase.
+	Understand "[something related by reversed incorporation] [Nase]" as a Nase.
+	Understand "dein/mein/unser/euer [Nase]" or "[Nase] von dir/mir/uns/euch" as your Nase.
 
 Nun werden "deine Nase", "Bennos Nase", "Nase des Polizisten" und so weiter als die entsprechenden Nasen erkannt.
+
+Der Workaround hängt an Eigennamen standarmäßig ein 's' an, würde also bei Namen, die auf S auslauten (Klaus, Max, Moritz) "Klauss Gesicht", "Moritzs Nase" und "Maxs Kopf" schreiben, was keine korrekten Genitive sind. Für Personen, die einen Namen haben, der auf ein gesprochenes S endet, muss folgende Eigenschaft angegeben werden:
+
+	Klaus is s-terminated.
+	
+Danach wird korrekt "Klaus' Gesicht", "Moritz' Nase" und "Max' Kopf" geschrieben. Falls sich der Name im Laufe des Spiels ändern und nicht mehr auf S enden sollte, kann man die Eigenschaft ganz einfach wieder wegnehmen.
+
+Leider wird der Genitiv mit Apostroph nicht automatisch verstanden. Es empfiehlt sich also, den Namen mit Apostroph als zusätzliche Vokabel für das entsprechende Körperteil anzugeben.
+
+	Understand "Max'" as Max's Nase. Understand "Moritz'" as Moritz's Nase. Understand "Klaus'" as Klaus's Nase.
 
 
 Chapter: Ausdrücke zur flexiblen Textausgabe
@@ -10510,11 +10728,11 @@ Möchte der Autor Namen wie "Karl der Große" verwenden, muss er besondere Ausdr
 	The printed name of Gertrud is "Gertrud[-es] [die] Große[-n] von Helfta".
 	The printed name of Hui Buh is "Hui Buh[-s] [das] Schlossgespenst[-s]".
 
-Denkbar wäre auch der (eher unwahrscheinliche) Fall, dass man den Genus und den Numerus für den Artikel von einem bestimmten Objekt beziehen möchte. Dazu benutzt man dann folgende Form:
+Denkbar wäre auch der (eher unwahrscheinliche) Fall, dass man das Genus und den Numerus für den Artikel von einem bestimmten Objekt beziehen möchte. Dazu benutzt man dann folgende Form:
 
 	The printed name of Gerd is "Graf[-en] Gerd [-der- Gerd] Mutige[-n]."
 
-Jetzt wird der Genus von Gerd (Maskulinum) und der Numerus (Singular) für den Artikel herangezogen. Das ist in diesem Fall gleichbedeutend mit "[der]" (und eigentlich sinnlos). "[-der- Objekt]", "[-die- Objekt]" und "[-das- Objekt]" sind synonym zu verwenden. (Das wird normalerweise keiner benutzen, aber wenn man doch mal auf ein Objekt verweisen will, kann man das damit tun.)
+Jetzt wird das Genus von Gerd (Maskulinum) und der Numerus (Singular) für den Artikel herangezogen. Das ist in diesem Fall gleichbedeutend mit "[der]" (und eigentlich sinnlos). "[-der- Objekt]", "[-die- Objekt]" und "[-das- Objekt]" sind synonym zu verwenden. (Das wird normalerweise keiner benutzen, aber wenn man doch mal auf ein Objekt verweisen will, kann man das damit tun.)
 
 
 Section: Manuelles Setzen der Suffixe
@@ -10874,6 +11092,10 @@ Section: Die deform-Eigenschaft init benutzen
 
 Ermöglicht die Benutzung der deform-Eigenschaft init zum Initialisieren von Objekten mittels Einbindung von I6-Code.
 
+	*: Use alternative gender definitions.
+	
+Aktiviert die Benutzung von Genusdefinitionen im printed name (s. Chapter N.NN).
+
 
 Chapter: Neue Standard-Aktionen, -Aktivitäten und -Kommandos
 
@@ -10932,7 +11154,7 @@ Für jeden Raum sind die Synonyme "Ort [m]", "Platz [m]", "Raum [m]", "Standort 
 
 	Understand "Umwelt [f]" as "[basic-room-synonyms]".
 	
-Bei der Definition von allgemeinem Raumvokabular empfiehlt es sich, den Genus des Synonyms als Changing-Gender-Attribut ("[f]") mit anzugeben, weil Räume unterschiedliche Genera bekommen können.
+Bei der Definition von allgemeinem Raumvokabular empfiehlt es sich, das Genus des Synonyms als Changing-Gender-Attribut ("[f]") mit anzugeben, weil Räume unterschiedliche Genera bekommen können.
 
 Der aktuelle Raum kann auch mit weiteren Synonymen angesprochen werden, wenn zusätzliches Vokabular für den einzelnen Raum definiert wird:
 
@@ -11482,5 +11704,6 @@ Example: * John Malkovichs Toilette - Eine Übersetzung des Beispiels "John Malk
 	The onyx key unlocks the oval door. It is in the Bedroom. The onyx key is male. "Auf dem Boden liegt kantig und schwarz von der Sonne beleuchtet [ein onyx key]." The printed name of the onyx key is "Onyxschlüssel". Understand "Schluessel", "Schluessel aus Onyx" and "Onyxschluessel" as the onyx key.
 
 	Test me with " u badezimmertür / schließ ovale tür auf / schließ badezimmertür auf / g / gehe durch badezimmertür / nimm schlüssel / schließ badezimmertür ab / schließ badezimmertür / s / schließ badezimmertür mit dem onyxschlüssel ab / w"
+	
 	
 	

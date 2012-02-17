@@ -1,8 +1,9 @@
-Version 11/110320 of Small Kindnesses by Aaron Reed begins here.
+Version 12/111126 of Small Kindnesses by Aaron Reed begins here.
 
 "Provides a number of small interface improvements for players, understanding commands like GO BACK and GET IN, an EXITS command which automatically runs after failed movement, a USE verb, and more. Compatible with Modified Exit and Approaches by Emily Short, Keyword Interface by Aaron Reed, and Implicit Actions by Eric Eve."
 
 [Changelog:
+ -- Version 12: Fixed a bug and improved the efficiency of "examining the room"; thanks very much to capmikee for the improved code. Added "Leave to exit" section to allow commands like "leave [location]" or "leave room" to work like exit.
  -- Version 11: Minor fixes
  -- Version 10: Updated for compatibility with Player Experience Upgrade
  -- Version 9: Updated EXIT to leave through a sole exit even if its through a door, but not to work when the only valid direction is IN; removed Automatically Leave Containers Before Going (since several other extensions, including Implicit Actions and Modified Exit already cover this). Modified exit listing to also be a standalone action. Fixed a bug in the example.
@@ -117,10 +118,24 @@ Rule for supplying a missing noun when we are approaching (this is the Small Kin
 
 Chapter - Examining the room
 
-Understand "look at/around/in/into the/a/an/some [any player-enclosing room]" or "look at/around/in/into [any player-enclosing room]" or "look [any player-enclosing room]" or "x [any player-enclosing room]" or "examine [any player-enclosing room]" or "search [any player-enclosing room]" as overly elaborate looking. Overly elaborate looking is an action applying to one thing. Definition: a room is player-enclosing if it encloses the player.
+Understand "look at/around/in/into the/a/an/some [room]" or "look at/around/in/into [room]" or "look [room]" or "x [room]" or "examine [room]" or "search [room]" as overly elaborate looking. Overly elaborate looking is an action applying to one thing. 
+
+After deciding the scope of the player when overly elaborate looking (this is the Small Kindnesses place the room in scope while looking rule):
+   place the location in scope, but not its contents.
 
 Carry out overly elaborate looking (this is the Small Kindnesses overly elaborate looking rule):
-	instead try looking;
+	instead try looking.
+	
+	
+Chapter - Leave to exit
+
+Understand "leave [room]" or "exit [room]" or "flee [room]" as getting off.
+
+After deciding the scope of the player when getting off (this is the Small Kindnesses place the room in scope while getting off rule): place the location in scope, but not its contents.
+
+Instead of getting off the location (this is the Small Kindnesses overly elaborate exiting rule), try exiting.
+
+Understand "leave room/area/place/here" as exiting.
 
 
 Chapter - Show valid directions after going nowhere

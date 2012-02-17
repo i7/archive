@@ -1,18 +1,37 @@
-Config File (for Glulx only) by Aaron Reed begins here.
+Version 2 of Config File (for Glulx only) by Aaron Reed begins here.
 
 "Allows for setting the value of number variables in an external config file that is loaded when play begins."
+
+[Version History:
+ - v2: Added better response to malformed numbers.
+]
 
 Section - Default Config File
 
 The File of Config is called "config". 
 
+Section - complex values
+
+A value-object is a kind of thing.
+A value-object has an indexed text called the nKey.
+
+Externally assigning something is an activity on value-objects.
+
 Section - number-objects
 
-A number-object is a kind of thing.
-A number-object has an indexed text called the nKey.
+A number-object is a kind of value-object.
 A number-object has a number called the nVal.
 
-Externally assigning something is an activity on number-objects.
+Section - truth-objects
+
+A truth-object is a kind of value-object.
+A truth-object has a truth state called the tVal.
+
+Section - string-objects
+
+A string-object is a kind of value-object.
+A string-object has an indexed text called the sVal.
+
 
 Section - Not Reporting on Missing Config File
 
@@ -40,30 +59,64 @@ To read config file:
 		set key value pair for thisline;  
 		if theKey is "", next;
 		if setup-external-variables is true, generate external variable code;
-		let valNumber be numerical value of theVal;
-		repeat with numObj running through number-objects:
-			if nkey of numObj is theKey:  
-				now nVal of numObj is valNumber;
+		repeat with valObj running through value-objects:
+			if nkey of valObj is theKey:
+				if theType is tNumeric:
+					let valNumber be numerical value of theVal;
+					unless valNumber is -1:
+						now nVal of valObj is valNumber;
+				else if theType is tBoolean:
+					let valTruth be whether or not boolean of theVal;
+					now tVal of valObj is valTruth;
+				else:
+					let valStr be contents of theVal;
+					unless valStr is "":
+						now sVal of valObj is valStr;
 	if setup-external-variables is true and the number of lines in config file > 0, say "[line break]** Completed generating config file code.";
-	repeat with numObj running through number-objects:
-		carry out the externally assigning activity with numObj.
+	repeat with valObj running through value-objects:
+		carry out the externally assigning activity with valObj.
 		
 Section - Setting the Key/Value Pairs
 
+typeKind is a kind of value. The typeKinds are tNumeric, tBoolean, or tString.
+theType is a typeKind variable.
 theKey is an indexed text variable. 
 theVal is an indexed text variable. 
 
 To set key value pair for (thisline - an indexed text):
 	if character number 1 in thisline is "!" or thisline is empty:
 		now theKey is "";
-	otherwise if thisline matches the regular expression "(.*)=(<^\s>+)":
+	otherwise if thisline matches the regular expression "(.*)=(.*)":
 		now theKey is "[text matching subexpression 1]";
 		now theVal is "[text matching subexpression 2]";
+		if character number 1 in theVal matches the regular expression "<tTfF>":
+			now theType is tBoolean;
+		otherwise if character number 1 in theVal matches the regular expression "<['][quotation mark]>":
+			now theType is tString;
+		otherwise:
+			now theType is tNumeric;
 	otherwise:
 		now theKey is "".
 
 Section - Converting Strings to Numbers
 		
+To decide what indexed text is contents of (str - an indexed text):
+	unless str matches the regular expression "^(<['][quotation mark]>)(.*)(<['][quotation mark]>)$":
+	 	say "***Error reading [str] as a string; using default value instead.***";
+		decide on "";
+	say "*[text matching subexpression 1]|[text matching subexpression 2]|[text matching subexpression 3]*";
+	now str is "[text matching subexpression 2]";
+	replace the text "\[quotation mark]" in str with "'";
+	decide on str.
+		
+To decide if boolean of (str - an indexed text):
+	if str matches the text "true", case insensitively:
+		now theVal is "true";
+		decide on true;
+	else:
+		now theVal is "false";
+		decide on false.
+
 To decide what number is numerical value of (str - an indexed text):
 	let cursorPos be the number of characters in str;
 	let cursorChar be an indexed text;
@@ -93,7 +146,8 @@ To decide what number is numerical value of (str - an indexed text):
 		otherwise if cursorChar matches the text "0":
 			now digit is 0;
 		otherwise:
-			say "***Error reading [str] as number.***";
+			say "***Error reading [str] as number; using default value instead.***";
+			decide on -1;
 		increase total by ( digit * tens ) ;
 		now tens is 10 * tens;
 		decrease cursorPos by 1;
@@ -111,7 +165,13 @@ To generate external variable code:
 		say "** Generating config file code. Paste this back into your Inform story project to initialize the config file.[paragraph break]";
 		say "setup-external-variables is false.";
 	increase evc-ctr by 1;
-	say "[theKey] is a number variable. n-[theKey] is a number-object with nkey '[theKey]' and nVal [theVal]. For externally assigning n-[theKey]: now [theKey] is nVal of n-[theKey]."
+	say "[theKey] is a ";
+	if theType is tNumeric:
+		say "number variable. n-[theKey] is a number-object with nkey '[theKey]' and nVal [theVal]. For externally assigning n-[theKey]: now [theKey] is nVal of n-[theKey].";
+	else if theType is tBoolean:
+		say "truth state variable. n-[theKey] is a truth-object with nkey '[theKey]' and nVal [theVal]. For externally assigning n-[theKey]: now [theKey] is tVal of n-[theKey].";
+	else:
+		say "text variable. n-[theKey] is a string-object with nkey '[theKey]' and nVal '[theVal]'. For externally assigning n-[theKey]: now [theKey] is sVal of n-[theKey].";
 
 Config File ends here.
 

@@ -1,8 +1,9 @@
-Version 6/110706 of Extended Grammar by Aaron Reed begins here.
+Version 7/120107 of Extended Grammar by Aaron Reed begins here.
 
 "Adds some of the most commonly attempted verb synonyms and alternate grammar lines. Based on the Inform 6 extension ExpertGrammar.h by Emily Short."
 
 [Changelog:
+  -- V7: Removed swear words in anticipation of I7 doing so soon also.
   -- V6: Added "put x on ground" and variants as synonym for drop.
   -- Version 5: Added useful section breaks; Added a few more things from intfiction.org newbie threads.
   -- Version 4: Absorbed a few prepositionless alternatives formerly in Small Kindnesses.
@@ -113,6 +114,18 @@ Section - Extended Grammar for Throw
 
 Understand "throw [something preferably held] into/through/to [something]" as throwing it at.
 
+Section - Retracted Grammar for Swearing
+
+[This is a stopgap until a post-6H98 version of Inform is released, where these are removed by default. The general consensus is that it should be up to the author to implement responses to these, if desired.]
+
+Understand the command "bother" as something new.
+Understand the command "curses" as something new.
+Understand the command "drat" as something new.
+Understand the command "darn" as something new.
+Understand the command "fuck" as something new.
+Understand the command "shit" as something new.
+Understand the command "damn" as something new.
+
 Extended Grammar ends here.
 
 ---- DOCUMENTATION ----
@@ -123,7 +136,7 @@ A few new command forms are also understood as well: for instance, CLIMB UP is u
 
 The functionality is similar to that provided by the old Inform 6 extension ExpertGrammar.h by Emily Short, minus some of the features since incorporated by default into Inform's grammar, and plus a few words and command forms I observed new IF players try to use during the testing of various projects. Emily's comments in the original extension note that many of these words are either standard in other IF languages, or were observed in the command logs of an online version of Zork.
 
-Example: * Blah Blah 
+Example: * Look Around You -
 
 	*: "Give My Creation Life"
 
@@ -132,3 +145,6 @@ Example: * Blah Blah
 	The Laboratory is above the Operating Room. A slab is an enterable supporter in the Operating Room. The Creature is a man on the slab. The player carries a raw steak. The oscillitron is a device in Operating Room. Instead of attacking the creature, say "It's alive!"
 
 	Test me with "descend / look around / observe the creature / activate oscillitron / sit down on the slab / hand steak to Creature / place steak on slab / kick Creature / upstairs"  
+
+
+

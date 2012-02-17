@@ -1,12 +1,16 @@
-Version 2/110709 of Neutral Library Messages by Aaron Reed begins here.
+Version 3/120107 of Neutral Library Messages by Aaron Reed begins here.
 
 "Replaces the most misleading and narratively-voiced parser messages with more instructive or neutral versions."
 
 [Version history
+3: Modified NPC action rejections to use the same verb the player typed in cases where this could be confusing (hug mapping to kiss).
 2: Fixed bug in misc message 72 to use "the person asked" instead of "the noun"; clarified documentation
 ]
 
-[Future work: modify to work with Custom Library Messages, too.]
+[Future work: 
+-- modify to work with Custom Library Messages, too.
+-- A weak/strong version, the first of which does nothing controversial but tone massaging?
+]
 
 Chapter - Compatibility
 
@@ -43,7 +47,7 @@ Section - Generic action rejections
 
 Unfortunately, many of the default messages attempt to guess which of these situations has arisen, sometimes leading to messages that are counterfactual ("That's plainly inedible") or, more dangerously, misleading ("Violence isn't the answer to this one"). Ideally, these messages should refuse the command without implying anything about the possibility or desirability of the requested action. In addition, since we don't know anything about the author's usage of the verb in question, we can't recommend a better command to try.
 
-Ideally, of course, an author implementing a non-standard verb will replace the default message with his own instructions, but we can't rely on that.
+Ideally, of course, an author implementing a non-standard verb will replace the default message with his own instructions, but every message in this extension is for the non-ideal situation.
  ]
 
 Table of custom library messages (continued)
@@ -73,15 +77,15 @@ Section - NPC action rejections
 
 Table of custom library messages (continued)
 library-action	library-message-id	library-message-text
-pulling action	4	"[as the parser]You can't normally pull [yourself-or-other].[as normal]" ["That would be less than courteous."]
-taking action	3	"[as the parser]You can't normally pick up other characters.[as normal]" ["I don't suppose Bob would care for that."]
-Turning action	4	"[as the parser]You can't normally turn [yourself-or-other].[as normal]" ["That would be less than courteous."]
-showing it to action	2	"[as the parser]You can't show [the noun] to [the second noun][can't-addendum].[as normal]"  ["Bob is unimpressed."]
-giving it to action	3	"[as the parser]You can't give [the noun] to [the second noun][can't-addendum].[as normal]" ["Bob doesn't seem interested."]
-pushing action	4	"[as the parser]You can't normally push [yourself-or-other].[as normal]" ["That would be less than courteous."]
-touching action	1	"[as the parser]You can't touch [the noun][can't-addendum].[as normal]" ["Keep your hands to yourself!"]
-squeezing action	1	"[as the parser]You can't squeeze [the noun][can't-addendum].[as normal]" ["Keep your hands to yourself."]
-Kissing action	1	"[as the parser]You can't kiss [the noun][can't-addendum].[as normal]" ["Keep your mind on the game."]
+pulling action	4	"[as the parser]You don't need to pull [yourself-or-other].[as normal]" ["That would be less than courteous."]
+taking action	3	"[as the parser]You can't normally pick up other characters.[as normal]" ["I don't suppose Bob would care for that."][Note: "yourself" handled elsewhere.]
+Turning action	4	"[as the parser]You can't normally rotate [yourself-or-other].[as normal]" ["That would be less than courteous."]
+showing it to action	2	"[as the parser]You don't need to show [the noun] to [the second noun][can't-addendum].[as normal]"  ["Bob is unimpressed."]
+giving it to action	3	"[as the parser]You don't need to give [the noun] to [the second noun][can't-addendum].[as normal]" ["Bob doesn't seem interested."]
+pushing action	4	"[as the parser]You don't need to push [yourself-or-other].[as normal]" ["That would be less than courteous."]
+touching action	1	"[as the parser]You don't need to touch [the noun][can't-addendum].[as normal]" ["Keep your hands to yourself!"]
+squeezing action	1	"[as the parser]You can't [the quoted verb] [the noun][can't-addendum].[as normal]" ["Keep your hands to yourself."]
+Kissing action	1	"[as the parser]You can't [the quoted verb] [the noun][can't-addendum].[as normal]" ["Keep your mind on the game."]
 Waking action	1	"[as the parser][if noun is player]As far as you know, you're already awake.[otherwise]You can't wake [the noun][can't-addendum].[end if][as normal]" ["That seems unnecessary."]
 --	72	"[as the parser]You can't order [the person asked] to do that[can't-addendum].[as normal]" ["Bob has  better things to do."]
 
@@ -331,7 +335,7 @@ library-action	library-message-id	library-message-text
 --	5	"Would you like to [ignore library line break]"
 --	50	"Your score has just gone [if library message amount > 0]up by [library message amount][otherwise]down by [0 - library message amount][end if] point[s]"
 --	68	"([The person asked] first taking [the noun])"
---	69	"(first taking [the noun])"
+--	69	"(first taking [the item described])"
 --	71	"Darkness"
 --	75	" The End [ignore library line break]"
 --	76	" or "

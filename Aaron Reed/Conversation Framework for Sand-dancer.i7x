@@ -1,8 +1,11 @@
-Conversation Framework for Sand-dancer by Aaron Reed begins here.
+Version 2 of Conversation Framework for Sand-dancer by Aaron Reed begins here.
 
-"A unified package for conversation in Sand-dancer (the example game for the book Creating Interactive Fiction with Inform 7). This is a modified and streamlined version of Eric Eve's Conversation Framework and Conversation Suggestsions."
+"A unified package for conversation in Sand-dancer (the example game for the book Creating Interactive Fiction with Inform 7). This is a modified and streamlined version of Eric Eve's Conversation Framework and Conversation Suggestions."
 
 "based on Conversation Framework and Conversation Suggestions by Eric Eve"
+
+[History:
+ v2: Named all rules to make the extension easier to modify.]
 
 Volume - Conversation Framework version 7
 
@@ -512,10 +515,10 @@ Section - Prevent leaving conversation early
 
 [Since Sand-dancer's conversations are tightly scripted events, we disallow player movement while one is underway.]
 
-Can't leave conversation early is a truth state that varies. Can't leave conversation early is true.
+Can't leave conversation early is a truth state that varies. Can't leave conversation early is usually true.
 
 Saying goodbye to someone is finishing conversation. Going is finishing conversation.
-Instead of finishing conversation when current interlocutor is a person and can't leave conversation early is true: say "You have a feeling this conversation isn’t over."
+Instead of finishing conversation when current interlocutor is a person and can't leave conversation early is true (this is the Conversation Framework for Sand-dancer can't normally leave conversation rule): say "You have a feeling this conversation isn’t over."
 
 Section - Show topics after every turn in conversation
 
@@ -523,7 +526,7 @@ Section - Show topics after every turn in conversation
 
 Show topics every turn is a truth state that varies. Show topics every turn is true.
 
-Every turn when current interlocutor is a person and show topics every turn is true: try listing suggested topics.
+Every turn when current interlocutor is a person and show topics every turn is true (this is the Conversation Framework for Sand-dancer show topics after every turn rule): try listing suggested topics.
 
 
 Section - Extend the grammar line
@@ -546,21 +549,21 @@ Section - Scope
 
 [Eric's extension requires manually setting topics as familiar or unfamiliar. Since our topics are matched to individual characters (who never have visible inventory), we simplify this by having a character hold all the topics he can say, and making all held topics familiar when a conversation begins. ]
 
-Carry out saying hello to a person (called the conversant):
+Carry out saying hello to a person (called the conversant) (this is the Conversation Framework for Sand-dancer make held things familiar on hello rule):
 	now every thing held by the conversant is familiar.
 	
-Carry out saying goodbye to a person (called the conversant):
+Carry out saying goodbye to a person (called the conversant) (this is the Conversation Framework for Sand-dancer make held things unfamiliar on goodbye rule):
 	now every thing held by the conversant is unfamiliar.
 
 Section - Remove conversation topics after discussion
 
 [Eric's topics are by default repeatable; ours are not.]
 
-First after informing somebody about something (called the thread):
+First after informing somebody about something (called the thread) (this is the Conversation Framework for Sand-dancer auto remove tell suggestions rule):
 	say "[remove thread tell suggestion][run paragraph on]";
 	continue the action.
 
-First after quizzing somebody about something (called the thread):
+First after quizzing somebody about something (called the thread) (this is the Conversation Framework for Sand-dancer auto remove ask suggestions rule):
 	say "[remove thread ask suggestion][run paragraph on]";
 	continue the action.
 
@@ -568,22 +571,22 @@ Section - Italicized Topics List
 
 [We style the topics list to make it stand out more from the surrounding text.]
 
-Before listing suggested topics: say "[italic type][run paragraph on]". After listing suggested topics: say "[roman type][run paragraph on]".
+Before listing suggested topics (this is the Conversation Framework for Sand-dancer italicize listed topics rule): say "[italic type][run paragraph on]". After listing suggested topics (this is the Conversation Framework for Sand-dancer end italicize listed topics rule): say "[roman type][run paragraph on]".
 
 Section - Can't talk to yourself
 
 [We fix what's arguably a bug in the original extension.]
 
-Instead of saying hello to yourself: say "You know you're crazy when you start talking to yourself.". 
+Instead of saying hello to yourself (this is the Conversation Framework for Sand-dancer can't say hello to yourself rule): say "You know you're crazy when you start talking to yourself.". 
 
-Instead of hailing: do nothing.
+Instead of hailing (this is the Conversation Framework for Sand-dancer ignore hailing rule): do nothing.
 
 
 Conversation Framework for Sand-dancer ends here.
 
 ---- DOCUMENTATION ----
 
-This extension is a modified version of Eric Eve's Conversation Framework and Conversation Suggestsions extensions, designed for use with the game "Sand-dancer." For full details, see the documentation for the above two extensions (which are not required, but included within this extension). Below are the ways this extension differs from the default.
+This extension is a modified version of Eric Eve's Conversation Framework and Conversation Suggestions extensions, designed for use with the game "Sand-dancer." For full details, see the documentation for the above two extensions (which are not required, but included within this extension). Below are the ways this extension differs from the default.
 
 Section - Saying yes and no
 
@@ -607,7 +610,7 @@ A new phrase, "clear all topics," will reset the ask-suggestions, tell-suggestio
 
 Section - scope
 
-By default, the player must both add a new topic to a conversation list and make sure it is in scope. This extension simplifies this by allowing for an NPC to be carrying any topics that are unique to that NPC, and bringing all those topics into and out of scope when the conversation begins and ends.
+By default, the author must both add a new topic to a conversation list and make sure it is in scope. This extension simplifies this by allowing for an NPC to be carrying any topics that are unique to that NPC, and bringing all those topics into and out of scope when the conversation begins and ends.
 
 
 

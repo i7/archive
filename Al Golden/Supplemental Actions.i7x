@@ -1,15 +1,12 @@
-Version 28 of Supplemental Actions by Al Golden begins here.
+Version 30 of Supplemental Actions by Al Golden begins here.
 
-"This extension adds 11 separated actions, 9 expanded actions, and 21 new actions.
-It also allows an NPC to be given something,and the player to ask for carried items
-owned by the NPC."
+"This extension adds 12 separated actions, 10 expanded actions, and 22 new actions.
+It also allows an NPC to be given something, and the player to ask for items
+carried or worn by the NPC."
 
 use MAX_ACTIONS of 900.
 
 To say verbword: (- print (address) verb_word; -).
-
-a thing is either blowable or unblowable.
-a thing is usually unblowable. 
 
 a thing is either climbable or unclimbable.
 a thing is usually unclimbable.
@@ -29,14 +26,23 @@ a thing is usually deflated.
 a thing is either inflatable or uninflatable.
 a thing is usually uninflatable.
 
-a thing is either safe or poisonous.
+a thing is either safe or dangerous.
 a thing is usually safe.
+
+a thing is either poisonous or non-poisonous.
+a thing is usually non-poisonous.
 
 a thing is either swimmable or unswimmable.
 a thing is usually unswimmable.
 
-a thing is either vacated or unvacated.
-a thing is usually vacated.
+
+a thing is either empty or unempty.
+a thing is usually empty.
+
+definition: a container is unempty if the number of things in it is not 0.
+definition: a supporter is empty if the number of things on it is 0.
+definition: a supporter is unempty if the number of things on it is not 0.
+
 
 Part 01 - Attacking (expanded)
 
@@ -60,25 +66,24 @@ understand "punch [something]" as attacking.
 understand "punch [someone]" as attacking. 
 understand "smack [something]" as attacking.
 understand "smack [someone]" as attacking.
-understand "wack [something]" as attacking.
-understand "wack [someone]" as attacking.
+understand "whack [something]" as attacking.
+understand "whack [someone]" as attacking.
 understand "wallop [something]" as attacking.
 understand "wallop [someone]" as attacking.
 understand "wound [something]" as attacking.
 understand "wound [someone]" as attacking.
 
 attacking it with is an action applying to two things.
-understand "attack [someone] with [something]"   as attacking it with.
+understand "attack [someone] with [something]" as attacking it with.
 understand "attack [something] with [something]" as attacking it with.
-understand "bash [someone] with [something]"   as attacking it with.
+understand "bash [someone] with [something]" as attacking it with.
 understand "bash [something] with [something]" as attacking it with.
-understand "belt [someone] with [something]"   as attacking it with.
+understand "belt [someone] with [something]" as attacking it with.
 understand "belt [something] with [something]" as attacking it with.
-understand "hit [something] with [something]"  as attacking it with. 
-understand "hit [someone] with [something]"    as attacking it with.
+understand "hit [something] with [something]" as attacking it with. 
+understand "hit [someone] with [something]" as attacking it with.
 understand "injure [something] with something" as attacking it with.
 understand "injure [someone] with something" as attacking it with.
-
 understand "pummel [something] with [something]" as attacking it with.
 understand "pummel [someone] with [something]" as attacking it with.
 understand "pound [something] with [something]" as attacking it with.
@@ -87,22 +92,20 @@ understand "punch [something] with [something]" as attacking it with.
 understand "punch [someone] with [something]" as attacking it with.
 understand "smack [something] with [something]" as attacking it with. 
 understand "smack [someone] with [something]" as attacking it with.
-understand "wack [something] with [something]" as attacking it with. 
-understand "wack [someone] with [something]" as attacking it with.
+understand "whack [something] with [something]" as attacking it with. 
+understand "whack [someone] with [something]" as attacking it with.
 understand "wallop [something] with [something]"as attacking it with. 
-understand "wallop [someone] with [something]"  as attacking it with.
+understand "wallop [someone] with [something]" as attacking it with.
 understand "wound [something] with [something]" as attacking it with.
 understand "wound [someone] with [something]" as attacking it with.
 
-carry out attacking something 
-(this is the attacking something rule):
+report attacking something: 
 let verbword be word number 1 in the player's command; 
-say "You [verbword] [the noun].";
+say "You can't [verbword] [the noun].";
 
-carry out attacking something with a second noun
-(this is the the attack it with something rule):
+report attacking something with a second noun:
 let verbword be word number 1 in the player's command; 
-say "You [verbword] [the noun] with [the second noun].".
+say "You can't [verbword] [the noun] with [the second noun].".
 
 Part 02 - Blowing (new)
 
@@ -113,52 +116,15 @@ blowing out is an action applying to one thing.
 blowing up is an action applying to one thing.
 
 understand "blow [something]" as blowing.
-understand "blow in [something]" as blowing in.
 understand "blow on [something]" as blowing on.
-understand "blow up [something]" as blowing up. 
-understand "blow [something] up" as blowing up.
 understand "blow out [something]" as blowing out. 
 understand "blow [something] out" as blowing out.
 
+report blowing something:
+say "You can't blow [the noun]." 
 
-check blowing up something (this is the can't blowup rule):
-if the noun is unblowable,
-say "You can't blow up [the noun]." instead.
-
-check blowing up an inflated thing
-(this is the already blown up thing rule):
-say "[The noun] is already inflated." instead. 
-
-carry out blowing up something:
-if the noun is inflatable begin;
-now the noun is inflated;
-say "You blow up [the noun].";
-otherwise;
-say "[The noun] can't be inflated.";
-end if.
-
-check blowing something (this is the can't blow rule):
-if the noun is unblowable,
-say "You can't blow [the noun]." instead.
-
-check blowing in something (this is the can't blow in rule):
-if the noun is unblowable,
-say "You can't blow in [the noun]." instead.
-
-
-check  blowing in an inflated inflatable thing
-(this is the already inflated rule):
-say "[The noun] is already inflated." instead.
-
-check blowing out something (this is the can't blow out rule): 
-if the noun is unblowable,
-say "You can't blow [the noun] out." instead.
-
-report  blowing on something:
-say "You blow on [the noun]."
-
-report blowing in a blowable thing: 
-say "You blow in [the noun]."
+report blowing on something:
+say "You can't blow on [the noun]."
 
 Part 03 - Breaking (separated)
 
@@ -208,58 +174,42 @@ understand "vandalize [something] with [something]" as breaking it with.
 understand "wreck [something] with [something]" as breaking it with.
 
 report breaking something:
-say "You [verbword] [the noun].".
+say "You can't [verbword] [the noun].".
 
 report breaking something with a second noun:
-say "You [verbword] [the noun] with [the second noun].".
+say "You can't [verbword] [the noun] with [the second noun].".
 
 Part 04 - Burning
 
 burning it with is an action applying to two things.
 understand "burn [something] with [something]" as burning it with.
 
-report burning something with a second noun
-(this is the burning it with rule):
-say "You burn [the noun] with [the second noun].".
-
+report burning something with a second noun:
+say "You can't burn [the noun] with [the second noun].".
 
 Part 05 - Buying and Selling (new)
-
-check buying:
-say "You need to buy [the noun] from someone." instead.
 
 buying it from is an action applying to two things.
 understand "buy [something] from [something]" as buying it from.
 understand "purchase [something] from [something]" as buying it from.
 
-carry out buying something from something
-(this is the buying it from rule):
-say "You buy [the noun] from [ the second noun] at a fair price. 
-Now you are the proud owner  of  a slightly-used [noun].";
-now the noun is carried by yourself.
-
 selling is an action applying to one thing.
 understand "sell [something]" as selling.
-
-report selling
-(this is the report selling rule):
- say "Please rephrase that as sell [noun] to (someone).".
-
-check buying a person from something
-(this is the check buying a person rule):
-say "Don't be ridiculous! You can't buy [the noun] from [the second noun]!" instead.
-	
-check selling a person to something
-(this is the check selling a person rule):
-say "Don't be ridiculous! You can't sell [the noun] to [the second noun]!" instead.
 
 selling it to is an action applying to two things.
 understand "sell [something] to [something]" as selling it to.
 
-carry out selling something (called the goods) to something (called the mark)
-(this is the selling it to rule):
-now the goods is carried by the mark;	
-say "You sell [the goods] to [the mark]." instead.
+report buying something:
+say "You can't buy [the noun].".
+
+report buying something from a second noun:
+say "Don't be ridiculous! You can't buy [the noun] from [the second noun]!".
+
+report selling something:
+say "Who do you want to sell [the noun] to?".
+
+report selling something to something:
+say "You can't sell [the noun] to [the second noun].".
 
 Part 06 - Cleaning (separated)
 
@@ -307,62 +257,54 @@ understand "shine [something] with [something]" as shining it with.
 understand "sweep [something] with [something]" as sweeping it with.
 understand "wipe [something] with [something]" as wiping it with.
 
-report cleaning something (this is the report cleaning rule):
-say "You clean [the noun]."
+report cleaning something:
+say "You can't clean [the noun].".
 
-report polishing something (this is the report polishing rule):
-say "You polish [the noun]."
+report dusting something:
+say "You can't dust [the noun]."
 
-instead of rubbing something (this is the report rubbing  rule):
-say "You rub [the noun]."
+report polishing something:
+say "You can't polish [the noun]."
 
-report scrubbing something
-(this is the report scrubbing  rule):
-say "You scrub [the noun]."
+report rubbing something:
+say "You can't rub [the noun]."
 
-report shining something
-(this is the report shining  rule):
-say "You shine [the noun]."
+report scrubbing something:
+say "You can't scrub [the noun]."
 
-report  sweeping something
-(this is the report sweeping  rule):
-say "You sweep [the noun]."
+report shining something:
+say "You can't shine [the noun]."
 
-report wiping something
-(this is the report wiping rule):
-say "You wipe [the noun]."
+report sweeping something:
+say "You can't sweep [the noun]."
 
-report cleaning something with something
-(this is the report cleaning something with something rule):
-say "You clean [the noun] with [the second noun]."
+report wiping something:
+say "You can't wipe [the noun]."
 
-report  dusting something with something
-(this is the report dusting something with something rule):
-say "You dust [the noun] with [the second noun]."
+report cleaning something with something:
+say "You can't clean [the noun] with [the second noun]."
 
-report  polishing something with something
-(this is the report polishing something with something rule):
-say "You polish [the noun] with [the second noun]."
+report dusting something with something:
+say "You can't dust [the noun] with [the second noun]."
 
-report rubbing something with something
-(this is the report rubbing something with something rule):
-say "You rub [the noun] with [the second noun]."
+report polishing something with something:
+say "You can't polish [the noun] with [the second noun]."
 
-report  scrubbing something with something
-(this is the report scrubbing something with something rule):
-say "You scrub [the noun] with [the second noun]."
+report rubbing something with something:
+say "You can't rub [the noun] with [the second noun]."
 
-report shining something with something
-(this is the report shining something with something rule):
-say "You shine [the noun] with [the second noun]."
+report scrubbing something with something:
+say "You can't scrub [the noun] with [the second noun]."
 
-report sweeping something with something
-(this is the report sweeping something with something rule):
-say "You sweep [the noun] with [the second noun]."
+report shining something with something:
+say "You can't shine [the noun] with [the second noun]."
 
-report wiping something with something
-(this is the report wiping something with something rule):
-say "You wipe [the noun] with [the second noun].";
+report sweeping something with something:
+say "You can't sweep [the noun] with [the second noun]."
+
+report wiping something with something:
+say "You can't wipe [the noun] with [the second noun].".
+
 
 Part 07 - Clearing (separated)
 
@@ -374,13 +316,11 @@ clearing it from is an action applying to two things.
 understand "clear [something] from [something]" as clearing it from.
 understand "clear [something] out of [something]" as clearing it from.
 
-report clearing something
-(this is the report clearing rule):
-say "You clear [the noun].".
+report clearing something:
+say "You can't clear [the noun].".
 
-report clearing something from a second noun
-(this is the report clearing something from something rule):
-say "You clear [the noun] from [the second noun].".
+report clearing something from a second noun:
+say "You can't clear [the noun] from [the second noun].".
 
 Part 08 - Climbing (expanded)
 
@@ -396,7 +336,7 @@ climbing through is an action applying to one thing.
 climbing under is an action applying to one thing.
 
 understand "climb [something]" as climbing.
-understand "climb in/into [something]"  as climbing in.
+understand "climb in/into [something]" as climbing in.
 understand "climb on/onto [something]" as climbing on.
 understand "climb through [something]" as climbing through.
 understand "climb thru [something]" as climbing through.
@@ -408,55 +348,37 @@ understand "climb down [something]" as climbing down.
 understand "climb over [something]" as climbing over.
 understand "climb under [something]" as climbing under.
 
-check climbing an unclimbable thing 
-(this is the unclimbable object rule):
-say "[The  noun] can not be climbed." instead.
+report climbing a climbable thing:
+say "You climb [the noun]." instead.
 
-check climbing up an unclimbable thing 
-(this is the can't climb up rule):
-say "[The  noun] can not be climbed." instead.
-
-check  climbing down an unclimbable thing 
-(this is the can't climb down rule):
-say "[The  noun] can not be climbed." instead.
-
-check climbing in something which is not an enterable container
-(this is the can't climb in an non-enterable container rule):
-say "You are unable to climb into [the noun]." instead
-
-check climbing on something which is not an enterable supporter
-(this is the can't climb on an non-enterable supporter rule):
-say "You are unable to climb onto [the noun]." instead.
-
-report climbing over something:
-say "You climb over [the noun].";
+report climbing over a climbable thing:
+say "You  climb over [the noun].";
 
 report climbing under something:
 say "You climb under [the noun].";
 
-report climbing a climbable thing:
-say "You climb [the noun].";
-
-report climbing up a climbable thing:
-say "You climb up [the noun].";
-
-report climbing down a climbable thing:
-say "You climb down [the noun].";
-
 report climbing in an enterable container:
 say "You climb into [the noun].";
-now the player is in the noun;
-
-report climbing through something:
-say "You climb through [the noun].".
-
-report climbing out something:
-say "You climb out of [the noun].";
-now the player is in the location;
+now the player is in the noun.
 
 report climbing on an enterable supporter:
-now the player is on the noun;
-say "You climb onto [the noun]."
+say "You climb onto [the noun].";
+now the player is on the noun.
+report climbing an unclimbable thing:
+say "You can't climb [the noun]." instead.
+
+report climbing up an unclimbable thing:
+say "You can't climb up [the noun].";
+
+report climbing down an unclimbable thing:
+say "You can't climb down [the noun].";
+
+report climbing through something:
+say "You can't climb through [the noun].".
+
+report climbing out something:
+say "You can't climb out of [the noun].";
+now the player is in the location;
 
 Part 09 - Cutting (expanded) 
 
@@ -507,29 +429,36 @@ understand "nick [something]" as cutting.
 understand "incise [something]" as cutting.
 
 cutting it with is an action applying to two things.
-understand "cut   [something] with [something]" as cutting it with. 
-understand "chop  [something] with [something]" as cutting it with. 
+understand "cut [something] with [something]" as cutting it with. 
+understand "chop [something] with [something]" as cutting it with. 
 understand "slice [something] with [something]" as cutting it with. 
-understand "nick  [something] with [something]" as cutting it with.
+understand "nick [something] with [something]" as cutting it with.
 understand "prune [something] with [something]" as cutting it with. 
 understand "sever [something] with [something]" as cutting it with. 
-understand "slit  [something] with [something]" as cutting it with. 
-understand "slash [something] with [something]"  as cutting it with.
-understand "lacerate [something] with [something]"  as cutting it with. 
+understand "slit [something] with [something]" as cutting it with. 
+understand "slash [something] with [something]" as cutting it with.
+understand "lacerate [something] with [something]" as cutting it with. 
 understand "lance [something] with [something]" as cutting it with.
 understand "pierce [something] with [something]" as cutting it with.
-understand "scratch [something] with [something]"  as cutting it with. 
-understand "graze   [something] with [something]"  as cutting it with. 
-understand "nick    [something] with [something]"  as cutting it with. 
-understand "incise [something] with [something]"  as cutting it with. 
+understand "scratch [something] with [something]" as cutting it with. 
+understand "graze [something] with [something]" as cutting it with. 
+understand "nick  [something] with [something]" as cutting it with. 
+understand "incise [something] with [something]" as cutting it with. 
 
 report cutting something:
 let verbword be word number 1 in the player's command; 
-say "You [verbword] [the noun].";
+say "You can't [verbword] [the noun].".
 
 report cutting something with a second noun:
 let verbword be word number 1 in the player's command; 
-say "You [verbword] [the noun] with [the second noun].";
+say "You can't [verbword] [the noun] with [the second noun]." .
+
+report deflating an inflated thing:
+now the noun is deflated;
+say "You deflate [the noun]." instead.
+
+report deflating an uninflatable thing:
+say "Since [the noun] is uninflatable to begin with, that's not possible." instead.
 
 Part 10 - Digging (new)
 
@@ -546,164 +475,131 @@ understand "dig [something] in [something]" as digging it in.
 digging in is an action applying to one thing.
 understand "dig in [something]" as digging in.
 
-check digging something which is undiggable
-(this is the can't dig an undiggable thing rule): 
+report digging an undiggable thing:
 say "You can't dig [the noun]." instead.
 
-check digging in something which is undiggable
-(this is the can't dig in an undiggable thing rule): 
-say "You can't dig in [the noun]." instead.
+report digging in an undiggable thing:
+ say "You can't dig in [the noun]." instead.
 
-check digging something which is undiggable with something
-(this is the can't dig an undiggable thing with something rule): 
-say "You can't dig [the noun]." instead.
+report digging an undiggable thing with something:
+say "You can't dig [the noun] with [the second noun]." instead.
 
 report digging something which is diggable: 
-say "You dig [the noun].";
+say "You can't dig [the noun].".
  
 report digging something which is diggable with something: 
-say "You dig [the noun] with the [second noun].";
+say "You can't dig [the noun] with the [second noun]."
 
 report digging something in a second noun:
-say "You dig [a noun] in [the second noun]."
+say "You can't dig [a noun] in [the second noun].".
 
 Part 11 - Diving (new)
 
-diving in  is an action applying to one thing.
+diving is an action applying to nothing.
+understand "dive" as diving.
+
+diving in is an action applying to one thing.
 diving off is an action applying to one thing.
+diving from is an action applying to one thing.
 
 understand "dive in/into [something]" as diving in.
-understand "dive off [something]" as  diving off.
+understand "dive off [something]" as diving off.
 understand "dive off of [something]" as diving off.
-understand "dive from [something]" as diving off.
+understand "dive from [something]" as diving from.
 
-check diving in something which is not a container
-(this is the can't dive into a non-container rule):
-say "You can't dive into [the noun]." instead
+report diving (this is the diving rule):
+say "You can't dive." instead.
 
-check diving off something
-(this is the can't dive off a non-supporter rule):
-if the player is not on a supporter,
-say "You're not on something that you can dive off of." instead. 
+report diving in something (this is the diving in rule):
+say "You can't dive into [the noun]." 
+
+report diving off something (this is the diving off rule):
+say "You can't dive off [the noun]."  
+
+report diving from something (this is the diving from rule):
+say "You can't dive from [the noun]." 
 
 Part 12 - Drinking (expanded)
 
 drinking from is an action applying to one thing.
 understand "drink from [something]" as drinking from.
 
-report drinking from something (this is the drinking from rule):
-say "You drink from [the second noun].".
-
 drinking it from is an action applying to two things.
 understand "drink [something] from [something]" as drinking it from.
 
-report drinking something from a second noun 
-(this is the drinking something from a second noun rule):
-say "You drink [the noun] from [the second noun].". 
+report drinking from something (this is the drinking from rule):
+say "You can't drink from [the second noun].".
+
+report drinking something from a second noun: 
+say "You can't drink [the noun] from [the second noun].". 
+
+report extinguishing something:
+say "You can't extinguish [the noun].".
+
+instead of drinking something
+(this is the can't drink rule):
+say "You can't drink that.".
 
 Part 13 - Dropping (expanded)
 
 understand the command "drop" as something new.
 
+multidropping is an action applying to nothing.
+understand "drop all" as multidropping. 
 
-understand "drop [things preferably held]" as dropping. 
+understand "drop [things preferably held]" as dropping.
+
+instead of dropping something:
+now the noun is in the location;
+say "Dropped."
+
+instead of multidropping:
+	if the player is carrying nothing:
+		say "You aren't carrying anything.";
+	otherwise:
+		say "You drop [the list of things carried by yourself] at your feet.";
+		now everything carried by yourself is in the location.
 
 dropping it into is an action applying to two things. 
-understand "drop [things] in/into [something]" as dropping it into.
+understand "drop [things preferably held] in/into [something]" as dropping it into.
 
 dropping it onto is an action applying to two things. 
-understand "drop [things] on/onto [something]" as dropping it onto.
+understand "drop [things preferably held] on/onto [something]" as dropping it onto.
 
 dropping it down is an action applying to two things. 
-understand "drop [things] down [something]" as dropping it down.
+understand "drop [things preferably held] down [something]" as dropping it down.
 
+report dropping something into a second noun:
+say "You can't drop [the noun] into [the second noun].".
 
-check dropping something into a second noun
-(this is the non-held drop in container rule):
-if the noun is not carried by the player,
-say "You haven't got [the noun]." instead.
+report dropping something onto a second noun:
+say "You can't drop [the noun] into [the second noun].".
 
-check dropping something onto something
-(this is the can't drop what's not held onto a supporter rule):
-if the noun is not carried by the player,
-say "You haven't got [the noun]." instead.
-
-check dropping something down a container
-(this is the can't drop what's not held down a container rule):
-if the noun is not carried by the player,
-say "You haven't got [the noun]." instead.
-
-check dropping something into a second noun
-(this is the can't drop  into a non-container rule):
-if the second noun is not a container,
-say "You can't drop [the noun] into [the second noun]." instead.
-
-check dropping something onto a second noun
-(this is the can't drop onto a non-supporter rule):
-if the second noun is not a supporter,
-say "You can't drop [the noun] into [the second noun]." instead.
-
-
-carry out dropping something carried by the player into a container 
-(this is the dropping into a container rule):
-say "You drop [the noun] into the [second noun].";
-now the noun is in the second noun;
-
-carry out dropping something carried by the player onto something
-(this is the dropping onto a supporter rule): 
-say "You drop [the noun] onto the [second noun]."; 
-now the noun is on the second noun;
-
-carry out dropping something carried by the player down a container
-(this is the dropping down a  container rule):
-say "You drop [the noun] down [second noun] where it becomes lost.";
-remove the noun from play;
-
-after reading a command
-(this is the check dropping all rule when nothing is held by you rule):	
-	if the player's command includes "drop all" and the player is carrying nothing:
-		say "You aren't carrying anything.";		
-		reject the player's command.
-
+report dropping something down a second noun:
+say "You can't drop [the noun] down [the second noun].".
+				
 Part 14 - Eating (no longer requires holding)
 		
 understand the command "eat" as something new.
-weating is an action applying to one thing.
-understand "eat [things]" as weating.
+understand "eat [things]" as eating.
 
-check weating something which is not edible
-(this is the check eating an inedible thing rule): 
-say "That's not edible." instead.
-
-instead of weating something which is poisonous
-(this is the eating a poisonous thing rule):
-say "You eat [the noun] which is not 
-conducive to your health.";
-end the game in death.
-
-after weating something which is safe:
-remove the noun from play;
+report eating something:
+say "You can't eat that!" instead.
 
 Part 15 - Emptying (new)
-
-definition: a container is unfilled if the number of things in it is 0.
-definition: a container is vacated if the number of things in it is 0.
-definition: a supporter is vacated if the number of things on it is 0.
 
 emptying is an action applying to one thing.
 understand "empty [something]" as emptying.
 understand "empty [container]" as emptying.
-understand "empty [something]" as emptying. 
-understand "empty out [container]" as emptying. 
-understand "empty [container] out" as emptying.
-understand "empty [something] out" as emptying. 
-understand "empty out [something]" as emptying.
 
-understand the command "dump" as "empty".
+understand "empty [something] out" as emptying. 
+understand "empty [container] out" as emptying. 
+
+understand "empty out [something]" as emptying.
+understand "empty out [container]" as emptying.
 
 emptying it into is an action applying to two things. 
 understand "empty [container] in/into [something]" as emptying it into. 
-understand "empty [container] in/into [container]" as emptying it into. 
 understand "empty [something] in/into [something]" as emptying it into.
 
 emptying it onto is an action applying to two things. 
@@ -711,143 +607,111 @@ understand "empty [container] on/onto [something]" as emptying it onto.
 understand "empty [something] on/onto [something]" as emptying it onto.
 
 emptying it from is an action applying to two things. 
+understand "empty [things] from [something]" as emptying it from.
+understand "empty [things] from [container]" as emptying it from.
 
-understand "empty [something] from [something]" as emptying it from.
-understand "empty [something] out of [something]" as emptying it from.
+emptying it out of is an action applying to two things.
+understand "empty [things] out of [something]" as emptying it out of.
+understand "empty [things] out of [container]" as emptying it out of.
 
-check emptying a closed container
-(this is the can't empty a closed container rule):
+understand the command "dump" as "empty".
+
+before emptying a closed container
+(this is the can't empty a closed container rule)::
+say "You need to open [the noun] before you can empty it." instead.
+	
+before emptying something which is not a container
+(this is the can't empty a non-container rule):
+say "Since [the noun] isn't a container, you can't empty it." instead.
+
+before emptying an empty container
+(this is the can't empty an empty container rule):
+say "[The noun] has nothing in it to empty." instead.
+
+before emptying something out of an empty container
+(this is the first can't empty something which is not in a container rule):
+if the noun is not in the second noun,
+say "The [noun] isn't in [the second noun]." instead.
+
+before emptying something from an empty container
+(this is the second can't empty something which is not in a container rule):
+if the noun is not in the second noun,
+say "The [noun] isn't in [the second noun]." instead.
+
+before emptying an unempty container into a second noun
+(this is the second noun isn't a container rule):
+if the second noun is not a container,
+say "Since [the second noun] isn't a container, it can't hold anything." instead
+
+before emptying an unempty container into a second noun
+(this is the first emptying it into rule):
+if the noun is closed,
 say "[The noun] isn't open." instead.
 
-check emptying a closed container into something
-(this is the can't empty a closed container into something rule): 
-say "[The noun] isn't open." instead.
-
-check emptying a closed container onto something
-(this is the can't empty a closed container onto something rule):
-say "[The noun] isn't open." instead.
-
-check emptying a vacated container onto something
-(this is the can't empty a vacated container onto something rule):
-say "[The noun] is empty." instead.
-
-check emptying a vacated container
-(this is the can't empty a vacated container rule):
-say "[The noun] is empty." instead.
-
-check emptying a vacated supporter
-(this is the can't empty a vacated supporter rule): 
-say "There is nothing on [the noun] to empty." instead.
-
-check emptying a vacated supporter into something
-(this is the can't empty a vacated supporter into something rule):
-say "[The noun] is empty." instead.
-
-check emptying a vacated supporter onto something
-(this is the can't empty a vacated supporter onto something  rule):
-say "[The noun] is empty." instead.
-
-check emptying a supporter onto something which is not a supporter
-(this is the can't empty a supporter onto a non-supporter rule):
-say "[The second noun] is not capable of holding the contents of [the noun]." instead.
-
-check emptying a supporter onto a second noun
-(this is the can't empty a vacated  supporter onto a supporter rule):
-if the number of things on the noun is 0,
-say "[The noun] is empty." instead.
-
-check emptying something into a closed container
-(this is the can't empty something into a closed container rule):
+before emptying an unempty container into a second noun
+(this is the second emptying it into rule):
+if the second noun is closed,
 say "[The second noun] isn't open." instead.
 
-check emptying a container into a second noun
-(this is the can't empty something into a filled container rule):
-if the second noun is filled or the number of things in the second noun is not 0,
-say "Either [the second noun] is filled with something, 
-or the [second noun] has something in it already" instead.
+before emptying an unempty container into a second noun
+(this is the third emptying it into rule):
+say "You empty [the list of things in the noun] into [the second noun] .";
+now all the things in the noun are in the second noun instead.
 
-before emptying a container (this is the emptying a container rule):
-if the number of things in the noun is not 0 begin;
-now the noun is vacated;
-say "You empty [the list of things in the noun] onto the floor.";
-now everything in the noun is in the location instead;
-otherwise;
-say "[The noun] is empty." instead;
-end if.
+before emptying an unempty container onto a second noun
+(this is the second noun isn't a supporter rule):
+if the second noun is not a supporter,
+say "Since [the second noun] isn't a supporter, it can't hold anything." instead.
 
-carry out emptying a supporter
-(this is the emptying a supporter rule):
-if the number of things on the noun is not 0 begin;
-now the noun is vacated;
-say "You empty [the list of things on the noun] onto the floor.";
-now all the things on the noun are in the location;
-otherwise;
-say "There's nothing on [the noun].";
-end if.
+before emptying an unempty container onto a second noun
+(this is the second noun is a supporter rule):
+if the second noun is  a supporter,
+say "You empty the [list of things in the noun] onto [the second noun]";
+now everything in the noun is on the second noun instead.
+		
+before emptying something from an unempty container: 
+	if the number of things in the second noun is 1:
+		say "You [verbword] the last item out of the [noun]. It's now empty.";
+		now the second noun is empty instead;
+		now the noun is in the location;
+	otherwise:
+		now the noun is in the location;
+		say "You [verbword] the [the noun] from [the second noun]. There are still
+		other things left in [the second noun]." instead.	
+		
+before emptying something out of an unempty container: 
+	if the number of things in the second noun is 1:
+		say "You empty the last item out of the [noun]. It's now empty.";
+		now the noun is in the location;
+		now the second noun is empty instead;
+	otherwise:
+		now the noun is in the location;
+		say "You [verbword] the [the noun] out of [the second noun]. There are still
+		other things left in [the second noun]." instead.	
+			
+after inserting something into an open container:
+now the second noun is unempty.
 
+check inserting something into a closed container:
+say "[The second noun] isn't open!" instead.
+	
+before emptying an open unempty container:
+say "You [verbword] [the list of things in the noun] out onto the ground.";
+now the noun is empty;
+now all the things in the noun are in the location instead.
 
-carry out emptying a supporter into something
-(this is the emptying a supporter into something rule):
-if the number of things on the noun is not 0,
-say "You empty [the list of things on the noun] 
-from [the noun] into [the second noun].";
-now the noun is vacated;
-now the noun is unfilled;
-now all the things on the noun are in the second noun;
-
-carry out emptying a container into a second noun
-(this is the emptying a container into something rule):
-say "You empty [the list of things in the noun] 
-from [the noun] into [the second noun].";
-now all the things in the noun are in the second noun;
-now the noun is vacated;
-now the second noun is filled
-
-carry out emptying a container onto something
-(this is the emptying a container onto something rule):
-if the number of things in the noun is not 0,
-now the noun is unfilled;
-now the noun is vacated;
-say "You empty [the list of things in the noun] from [the noun] 
-onto [the second noun].";
-now all the things in the noun are on the second noun;
-
-carry out emptying something
-(this is the 1st emptying contents of a container rule):
-if the noun is not a container and the noun is in a container,
-now the holder of the noun is vacated;
-now the holder of the noun is unfilled;
-say "You empty [the noun] out onto the floor.";
-now the noun is in the location; 
-
-carry out emptying something into something
-(this is the 2nd emptying contents of a container rule):
-if the noun is not a container and the noun is in a container, 
-say "You empty [the noun] into [the second noun]."; 
-now the noun is in the second noun.
-
-carry out emptying something onto something
-(this is the 3rd emptying contents of a container rule):
-if the noun is not a container and the noun is in a container, 
-say "You empty [the noun] onto the [second noun]."; 
-now the noun is on the second noun;
-
-carry out emptying something from a second noun
-(this is the emptying something from a container rule):
-say "You empty [the noun] from the [second noun] out onto the ground.";
-now the noun is in the location.
 
 Part 16 - Extinguishing (new)
 
 extinguishing is an action applying to one thing. 
 understand "extinguish [something]" as extinguishing. 
-understand "put [something] out"  as extinguishing.
+understand "put [something] out" as extinguishing.
 understand "put out [something]" as extinguishing.
 understand "douse [something]" as extinguishing. 
 understand "ext [something]" as extinguishing.
 
 report extinguishing something:
-say "You extinguish [the noun].".
+say "You can't extinguish [the noun].".
 
 Part 17 - Feed (separated)
 
@@ -866,17 +730,14 @@ understand "feed [something] with [something]" as feeding it with.
 understand "feed [something] with [someone]" as feeding it with.
 understand "feed [someone] with [something]" as feeding it with.
 
-report feeding
-(this is the first feeding rule):
-say "You feed [the noun]." instead.
+report feeding:
+say "You can't feed [the noun].".
 
-report feeding something to a second noun
-(this is the feed it to something rule):
-say "You feed [the noun] to [the second noun]." instead. 
+report feeding something to a second noun:
+say "You can't feed [the noun] to [the second noun]."
 
-after feeding something with a second noun
-(this is the feeding it with rule):
-say "You feed [the noun] with [the second noun].". 
+report feeding something with a second noun:
+say "You can't feed [the noun] with [the second noun].". 
 
 Part 18 - Filling (new)
 
@@ -884,6 +745,14 @@ understand the command "fill" as something new.
 filling is an action applying to one thing. 
 
 understand "fill [something]" as filling.
+
+check filling a closed container
+(this is the can't fill a closed container rule):
+say "Since [the noun] is closed, you can't fill it." instead.
+
+check filling a supporter
+(this is the can't fill a supporter rule):
+say "For the most part, supporters can't be filled." instead.
 
 check filling a fillable thing
 (this is the what do you want to fill rule):
@@ -901,7 +770,7 @@ check filling an unfillable thing from something
 (this is the can't fill an unfillable thing from something rule): 
 say "You can't fill [the noun]." instead.
 
-check filling a filled thing  from something
+check filling a filled thing from something
 (this is the first already filled rule):
 say "[The noun] is already filled" instead.
 
@@ -915,14 +784,20 @@ understand "fill [something] from [something]" as filling it from.
 filling it with is an action applying to two things. 
 understand "fill [something] with [something]" as filling it with.
 
-carry out filling an unfilled thing with something
-(this is the filling report rule):
+instead of filling an unfilled thing with something
+(this is the filling an unfilled thing with something rule):
 now the noun is filled;
 now the second noun is in the noun;
 now the second noun is filled;
-say "You fill [the noun] with [the second noun].";
+say "You fill [the noun] with [the second noun]."
 
-Part 19 - Fixing (separated) 
+instead of filling an unfilled thing from something
+(this is the filling an unfilled thing from something rule):
+now the noun is filled;
+now everything in the second noun is in the noun;
+say "You fill [the noun] from [the second noun]."
+
+Part 19 - Fixing (new) 
 
 understand the command "fix" as something new.
 fixing is an action applying to one thing.
@@ -935,6 +810,13 @@ understand "fix [something] with [something]" as fixing it with.
 understand "repair [something] with [something]" as fixing it with.
 understand "mend [something] with [something]" as fixing it with.
 
+report fixing something:
+say "You can't [verbword] [the noun]."
+
+report fixing something with a second noun:
+say "You can't [verbword] [the noun] with [the second noun].".
+
+
 Part 20 - Folding/Unfolding (new)
 
 a thing is either folded or unfolded.
@@ -945,16 +827,6 @@ understand "fold [something]" as folding.
 
 unfolding is an action applying to one thing.
 understand "unfold [something]" as unfolding.
-
-carry out folding something that is unfolded
-(this is the folding an unfolded thing rule):
-now the noun is folded;
-say "You fold [the noun].";
-	
-after unfolding something that is folded
-(this is the after unfolding rule):
-now the noun is unfolded;
-say "You unfold [the noun].";
 	
 check folding a folded thing
 (this is the already folded rule):
@@ -964,6 +836,13 @@ check unfolding an unfolded thing
 (this is the already unfolded rule):
 say "[The noun] is already unfolded." instead.
 
+report folding something:
+say "You can't fold [the noun].".
+
+report unfolding something:
+
+say "You can't unfold [the noun].".
+
 Part 21 - Give and Asking For (allows NPC to give and take)
 
 understand the command "give" as something new.
@@ -971,27 +850,27 @@ understand the command "hand" as something new.
 
 understand "give [things] to [something]" as giving it to.
 understand "give [things] to [someone]" as giving it to.
+understand "hand [things] to [something]" as giving it to.
+understand "hand [things] to [someone]" as giving it to.
 
-carry out giving something to a second noun
+report giving something to a second noun
 (this is the giving something to a person rule):
-say "You give [the noun] to [the second noun].";
-now the noun is carried by the second noun.
+say "You can't give [the noun] to [the second noun].";
 
 handing it over to is an action applying to two things.
 understand "hand [something] over to [something]" as handing it over to.
 
-carry out  handing something over to a second noun
+instead of handing something over to a second noun
 (this is the handing it over to someone rule):
-say "You hand [the noun] over to [the second noun].";
-now the noun is carried by the second noun.
+say "You can't hand [the noun] over to [the second noun].";
 
-instead of asking a person  (called the requestee) for something (called the target)
+instead of asking a person (called the requestee) for something (called the target)
 (this is the asking someone for something rule):
-if the requestee carries the target begin;
+if the target is enclosed by the requestee begin;
 now the target is carried by the player;
 say "[The requestee] gives you [the target]." instead;
 otherwise;
-say "[The requestee]  hasn't got the [target]." instead;
+say "[The requestee] hasn't got the [target]." instead;
 end if.
 
 Part 22 - Inflating and Deflating (new)
@@ -1002,6 +881,9 @@ inflating is an action applying to one thing.
 understand "inflate [something]" as inflating. 
 understand "pump up [something]" as inflating.
 understand "pump [something] up" as inflating.
+understand "blow in [something]" as inflating.
+understand "blow up [something]" as inflating. 
+understand "blow [something] up" as inflating.
 
 inflating it with is an action applying to two things. 
 understand "inflate [something] with [something]" as inflating it with. 
@@ -1010,31 +892,28 @@ understand "pump [something] up with [something]" as inflating it with.
 understand "blow up [something] with [something]" as inflating it with. 
 understand "blow [something] up with [something]" as inflating it with. 
 
-check inflating an uninflatable thing
- (this is the can't inflate rule): 
+report inflating an uninflatable thing: 
 say "You can't inflate [the noun]." instead.
 
-check  inflating an inflated thing 
-(this is the first already inflated rule):
-say "[The noun] is already inflated." instead.
-
-check inflating something which is inflated with something
- (this is the second already inflated rule):
-say "[The noun] is already inflated." instead.
-
-check inflating an uninflatable thing with something 
-(this is the third inflatable rule): 
-say "You can't inflate [the noun]." instead.
-
-carry out inflating a deflated thing
-(this is the someone inflating rule):
-now the noun is inflated; 
-say "You inflate [the noun].".
-
-carry out inflating a deflated inflatable thing with something
-(this is the someone inflating something with something rule):
+report inflating a deflated inflatable thing:
 now the noun is inflated;
-say "You inflate [the noun] with [the second noun].".
+say "You inflate [the noun]." instead.
+
+report inflating a deflated inflatable thing with something:
+now the noun is inflated;
+say "You inflate [the noun] with [the second noun]." instead.
+
+report inflating an inflated thing:
+say "[The noun] is already inflated." instead.
+
+
+report inflating something with something:
+if the noun is inflated,
+say "[The noun] is already inflated." instead.
+
+report inflating an uninflatable thing with something: 
+say "You can't inflate [the noun] with [the second noun]." instead.
+
 
 Section 2 - Deflating
 
@@ -1045,17 +924,10 @@ understand "let air out of [something]" as deflating.
 deflating it with is an action applying to two things.
 understand "deflate [something] with [something]" as deflating it with.
 
-carry out deflating an inflated thing:
-now the noun is deflated;
-say "You deflate [the noun].".
-
-
-check deflating a deflated thing 
-(this is the first already deflated rule):
+report deflating a deflated thing:
 say "[The noun] is already deflated." instead.
 
-check deflating something  with a second noun 
-(this is the second already deflated rule):
+report deflating a deflated thing with a second noun:
 say "[The noun] is already deflated." instead.
 
 
@@ -1067,60 +939,46 @@ understand "jump from [something]" as jumping from.
 jumping in is an action applying to one thing. 
 understand "jump in/into [something]" as jumping in. 
 
-check jumping in something that is not a container
-(this is the can't jump into a non-container rule):
-say "You can't jump into [the noun].";
-
-carry out jumping in something
-(this is the jumping in rule):
-say "You jump into [the noun]."; 
-now the player is in the noun;
-
 jumping on is an action applying to one thing. 
 understand "jump on/onto [something]" as jumping on.
-
-carry out jumping on something
-(this is the jumping on rule):
-say "You jump on [the noun]."
 
 jumping down is an action applying to one thing.
 understand "jump down [something]" as jumping down.
 
-report jumping down something
-(this is the jumping down rule):
-say "You jump down [the noun].".
-
 jumping off is an action applying to one thing.
 understand "jump off [something]" as jumping off.
-
 understand "jump off of [something]" as jumping off.
-
-carry out jumping off something
-(this is the jumping off rule):
-say "You jump off of [the noun].";
-now the player is in the location;
 
 jumping over is an action applying to one thing. 
 understand "jump over [something]" as jumping over.
 
-report jumping over something
-(this is the jumping over rule):
-say "You jump over [the noun].";
-
 jumping through is an action applying to one thing. 
 understand "jump through[something]" as jumping through.
-understand "jump  thru [something]" as jumping through.
-
-report jumping through something
-(this is the jumping through rule):
-say "You jump through [the noun].";
+understand "jump thru [something]" as jumping through.
 
 jumping under is an action applying to one thing. 
 understand "jump under [something]" as jumping under.
 
-report jumping under something
-(this is the jumping under rule):
-say "You jump under [the noun].";
+report jumping in something:
+say "You can't jump into [the noun].".
+
+report jumping on something:
+say "You can't jump onto [the noun].".
+
+report jumping down something:
+say "You can't jump down [the noun].".
+
+report jumping over something:
+say "You can't jump over [the noun].";
+
+report jumping off something:
+say "You can't jump off of [the noun].".
+
+report jumping through something:
+say "You can't jump through [the noun].";
+
+instead of jumping under something:
+say "You can't jump under [the noun].";
 
 Part 24 - Killing (expanded and synonyms)
 
@@ -1128,13 +986,13 @@ understand the command "kill" as something new.
 killing is an action applying to one thing. 
 killing it with is an action applying to two things.
 
-understand "kill [someone] with [something]"    as killing it with.
-understand "kill [something] with [something]"  as killing it with. 
-understand "murder [someone] with [something]"   as killing it with. 
+understand "kill [someone] with [something]" as killing it with.
+understand "kill [something] with [something]" as killing it with. 
+understand "murder [someone] with [something]" as killing it with. 
 understand "murder [something] with [something]" as killing it with.
-understand "stab [someone] with [something]"   as killing it with. 
+understand "stab [someone] with [something]" as killing it with. 
 understand "stab [something] with [something]" as killing it with.
-understand "torture [someone] with [something]"  as killing it with. 
+understand "torture [someone] with [something]" as killing it with. 
 understand "torture [something] with [something]"as killing it with. 
 
 understand "murder [someone]" as killing. 
@@ -1146,16 +1004,11 @@ understand "stab [something]" as killing.
 understand "torture[someone]" as killing.
 understand "torture[something]" as killing.
 
-report killing (this is the report killing rule):
-say "You [verbword] [the noun]."
+report killing:
+say "You can't [verbword] [the noun]."
 
-report killing something with a second noun
-(this is the report killing with something rule):
-say "You [verbword] [the noun] with [the second noun].";
-
-Part 25 - Loading and Unloading (new)
-
-Section 1 - Loading
+report killing something with a second noun:
+say "You can't [verbword] [the noun] with [the second noun].".
 
 Part 25 - Loading and Unloading (new)
 
@@ -1176,49 +1029,18 @@ understand "load [something] with [something]" as loading it with.
 loading it from is an action applying to two things.
 understand "load [something] from [something]" as loading it from.
 
-check loading something with something
-(this is the can't load something with nothing rule):
-if the second noun is not carried by the player,
-say "You don't have [the second noun]." instead.
 
-check loading something into a second noun
-(this is the can't load a non-container rule):
-if the second noun is not an open container,
-say "[The second noun] is not capable of holding [the noun]." instead.
+report loading something:
+say "You can't load [the noun].";
 
-check loading something onto a second noun
-(this is the can't load a non-supporter rule):
-if the second noun is not a supporter,
-say "[The second noun] is not capable of supporting [the noun]." instead.
+report unloading something:
+say "You can't unload [the noun].";
 
-check loading something from a second noun
-(this is the can't load from an empty container rule):
-if the number of things in the second noun is 0,
-say "[The second noun] is empty." instead.
+report loading something with a second noun:
+say "You can't load [the noun] with [the second noun].";
 
-carry out loading something from a second noun
-(this is the report loading from a second noun rule):
-say "You load [the noun] from [the second noun].";
-now the second noun is in the noun;
-
-carry out loading something with a second noun
-(this is the report loading with a second noun rule):
-say "You load [the noun] with [the second noun].";
-now the second noun is in the noun;
-
-carry out loading into a second noun
-(this is the report loading into a second noun rule):
-say "You load [the noun] with [the second noun].";
-now the second noun is in the noun;
-
-carry out loading something onto a second noun
-(this is the report loading onto a second noun rule):
-say "You load [the noun] onto a [the second noun].";
-now the second noun is on the noun;
-
-report loading something
-(this is the loading something rule):
-say "You load [the noun].";
+report unloading something with a second noun:
+say "You can't unload [the noun] with [the second noun].";
 
 Section 2 - Unloading 
 
@@ -1257,38 +1079,30 @@ check unloading something onto a second noun
 if the second noun is not a supporter,
 say "[The second noun] is not capable of supporting [the noun]." instead.
 
-carry out unloading something with a second noun
+instead of unloading something with a second noun
 (this is the loading with a second noun rule):
 say "You unload [the noun] with [the second noun].";
 now the second noun is in the location.
 
-carry out unloading into a second noun
+instead of unloading into a second noun
 (this is the loading into a second noun rule):
 say "You unload [the noun] into [the second noun].";
 now the second noun is in the noun;
 
-carry out unloading something onto a second noun
+instead of unloading something onto a second noun
 (this is the loading onto a second noun rule):
 say "You unload [the noun] onto a [the second noun].";
 now the second noun is on the noun;
 
-
-carry out unloading something from a second noun
+instead of unloading something from a second noun
 (this is the loading from a second noun rule):
 say "You unload [the noun] from [the second noun].";
 now the second noun is in the location.
-
-report unloading something
-(this is the report loading rule):
-say "You unload [the noun].";
 
 Part 26 - Looking (expanded)
 
 looking behind is an action applying to one thing.
 understand "look behind [something]" as looking behind.
-
-report looking behind something (this is the look behind rule):
-say "You look behind [the noun].".
 
 looking north is an action applying to nothing.
 looking south is an action applying to nothing.
@@ -1303,51 +1117,54 @@ looking down is an action applying to nothing.
 
 understand "look north" or "look n" as looking north.
 understand "look south" or "look s" as looking south.
-understand "look east" or "look e" as  looking east.
-understand "look west" or "look w" as  looking west.
-understand "look northeast" or "look ne" as  looking northeast.
-understand "look northwest" or "look nw" as  looking northwest.
-understand "look southeast" or "look se" as  looking southeast.
-understand "look southwest" or "look sw" as  looking southwest.
-understand "look up" or "l u" or "lu"  as looking up.
+understand "look east" or "look e" as looking east.
+understand "look west" or "look w" as looking west.
+understand "look northeast" or "look ne" as looking northeast.
+understand "look northwest" or "look nw" as looking northwest.
+understand "look southeast" or "look se" as looking southeast.
+understand "look southwest" or "look sw" as looking southwest.
+understand "look up" or "l u" or "lu" as looking up.
 understand "look down" or "l d" or "ld" as looking down.
 understand "look behind [something]" as looking behind.
 understand "l b [something]" or "lb [something]" as looking behind.
 
-report looking north (this is the looking north rule):
-say "You see nothing to the north.".
+report looking behind something:
+say "You can't look behind [the noun].".
 
-report looking south (this is the looking south rule):
-say "You see nothing to the south.".
+report looking north:
+say "You can't look to the north.".
 
-report looking east  (this is the looking east rule):
-say "You see nothing to the east.".
+report looking south:
+say "You can't look to the south.".
 
-report looking west (this is the looking west rule):
-say "You see nothing to the west.".
+report looking east:
+say "You can't look to the east.".
 
-report looking northeast (this is the looking northeast rule):
-say "You see nothing to the northeast.".
+report looking west:
+say "You can't look to the west.".
 
-report looking northwest (this is the looking northwest rule):
-say "You see nothing to the northwest.".
+report looking northeast:
+say "You can't look to the northeast.".
 
-report looking southeast (this is the looking southeast rule):
-say "You see nothing to the southeast.".
+report looking northwest:
+say "You can't look to the northwest.".
 
-report looking southwest (this is the looking southwest rule):
-say "You see nothing to the southwest.".
+report looking southeast:
+say "You can't look to the southeast.".
 
-report looking up (this is the looking up rule):
-say "You see the sky.".
+report looking southwest:
+say "You can't look to the southwest.".
 
-report looking down (this is the looking down rule):
-say "You see the ground.".
+report looking up:
+say "You can't look up.".
 
-report looking behind something (this is the looking behind rule):
-say "You see nothing behind [the noun].".
+report looking down:
+say "You can't look down.".
 
-Part 27 - Mixing  (new)
+report looking behind something :
+say "You can't look behind [the noun].".
+
+Part 27 - Mixing (new)
 
 mixing is an action applying to one thing.
 understand "mix [something]" as mixing.
@@ -1355,13 +1172,12 @@ understand "mix [something]" as mixing.
 mixing it with is an action applying to two things. 
 understand "mix [something] with [something]" as mixing it with.
 
-report mixing
-(this is the report mixing rule):
+report mixing:
 say "What do you want to mix [the noun] with?"
 
-report mixing something with a second noun
-(this is the report mixing together rule):
-say "You mix [the noun] with [the second noun].".
+report mixing something with a second noun:
+say "You can't mix [the noun] with [the second noun].".
+
 
 Part 28 - Moving (separated)
 
@@ -1371,22 +1187,24 @@ understand the command "move" as something new.
 moving is an action applying to one thing.
 understand "move [something]" as moving.
 
-report moving something
-(this is the moving report rule):
-say "You move [the noun].".
+report moving something:
+say "You can't move [the noun].".
 
-Part 30 - Offering (separated)
+
+
+Part 29 - Offering (separated)
+
+Section 1 
 
 understand the command "offer" as something new.
 offering it to is an action applying to two things.
 understand "offer [something] to [someone]" as offering it to.
 understand "offer [something] to [something]" as offering it to.
 
-report offering something to a second noun
-(this is the offering it to someone rule):
-say "You offer [the noun] to [the second noun].";
+report offering something to a second noun:
+say "You can't offer [the noun] to [the second noun].";
 
-Section 1 - Bribing (new)
+Part 30 - Bribing (new)
 
 bribing is an action applying to one thing.
 understand "bribe [someone]" as bribing.
@@ -1394,19 +1212,17 @@ understand "bribe [someone]" as bribing.
 bribing it with is an action applying to two things.
 understand "bribe [someone] with [something]" as bribing it with.
 
-report bribing
-(this is the bribing rule):
-say "You bribe [the noun].";
+report bribing:
+say "You can't bribe [the noun].";
 
-report bribing someone with a second noun
-(this is the bribing someone with something rule):
-say "You bribe [the noun] with [the second noun].";
+report bribing someone with a second noun:
+say "You can't bribe [the noun] with [the second noun].".
 
 Part 31 - Paying (separated)
 
 understand the command "pay" as something new.
 paying is an action applying to one thing.
-understand "pay [something]" as paying.   
+understand "pay [something]" as paying. 
 understand "pay [someone]" as paying.
 
 paying it to is an action applying to two things.
@@ -1416,19 +1232,16 @@ understand "pay [something] to [someone]" as paying it to.
 paying it for is an action applying to two things.
 understand "pay [someone] for [something]" as paying it for.
 
-report paying 
-(this is the paying rule):
-say "You pay [the noun].";
+report paying:
+say "You can't pay [the noun].";
 
-after paying something to a second noun 
-(this is the paying something to rule):
-say "You pay [the noun] to [the second noun].";
+report paying something to a second noun: 
+say "You can't pay [the noun] to [the second noun].";
 
-after paying someone for something
- (this is the paying someone for rule):
-say "You pay [the noun] for [the second noun].".
+report paying someone for something:
+say "You can't pay [the noun] for [the second noun].".
 
-Part 30 - Positions (Sitting,Standing,Lieing)
+Part 32 - Positions (Sitting,Standing,Lieing)
 
 understand the command "lie" as something new.
 
@@ -1441,27 +1254,15 @@ understand "lie on [something]" as lieing on.
 lieing under is an action applying to one thing.
 understand "lie under [something]" as lieing under.
 
-check lieing on something which is not enterable
-(this is the can't lie on a non-supporter rule):
-say "You can't lie on [the noun]." instead.
 
-check lieing in something which is not enterable
-(this is the can't lie in a non-container rule) :
-say "You can't lie in [the noun]." instead.
+report lieing under something:
+say "You can't lie under [the noun].".
 
-carry out lieing under something
-(this is the lie under rule):
-say "You lie in [the noun].";
- 
-carry out lieing on an enterable supporter
-(this is the lie on rule):
-say "You lie on the [noun].";
-now the player is on the noun.
+report lieing on something:
+say "You can't lie on [the noun].".
 
-carry out lieing in an enterable container
-(this is the lie in rule):
-say "You lie in the [noun].";
-now the player is in the noun.
+report lieing in something:
+say "You can lie in [the noun].".
 
 understand the command "sit" as something new.
 
@@ -1478,32 +1279,11 @@ understand "sit under [something]" as sitting under.
 sitting behind is an action applying to one thing.
 understand "sit behind [something]" as sitting behind.
 
-check sitting on something
-(this is the can't sit on a non-enterable supporter rule):
-if the noun is not an enterable supporter,
-say "You can't sit on [the noun].";
+report sitting under something:
+say "You can't sit under [the noun]." instead.
 
-check sitting in something
-(this is the can't sit in a non-enterable container rule)::
-if the noun is not an enterable container,
-say "You can't sit in [the noun].";
-
-carry out sitting in an enterable container:
-say "You sit in [the noun].";
-now the player is in the noun;
-
-report sitting under something
-(this is the sit under rule):
-say "You sit under [the noun]."  instead.
-
-report sitting behind something
-(this is the sit behind rule):
-say "You sit behind [the noun]." instead.
-
-carry out sitting on an enterable supporter
-(this is the sit on rule):
-say "You sit on [the noun].";
-now the player is on the noun;
+report sitting behind something:
+say "You can't sit behind [the noun]." instead.
 
 understand the command "stand" as something new.
 
@@ -1526,156 +1306,73 @@ understand "stand under [something]" as standing under.
 standing behind is an action applying to one thing.
 understand "stand behind[something]" as standing behind.
 
-carry out standing on an enterable supporter
-(this is the 1st standing on a supporter rule):
-say "You stand on [the noun].";
-now the player is on the noun;
+report standing on something:
+say "You can't stand on [the noun]."
 
-carry out standing in an enterable container
-(this is the standing in rule):
-say "You stand in [the noun].";
-now the player is in the noun;
+report standing in something:
+say "You can't stand in [the noun]."
 
-report standing on something
-(this is the 2nd report standing on a supporter rule):
-say "You stand on [the noun].";
+report standing under something:
+say "You can't stand under [the noun]."
 
-check standing on something
-(this is the can't stand on an non-enterable supporter rule):
-if the noun is not an enterable supporter,
-say "You can't stand on [the noun]." instead.
+report standing behind something:
+say "You can't stand behind [the noun]."
 
-check standing in something
-(this is the can't stand in an non-enterable container rule):
-if the noun is not an enterable container,
-say "You can't stand in [the noun]." instead.
+Part 33 - Pouring (new)
 
-report standing in something
-(this is the report standing in rule):
-say "You stand in [the noun].".
-
-report standing under something
-(this is the report standing under rule):
-say "You stand under [the noun].".
-
-report standing behind something
-(this is the report standing behind rule):
-say "You stand behind [the noun].".
-
-Part 32 - Pouring (new)
 
 pouring is an action applying to one thing.
 understand "pour [something]" as pouring.
-understand "pour [container]" as pouring.
-understand "pour [something]" as pouring. 
-understand "pour out [container]" as pouring. 
-understand "pour [container] out" as pouring.
-understand "pour [something] out" as pouring. 
+understand "pour [something] out" as pouring.
 understand "pour out [something]" as pouring.
-
-understand the command "spill" as "pour".
+understand "pour [container]" as pouring.
+understand "pour [container] out" as pouring.
+understand "pour out [container]" as pouring.
 
 pouring it into is an action applying to two things. 
-understand "pour [container] in/into [something]" as pouring it into. 
-understand "pour [container] in/into [container]" as pouring it into. 
 understand "pour [something] in/into [something]" as pouring it into.
+understand "pour [container] in/into [something]" as pouring it into.
 
 pouring it onto is an action applying to two things. 
-understand "pour [container] on/onto [something]" as pouring it onto. 
 understand "pour [something] on/onto [something]" as pouring it onto.
+understand "pour [container] in/into [something]" as pouring it into.
+
+pouring it out of is an action applying to two things.
+understand "pour [something] out of [something]" as pouring it out of.
+understand "pour [container] in/into [something]" as pouring it into.
 
 pouring it from is an action applying to two things. 
 understand "pour [something] from [something]" as pouring it from.
-understand "pour [something] out of [something]" as pouring it from.
+understand "pour [container] in/into [something]" as pouring it into.
 
-check pouring a closed container 
-(this is the can't pour a closed container rule):
-say "[The noun] isn't open." instead.
+understand the command "spill" as "pour".
 
-check pouring a closed container into something
-(this is the can't pour a closed container into something rule):
-say "[The noun] isn't open." instead.
+report pouring something which is not a container:
+say "You can't pour [the noun]." instead.
 
-check pouring a closed container onto something
-(this is the can't pour a closed container onto something rule):
-say "[The noun] isn't open." instead.
+report pouring a container:
+say "You can't pour [the noun]." instead.
 
-carry out pouring an open container when the number of things in the container is not 0
-:
-now the noun is unfilled;
-say "You pour the [list of things in the noun] onto the floor.";
-now everything in the noun is in the location;
+report pouring something which is not a container into something:
+say "You can't pour [the noun] into [the second noun]." instead.
 
-check pouring a vacated open container
-(this is the can't pour a vacated container rule):
-say "[The noun] is empty.";
+report pouring a container into something:
+say "You can't pour [the noun] into [the second noun]." instead.
 
-check pouring an unfilled container
-(this is the can't pour an unfilled container rule):
-say "[The noun] is empty." instead.
+report pouring something which is not a container onto something:
+say "You can't pour [the noun] onto [the second noun]." instead.
 
-check pouring a vacated container
-(this is the can't pour an empty container rule): 
-say "[The noun] is empty." instead.
+report pouring a container onto something:
+say "You can't pour [the noun] onto [the second noun]." instead.
 
-check pouring something into a closed container
-(this is the can't pour into a closed container rule):
-say "[The second noun] isn't open." instead.
+report pouring something out of a container:
+say "You can't pour [the noun] out of [the second noun]." instead.
 
-check pouring a container into something which is filled
-(this is the can't pour into a filled container rule):
-say "[The second noun] is already filled with [list of things in the second noun].";
+report pouring something from a container:
+say "You can't pour [the noun] from [the second noun]." instead.
 
-carry out pouring a supporter when the number
-of things on the supporter is not 0
-(this is the pouring a supporter out rule):
-say "You pour the [list of things on the noun] onto the floor.";
-now all the things on the noun are in the location;
-now the noun is unfilled;
-now the noun is vacated;
 
-carry out pouring a container into something
-(this is the pouring a container into something rule):
-say "You pour the [list of things in the noun] from [the noun] 
-into [the second noun].";
-now the second noun is filled;
-now the noun is unfilled;
-now the noun is vacated;
-now all the things in the noun are in the second noun;
-
-carry out pouring a supporter into something
-(this is the pouring a supporter into  something rule):
-say "You pour the [list of things on the noun] into [the second noun].";
-now all the things on the noun are in the second noun;
-now the noun is unfilled;
-now the noun is vacated;
-
-carry out pouring a filled thing onto something
-(this is the pouring a filled thing onto something rule):
-say "You pour the [list of things in the noun] onto [the second noun].";
-now the noun is unfilled;
-now the noun is vacated;
-now all the things in the noun are on the second noun;
-
-carry out pouring something
-(this is the pouring something in a container onto something rule):
-if the noun is not a container and the noun is in a container,
-say "You pour [the noun] out onto the floor."; 
-now the noun is in the location;
- 
-carry out pouring something into something
-(this is the pouring something in a container into something rule):
-if the noun is not a container and the noun is in a container, 
-say "You pour [the noun] into [the second noun]."; 
-now the noun is in the second noun;
-
-carry out pouring something onto something
-(this is the pouring someting in a  container onto something rule):
-if the noun is not a container and the noun is in a container, 
-say "You pour [the noun] onto the [second noun]."; 
-now the noun is on the second noun;
-
-Part 33 - Praying (expanded)
+Part 34 - Praying (expanded)
 
 praying is an action applying to nothing. 
 understand "pray" as praying.
@@ -1686,75 +1383,68 @@ understand "pray to [something]" as praying to.
 praying for is an action applying to one thing. 
 understand "pray for [something]" as praying for.
 
-report praying
-(this is the first praying rule):
-say "Your prayers go unanswered." instead.
+report praying:
+say "Your prayers go unanswered." 
 
-report praying to something
-(this is the second  praying rule):
-say "You pray to the [noun]." instead.
+report praying to something:
+say "You can't pray to the [noun]." 
 
-report praying for something
-(this is the third praying rule):
-say "You pray for [the noun]." instead.
+report praying for something:
+say "You can't pray for [the noun]." 
 
-Part 34 - Reading (separated)
+Part 35 - Reading (separated)
 
 understand the command "read" as something new.
 reading is an action applying to one thing.
 understand "read [something]" as reading.
 
-report reading
-(this is the reading rule):
-say "You read [the noun]."
+report reading:
+say "You can't read [the noun]."
 
-Part 35 - Screwing (separated)
+
+Part 36 - Screwing (separated)
+
+Section 1 - Screwing
 
 understand the command "screw" as something new.
 screwing is an action applying to one thing.
 understand "screw [something]" as screwing.
 
-
 screwing it with is an action applying to two things.
 understand "screw [something] with [something]" as screwing it with.
 
-report screwing something
-(this is the 1st screwing output rule):
-say "You screw [the noun].".
+report screwing something:
+say "You can't screw [the noun].".
 
-report screwing something with something
-(this is the 2nd screwing output rule):
-say "You screw [the noun] with [the second noun]."
+report screwing something with something:
+say "You can't screw [the noun] with [the second noun]."
 
-Section 1 - Unscrewing (new)
+Section 2 - Unscrewing (new)
 
 understand the command "unscrew" as something new.
 unscrewing is an action applying to one thing.
 understand "unscrew [something]" as unscrewing.
 
-report unscrewing something
-(this is the 1st unscrewing output rule):
-say "You unscrew [the noun].".
-
 unscrewing it with is an action applying to two things.
 understand "unscrew [something] with [something]" as unscrewing it with.
 
-report unscrewing something with something
-(this is the 2nd unscrewing output rule):
-say "You unscrew [the noun] with [the second noun]."
+report unscrewing something:
+say "You can't unscrew [the noun].".
 
-Part 36 - Shifting (separated)
+report unscrewing something with something:
+say "You can't unscrew [the noun] with [the second noun]."
+
+Part 37 - Shifting (separated)
 
 understand the command "shift" as something new.
 shifting is an action applying to one thing.
 
 understand "shift [something]" as shifting.
 
-report shifting something
-(this is the report shifting rule):
-say "You shift [the noun].".
+report shifting something:
+say "You can't shift [the noun].".
 
-Part 37 - Shooting (new)
+Part 38 - Shooting (new)
 
 shooting is an action applying to one thing.
 understand "shoot [something]" as shooting .
@@ -1776,19 +1466,16 @@ understand "shoot [something] at [someone]" as shooting it at.
 understand "fire [something] at [something]" as shooting it at. 
 understand "fire [something] at [someone]" as shooting it at. 
 
-report shooting something
-(this is the first shooting rule):
-say "You shoot [the noun].";
+report shooting something:
+say "You can't shoot [the noun].";
 
-report shooting something with something
-(this is the the 2nd shooting rule):
-say "You shoot [the noun] with [the second noun].";
+report shooting something with something:
+say "You can't shoot [the noun] with [the second noun].";
 
-report shooting something at something
-(this is the the 3rd shooting rule):
-say "You shoot [the noun] at [the second noun].";
+report shooting something at something:
+say "You can't shoot [the noun] at [the second noun].";
 
-Part 38 - Stealing (new)
+Part 39 - Stealing (new)
 
 stealing is an action applying to one thing.
 
@@ -1816,7 +1503,6 @@ understand "filch [something] from [something]" as stealing it from.
 understand "pinch [something] from [something]" as stealing it from.
 understand "heist [something] from [something]" as stealing it from.
 
-
 check stealing something 
 (this is the can't take your own goods rule):
 if the noun is carried by the player,
@@ -1837,18 +1523,18 @@ carry out stealing something from a second noun
 say "You steal [the noun] from [the second noun].";
 now the noun is carried by the player;
 
-Part 39 - Striking (new)
+Part 40 - Striking (new)
 
 striking is an action applying to one thing. 
 
 understand "strike [something]" as striking. 
 understand "ignite [something]" as striking.
 
-report striking
-(this is the striking output rule):
-say "You [verbword] [the noun]."
+report striking:
+say "You can't [verbword] [the noun]."
 
-Part 40 - Swimming (new)
+
+Part 41 - Swimming (new)
 
 swimming is an action applying to nothing. 
 swimming in is an action applying to one thing.
@@ -1867,59 +1553,48 @@ understand "swim around [something]" as swimming around.
 understand "swim through [something]" as swimming through.
 understand "swim thru [something]" as swimming through.
 
-check swimming around something which is unswimmable
-(this is the can't swim around an unswimmable thing rule):
-say "You can't swim around [the noun].";
+report swimming:
+say "You can't swim."
 
-check swimming over something which is unswimmable
-(this is the can't swim over an unswimmable thing rule):
-say "You can't swim around [the noun]." instead 
+report swimming in an unswimmable thing: 
+say "You can't swim in [the noun].".
 
-check swimming under something which is unswimmable
-(this is the can't swim under an unswimmable thing rule):
-say "You can't swim around [the noun]." instead 
+report swimming over an unswimmable thing:
+say "You can't swim over [the noun].".
 
-check swimming across something which is unswimmable
-(this is the can't swim across an unswimmable thing rule):
-say "You can't swim around [the noun]." instead 
+report swimming under an unswimmable thing: 
+say "You can't swim under [the noun].".	
 
-check swimming in something which is unswimmable
-(this is the can't swim in an unswimmable thing rule):
-say "You can't swim around [the noun]." instead 
+report swimming around an unswimmable thing: 
+say "You can't swim around [the noun].".
 
-report swimming
-(this is the 1st swimming report rule):
-say "You take a swim."
+report swimming across an unswimmable thing: 
+say "You can't swim across [the noun].".
 
-report swimming in a swimmable thing
-(this is the swimming in rule): 
-say "You swim in [the noun]."
+report swimming through an unswimmable thing: 
+say "You can't swim through [the noun].".
 
-report swimming under a swimmable thing
-(this is the swimming under rule): 
-say "You swim under [the noun]."
- 
-report swimming over a swimmable thing
-(this is the swimming over rule): 
-say "You swim over [the noun]."
+report swimming in a swimmable thing:
+say "You swim in [the noun].".
 
-report swimming around a swimmable thing
-(this is the swimming around rule): 
-say "You swim around [the noun]."
+report swimming over a swimmable thing:
+say "You swim over [the noun].".
 
-report swimming across a swimmable thing
-(this is the swimming across rule): 
-say "You swim across [the noun]."
+report swimming under a swimmable thing: 
+say "You swim under [the noun].".	
 
-report swimming through a swimmable thing
-(this is the swimming through rule): 
-say "You swim through [the noun]."
+report swimming around a swimmable thing: 
+say "You wim around [the noun].".
 
-report swimming in something which is unswimmable
-(this is the swimming in an unswimmable thing rule): 
-say "You can't swim in [the noun]."
+report swimming across a swimmable thing: 
+say "You swim across [the noun].".
 
-Part 41 - Talking and Shouting (new)
+report swimming through a swimmable thing: 
+say "You swim through [the noun].".
+
+
+
+Part 42 - Talking and Shouting (new)
 
 understand the command "speak" as something new.
 
@@ -1931,6 +1606,12 @@ understand "talk to [something]" as talking to.
 understand "speak to [something]" as talking to.
 understand "talk to [someone]" as talking to.
 understand "speak to [someone]" as talking to.
+
+report talking:
+say "Who do you want to talk to?".
+
+report talking to something:
+say "You can't [verbword] to [the noun].".
 
 understand the command "shout" as something new.
 shouting is an action applying to nothing.
@@ -1947,7 +1628,6 @@ understand "yell at [something]" as shouting at.
 understand "scream at [something]" as shouting at.
 understand "holler at [something]" as shouting at.
 understand "bellow at [something]" as shouting at.
-
 understand "screech at [something]" as shouting at.
 
 shouting to is an action applying to one thing.
@@ -1957,7 +1637,6 @@ understand "yell to [something]" as shouting to.
 understand "scream to [something]" as shouting to.
 understand "holler to [something]" as shouting to.
 understand "bellow to [something]" as shouting to.
-
 understand "screech to [something]" as shouting to.
 
 shouting it at is an action applying to two things.
@@ -1976,32 +1655,22 @@ understand "holler [something] to [something]" as shouting it to.
 understand "bellow [something] to [something]" as shouting it to.
 understand "screech [something] to [something]" as shouting it to.
 
-report shouting
-(this is the shouting rule): 
-say "You [verbword].";
+report shouting: 
+say "You can't [verbword].";
 
-report shouting at something
-(this is the shouting at rule): 
-say "You [verbword] at [the noun].".
+report shouting at something: 
+say "You can't [verbword] at [the noun].".
 
-report shouting to something
-(this is the shouting to rule): 
-say "You [verbword] to [the noun].".	
+report shouting to something: 
+say "You can't [verbword] to [the noun].".	
 
-report shouting something at something
-(this is the shouting something at something rule): 
-say "You [verbword] [the noun] at [the second noun].".
+report shouting something at something: 
+say "You can't [verbword] [the noun] at [the second noun].".
 
-report shouting something to something
-(this is the shouting something to something rule): 
-say "You [verbword] [the noun] to [the second noun].".
+report shouting something to something: 
+say "You can't [verbword] [the noun] to [the second noun].".	
 
-report talking to someone
-(this is the talking to someone rule):
-say "You [verbword] to [the noun].".
-
-
-Part 42 - Throwing (expanded)
+Part 43 - Throwing (expanded)
 
 understand the command "throw" as something new.
 
@@ -2009,8 +1678,8 @@ throwing is an action applying to one thing.
 understand "chuck [things]" as throwing. 
 understand "heave [things]" as throwing. 
 understand "throw [things]" as throwing.
-understand "toss  [things]" as throwing.
-understand "hurl  [things]" as throwing. 
+understand "toss [things]" as throwing.
+understand "hurl [things]" as throwing. 
 understand "pitch [things]" as throwing.
 
 understand "throw [something] at [something]" as throwing it at.
@@ -2019,32 +1688,30 @@ throwing it into is an action applying to two things.
 understand "chuck [things] in/into [something]" as throwing it into. 
 understand "heave [things] in/into [something]" as throwing it into. 
 understand "throw [things] in/into [something]" as throwing it into. 
-understand "toss  [things] in/into [something]" as throwing it into. 
-understand "hurl  [things] in/into [something]" as throwing it into. 
+understand "toss [things] in/into [something]" as throwing it into. 
+understand "hurl [things] in/into [something]" as throwing it into. 
 understand "pitch [things] in/into [something]" as throwing it into.
+
+check throwing something at a second noun
+(this is the can't throw what you don't have rule):
+if the noun is not carried by the player,
+say "You don't have [the noun]." instead.
 
 throwing it onto is an action applying to two things. 
 understand "chuck [things] on/onto [something]" as throwing it onto.
 understand "heave [things] on/onto [something]" as throwing it onto. 
 understand "throw [things] on/onto [something]" as throwing it onto. 
-understand "toss  [things]  on/onto [something]" as throwing it onto. 
-understand "hurl  [things]  on/onto [something]" as throwing it onto. 
-understand "pitch [things]  on/onto [something]" as throwing it onto.
-
-understand "chuck [things] on/onto [something]" as throwing it onto.
-understand "heave [things] on/onto [something]" as throwing it onto. 
-understand "throw [things] on/onto [something]" as throwing it onto. 
-understand "toss  [things]  on/onto [something]" as throwing it onto. 
-understand "hurl   [things]  on/onto [something]" as throwing it onto. 
-understand "pitch [things]  on/onto [something]" as throwing it onto.
+understand "toss [things] on/onto [something]" as throwing it onto. 
+understand "hurl [things] on/onto [something]" as throwing it onto. 
+understand "pitch [things] on/onto [something]" as throwing it onto.
 
 throwing it down is an action applying to two things.
 
 understand "chuck [things] down [something]" as throwing it down. 
 understand "throw [things] down [something]" as throwing it down. 
 understand "heave [things] down [something]" as throwing it down. 
-understand "toss  [things] down [something]" as throwing it down. 
-understand "hurl  [things] down [something]" as throwing it down.
+understand "toss [things] down [something]" as throwing it down. 
+understand "hurl [things] down [something]" as throwing it down.
 understand "pitch [things] down [something]" as throwing it down.
 
 throwing it off is an action applying to two things.
@@ -2052,102 +1719,58 @@ throwing it off is an action applying to two things.
 understand "chuck [things] off [something]" as throwing it off. 
 understand "heave [things] off [something]" as throwing it off. 
 understand "throw [things] off [something]" as throwing it off. 
-understand "toss  [things] off [something]" as throwing it off. 
-understand "hurl  [things] off [something]" as throwing it off.
+understand "toss [things] off [something]" as throwing it off. 
+understand "hurl [things] off [something]" as throwing it off.
 understand "pitch [things] off [something]" as throwing it off.
 
 throwing it over is an action applying to two things.
 
 understand "chuck [things] over [something]" as throwing it over. 
 understand "throw [things] over [something]" as throwing it over. 
-understand "heave [things] over [something]" as throwing it over.  
-understand "toss  [things] over [something]" as throwing it over. 
-understand "hurl  [things] over [something]" as throwing it over. 
+understand "heave [things] over [something]" as throwing it over. 
+understand "toss [things] over [something]" as throwing it over. 
+understand "hurl [things] over [something]" as throwing it over. 
 understand "pitch [things] over [something]" as throwing it over. 
 
 throwing it under is an action applying to two things.
 
 understand "chuck [things] under [something]" as throwing it under. 
 understand "throw [things] under [something]" as throwing it under. 
-understand "heave [things] under [something]" as throwing it under.  
-understand "toss  [things] under [something]" as throwing it under. 
-understand "hurl  [things] under [something]" as throwing it under. 
+understand "heave [things] under [something]" as throwing it under. 
+understand "toss [things] under [something]" as throwing it under. 
+understand "hurl [things] under [something]" as throwing it under. 
 understand "pitch [things] under [something]" as throwing it under. 
 
 throwing it through is an action applying to two things.
 understand "chuck [things] through [something]" as throwing it through. 
 understand "throw [things] through [something]" as throwing it through. 
 understand "heave [things] through [something]" as throwing it through. 
-understand "toss  [things] through [something]" as throwing it through. 
-understand "hurl  [things] through [something]" as throwing it through.
+understand "toss [things] through [something]" as throwing it through. 
+understand "hurl [things] through [something]" as throwing it through.
 understand "pitch [things] through [something]" as throwing it through.
 
-check throwing something into a closed container
-(this is the can't throw into a closed container rule):
-say "[The second noun] isn't open." instead.
+report throwing something into something:
+say "You can't [verbword] [the noun] into [the second noun].".
 
-check throwing something at a second noun
-(this is the first can't throw what you don't have rule):
-if the noun is not carried by the player,
-say "You don't have [the noun]." instead.
-
-check throwing something into a closed container
-(this is the second can't throw what you don't have rule):
-if the noun is not carried by the player,
-say "You haven't got [the noun]." instead.
-
-check throwing something over a second noun
-(this is the third can't throw what you don't have rule):
-if the noun is not carried by the player,
-say "You don't have [the noun]." instead.
-
-check throwing something over a second noun
-(this is the fourth can't throw what you don't have rule):
-if the noun is not carried by the player,
-say "You don't have [the noun]." instead.
-
-check throwing something under a second noun
-(this is the fifth can't throw what you don't have rule):
-if the noun is not carried by the player,
-say "You don't have [the noun]." instead.
-
-check throwing something down a second noun
-(this is the sixth can't throw what you don't have rule):
-if the noun is not carried by the player,
-say "You don't have [the noun]." instead.
-
-check throwing something through a second noun
-(this is the seventh can't throw what you don't have rule):
-if the noun is not carried by the player,
-say "You don't have [the noun]." instead.
-
-check throwing something into a second noun
-(this is the throwing something into something rule):
-if the second noun is not a open  container,
-say "[The second noun] can't hold anything." instead.
-
-report throwing something over a second noun
-(this is the throwing something over something rule):
-now the noun is in the location;
-say "You throw [the noun] over [the second noun].";
-
-report throwing something into a second noun
-(this is the report throwing something into something rule):
-now the noun is in the second noun;
-say "You [verbword] [the noun] into [the second noun].".
-
-carry out throwing something under a second noun
-(this is the throwing something under something rule):
-now the noun is in the location;
-say "You throw [the noun] under [the second noun].".
-
-carry out throwing something down a second noun
-(this is the throwing something down something rule):
-now the noun is in the location;
-say "You throw [the noun] under [the second noun].".
+report throwing something off a second noun:
+say "You can't [verbword] [the noun] off [the second noun].". 
 
 
-Part 43 - Checking Separated from Look
+report throwing something over something:
+say "You can't [verbword] [the noun] over [the second noun].". 
+
+
+report throwing something under a second noun:
+say "You can't [verbword] [the noun] under [the second noun].". 
+
+report throwing something down a second noun:
+say "You can't [verbword] [the noun] down [the second noun].". 
+
+report throwing something through a second noun:
+say "You can't [verbword] [the noun]through [the second noun].". 
+
+
+Part 44 - Checking Separated from Look
 
 understand the command "check" as something new.
 
@@ -2157,22 +1780,177 @@ understand "check [something]" as checking.
 checking it with is an action applying to two things.
 understand "check [something] with [something]" as checking it with.
 
-report checking (this is the first checking rule): 
-say "You check [the noun].".
+report checking: 
+say "You can't check [the noun].".
 
-report checking something with a second noun
-(this is the second checking rule):
-say "You check [the noun] with [the second noun].".
+report checking something with a second noun:
+say "You can't check [the noun] with [the second noun].".
+
+
+Part 45 - Crawl Action (new)
+
+understand the command "crawl" as something new.
+
+crawling is an action applying to nothing.
+understand "crawl" as crawling.
+
+crawling around is an action applying to one thing.
+crawling behind is an action applying to one thing.
+crawling in front of is an action applying to one thing.
+crawling on is an action applying to one thing.
+crawling over is an action applying to one thing.
+crawling under is an action applying to one thing.
+crawling through is an action applying to one thing.
+
+understand "crawl around [something]" as crawling around.
+understand "crawl behind [something]" as crawling behind.
+understand "crawl in front of [something]" as crawling in front of.
+understand "crawl on [something]" as crawling on.
+understand "crawl over [something]" as crawling over.
+understand "crawl under [something]" as crawling under.
+understand "crawl through [something]" as crawling through.
+
+report crawling:
+say "You can't crawl.".
+
+report crawling around something:
+say "You can't crawl around [the noun].".
+
+report crawling behind something:
+say "You can't crawl behind [the noun].".
+
+report crawling in front of something:
+say "You can't crawl in front of [the noun].".
+
+report crawling on something:
+say "You can't crawl on [the noun].".
+
+report crawling over something:
+say "You can't crawl over [the noun].".
+
+report crawling under something:
+say "You can't crawl under [the noun].".
+
+report crawling through something:
+say "You can't crawl through [the noun].".
+
+Part 46 - Run and Walk (separated out from 'Go')
+
+Section 1 - Running
+
+understand the command "run" as something new.
+
+running is an action applying to nothing.
+understand "run" as running.
+	
+running around is an action applying to one thing.
+running behind is an action applying to one thing.
+running in front of is an action applying to one thing.
+running on is an action applying to one thing.
+running over is an action applying to one thing.
+running under is an action applying to one thing.
+running through is an action applying to one thing.
+
+understand "run around [something]" as running around.
+understand "run behind [something]" as running behind.
+understand "run in front of [something]" as running in front of.
+understand "run on [something]" as running on.
+understand "run over [something]" as running over.
+understand "run under [something]" as running under.
+understand "run through [something]" as running through.
+
+report running:
+say "You can't run.".
+
+report running around something:
+say "You can't run around [the noun].".
+
+report running behind something:
+say "You can't run behind [the noun].".
+
+report running in front of something:
+say "You can't run in front of [the noun].".
+
+report running on something:
+say "You can't run on [the noun].".
+
+report running over something:
+say "You can't run over [the noun].".
+
+report running under something:
+say "You can't run under [the noun].".
+
+report running through something:
+say "You can't run through [the noun].".
+
+Section 2 - Walking
+
+understand the command "walk" as something new.
+
+walking is an action applying to nothing.
+understand "walk" as walking.
+
+walking around is an action applying to one thing.
+walking behind is an action applying to one thing.
+walking in front of is an action applying to one thing.
+walking on is an action applying to one thing.
+walking over is an action applying to one thing.
+walking under is an action applying to one thing.
+walking through is an action applying to one thing.
+
+understand "walk around [something]" as walking around.
+understand "go around [something]" as walking around.
+
+understand "walk behind [something]" as walking behind.
+understand "go behind [something]" as walking behind.
+
+understand "walk in front of [something]" as walking in front of.
+understand "go in front of [something]" as walking in front of.
+
+understand "walk on [something]" as walking on.
+understand "go on [something]" as walking on.
+
+understand "walk over [something]" as walking over.
+understand "go over [something]" as walking over.
+
+understand "walk under [something]" as walking under.
+understand "go under [something]" as walking under.
+
+understand "walk through [something]" as walking through.
+
+report walking:
+say "You can't walk.".
+
+report walking around something:
+say "You can't walk around [the noun].".
+
+report walking behind something:
+say "You can't walk behind [the noun].".
+
+report walking in front of something:
+say "You can't walk in front of [the noun].".
+
+report walking on something:
+say "You can't walk on [the noun].".
+
+report walking over something:
+say "You can't walk over [the noun].".
+
+report walking under something:
+say "You can't walk under [the noun].".
+
+report walking through something:
+say "You can't walk through [the noun].".
 
 Supplemental Actions ends here.
 
 ---- DOCUMENTATION ----
 
-Chapter 1: Actions covered 
+Section 1 : Actions covered 
 
 This extension adds the actions listed above so that you don't have to.
 
-Chapter 2: Warnings
+Section 2 : Warnings
 
 Note: This extension can not be used with either of the following 2 Emily Short 
 extensions:Empty Transfer and Measured Liquids.
@@ -2180,18 +1958,18 @@ extensions:Empty Transfer and Measured Liquids.
 Also you need to set the output file to at least a .z8 setting or you will get
 an error during compilation.
 
-Chapter 3: Contacting the Author
+Section 3 : Contacting the Author
 
 It is highly recommended that you print out this code so that you can consult 
-it for actions and default responses which you may over ride with your own.
+it for actions and default responses which you may override with your own.
 
 Questions and comments to: radical1@evcohs.com
 
-Chapter 4: New Properties Required
-
-For the blowing function add this line: the (NOUN) is blowable.
+Section 4 : New Properties Required
 
 For the climbing function add this line: the (NOUN) is climbable.
+
+For the inflating function add this line: the (NOUN) inflatable.
 
 For the swimming function add this line: the (NOUN) is swimmable.
 
@@ -2201,9 +1979,29 @@ For the filling function add this line: the (NOUN) is fillable.
 
 where (NOUN) is the object you have coded.
 
-Chapter 5: New Commands (Actions)
+Note: Version 29 removes the (NOUN) IS BLOWABLE function. It didn't make
+much sense really and can be custom programmed by the author.
 
-version 27 adds a new action: STEAL and STEALING IT FROM.
+Section 5 : New Commands (Actions)
+
+Version 29 adds a new action: CRAWL. You can crawl, crawl around, behind, 
+in front of,on,over,under, and through something.
+
+Some example Code:
+
+Instead of crawling through the pipe: say "You crawl through the drainpipe to the other side.".
+
+Instead of crawling around the room: say "You crawl around the room.".
+
+Instead of crawling behind the stove: say "You crawl behind the stove and find some things you dropped.".
+
+Instead of crawling under something: say "You crawl under [the noun] and feel foolish for doing so.".
+
+Instead of crawling in front of the TV: say "You crawl in front of the TV for no apparent reason." 
+
+instead of crawling over the fence: say "You'd rather jump over it.".
+
+Version 27 adds a new action: STEAL and STEALING IT FROM.
 
 There are 2 new DIVING commands called DIVE OFF/FROM (NOUN) and DIVE IN/INTO (NOUN).
 
@@ -2220,11 +2018,11 @@ CLIMBING OVER and CLIMBING UNDER have been added.
 
 Commands for LIEING ON/IN (SOMETHING) have also been added.
 
-Chapter 6: Synonyms
+Section 6 : Synonyms
 
-ATTACK,BASH,BELT,HIT,INJURE,PUNCH,PUMMEL,POUND,SMACK,WACK,WALLOP and WOUND are now all synonyms.
+ATTACK,BASH,BELT,HIT,INJURE,PUNCH,PUMMEL,POUND,SMACK,WHACK,WALLOP and WOUND are now all synonyms.
 
-SLASH, LACERATE, SEVER, SLIT, PIERCE,  WOUND, SCRATCH, GRAZE, NICK, INCISE, and LANCE are 
+SLASH, LACERATE, SEVER, SLIT, PIERCE, WOUND, SCRATCH, GRAZE, NICK, INCISE, and LANCE are 
 now new synonyms for CUT along with CHOP AND SLICE.
 
 BREAK, CRACK,CRUSH, DAMAGE, DESTROY, FRACTURE, RUIN,SHATTER, SMASH, 
@@ -2232,19 +2030,51 @@ SNAP,TRASH, WRECK, AND VANDALIZE are now synonyms for breaking things.
 
 SCREAM,YELL,HOLLER, BELLOW, and SCREECH are now synonyms for SHOUT
 
-There are now  TALK and TALK TO verbs implemented. 
+There are now TALK and TALK TO verbs implemented. 
 SPEAK is now a synonym for TALK
 
 As of version 19, SYNONYMS are echoed. The game will now automatically echo the correct verb.
 
-Chapter 7: Separated Actions
+Section 7 : Separated Actions
 
-Version 28 separates "check" from "look". There are 2 new separated commands
-"check" and "checking it with".
+Version 29 now separates "run" and "walk" from "go".
+
+You can now RUN, RUN AROUND, RUN BEHIND,RUN IN FRONT OF,RUN ON, RUN OVER,
+RUN UNDER, AND RUN THROUGH SOMETHING.
+
+Some example Code:
+
+Instead of running through the pipe: say "You run through the drainpipe to the other side.".
+
+Instead of running around the room: say "You run around the room.".
+
+Instead of running behind the stove: say "You run behind the stove and find some things you dropped.".
+
+Instead of running under something: say "You run under [the noun] and feel foolish for doing so.".
+
+Instead of running in front of the TV: say "You run in front of the TV for no apparent reason." 
+
+instead of running over the fence: say "You'd rather jump over it."
+
+Instead of walking through the pipe: say "You walk through the drainpipe to the other side.".
+
+Instead of walking around the room: say "You walk around the room.".
+
+Instead of walking behind the stove: say "You walk bejomd the stove and find some things you dropped.".
+
+Instead of walking under something: say "You craw under [the noun] and feel foolish for doing so.".
+
+Instead of walking in front of the TV: say "You walk in front of the TV for no apparent reason." 
+
+instead of walking over the fence: say "You'd rather jump over it."
+
+Version 28 separates "check" from "look". There are 2 new separated commands "check" and "checking it with".
 
 SHOUT has been separated from ANSWER and SPEAK.
 
 THROW and DROP commands have been separated.
+
+In addition you can now throw something over, under, onto something and off something as well.
 
 As of version 25 CLEAR and SHIFT are now separated.
 
@@ -2256,8 +2086,7 @@ SHOUT AND SPEAK have been separated from ANSWER and SAY.
 
 FEED,FEEDING IT TO,and FEEDING IT WITH are now separated from GIVE and PAY.
 
-PAY is now a separate verb that stands alone. 
-PAYING IT TO and PAYING IT FOR are extensions of PAY.
+PAY is now a separate verb that stands alone. PAYING IT TO and PAYING IT FOR are extensions of PAY.
 
 The THROW and DROP commands have been separated.
 
@@ -2270,13 +2099,13 @@ SIT,STAND, AND LIE are now separate commands from ENTER.
 SCREW AND UNSCREW are now separate commands from TURN.
 
 As of version 26 the command FIX has been separated from TIE. 
+
 REPAIR and MEND are also synonyms for FIX.
-FIXING IT WITH is 
-also added for fixing something with a second noun.
+FIXING IT WITH is also added for fixing something with a second noun.
 
-OFFER is now a separate verb. OFFERING IT TO is a new  verb.
+OFFER is now a separate verb. OFFERING IT TO is a new verb.
 
-Chapter 8: New Features
+Section 8 : New Features
 
 You can now also look in directions: LOOK (UP) (DOWN) (BEHIND) (NORTH) (SOUTH)
 (EAST)(WEST)(NORTHEAST) (NORTHWEST) (SOUTHEAST) (SOUTHWEST)
@@ -2287,27 +2116,27 @@ You can now GIVE THING or THINGS to an NPC or to an inanimate object.
 
 ASKING an NPC for something will automatically give you the object IF the NPC has it.
 
-Example: ** Silliness - a small program for testing the extension.
+Example: * "Silliness" - a short game showing the extension features.
 
 	*: "Silliness"
 
 	Include Supplemental Actions by Al Golden.
-
-	use full-length room descriptions.
 
 	rule for printing room description details: stop.
 
 	after printing the name of an open container: 
 	omit contents in listing.
 
-	rule for deciding whether all includes scenery: 
-	it does not.
-	rule for deciding whether all includes backdrops: 
-	it does not.
-	rule for deciding whether all includes something fixed in place: 
-	it does not.
-	rule for deciding whether all includes a person: 
-	it does not.
+	rule for deciding whether all includes scenery: it does not.
+	rule for deciding whether all includes backdrops: it does not.
+	rule for deciding whether all includes something fixed in place: it does not.
+	rule for deciding whether all includes a person: it does not.
+
+	understand "go through [window]" as a mistake 
+	("Try climbing in or climbing out the window instead.").
+
+	understand "go through [something]" as a mistake 
+	("You can't go through [the noun]!").
 
 	report giving something to someone:
 	now the second noun carries the noun;
@@ -2316,8 +2145,49 @@ Example: ** Silliness - a small program for testing the extension.
 	Idyllic Scene is a room.
 	"The best way to describe this place is 'Heaven On Earth'!".
 
+	before going east when the player is in Idyllic:
+	try entering the house instead.
+
+	before going inside when the player is in Idyllic:
+	try entering the house instead.
+
+	before entering the house when the player is in Idyllic:
+	if the window is open begin;
+	now the player is in Kitchen instead;
+	otherwise;
+	say "The window isn't open." instead;
+	end if.
+
 	the player is carrying a polishing cloth, a knife, and a testing machine.
 	the description of the testing machine is "It can be used to test things.".
+
+	instead of cleaning or dusting or rubbing or polishing or scrubbing
+	or shining or sweeping or wiping something:
+	say "You [verbword] [the noun]."
+
+	instead of cleaning something with something:
+	say "You [verbword] [the noun] with [the second noun]."
+
+	instead of dusting something with something:
+	say "You [verbword] [the noun] with [the second noun]."
+
+	instead of rubbing something with something:
+	say "You [verbword] [the noun] with [the second noun]."
+
+	instead of scrubbing something with something:
+	say "You [verbword] [the noun] with [the second noun]."
+
+	instead of polishing something with something:
+	say "You [verbword] [the noun] with [the second noun]."
+
+	instead of shining something with something:
+	say "You [verbword] [the noun] with [the second noun]."
+
+	instead of sweeping something with something:
+	say "You [verbword] [the noun] with [the second noun]."
+
+	instead of wiping something with something:
+	say "You [verbword] [the noun] with [the second noun]."
 
 	a thing is either broken or whole.
 	a thing is usually whole.
@@ -2338,6 +2208,12 @@ Example: ** Silliness - a small program for testing the extension.
 	instead of breaking a broken thing with a second noun:
 	say "But the [noun] is already broken.".
 
+	report feeding something:
+	say "You can't feed [the noun]."
+	
+	report feeding something with something:
+	say "You can't feed [the noun] with [the second noun]."
+
 	instead of fixing a broken thing:
 	now the noun is whole;
 	let verbword be word number 1 in the player's command;
@@ -2353,24 +2229,153 @@ Example: ** Silliness - a small program for testing the extension.
 
 	instead of fixing a whole thing with a second noun:
 	say "But [the noun] isn't broken!".
-	
-	instead of clearing or pushing or moving or shifting  something:
-	if the noun is portable begin;
-	say "You push [the noun].";
-	otherwise;
-	say "Impossible!";
-	end if.
 
-	report attacking something which is not the lifeguard:
-	say "You [verbword] [the noun].";
+	instead of walking or crawling or running:
+	say "You [verbword].".
+
+	instead of walking around:
+	say "You [verbword] around [the noun].".
+
+	instead of walking behind:
+	say "You [verbword] behind [the noun].".
+
+	instead of walking on:
+	say "You [verbword] on [the noun].".
+
+	instead of walking over:
+	say "You [verbword] over [the noun].".
+
+	instead of walking under:
+	say "You [verbword] under [the noun].".
+
+	instead of walking through:
+	say "You [verbword] through [the noun].".
+
+	instead of walking in front of:
+	say "You [verbword] in front of [the noun].".
+
+	instead of running around:
+	say "You [verbword] around [the noun].".
+
+	instead of running behind:
+	say "You [verbword] behind [the noun].".
+
+	instead of running on:
+	say "You [verbword] on [the noun].".
+
+	instead of running over:
+	say "You [verbword] over [the noun].".
+
+	instead of running under:
+	say "You [verbword] under [the noun].".
+
+	instead of running through:
+	say "You [verbword] through [the noun].".
+
+	instead of running in front of:
+	say "You [verbword] in front of [the noun].".
+
+	instead of crawling around:
+	say "You [verbword] around [the noun].".
+
+	instead of crawling behind:
+	say "You [verbword] behind [the noun].".
+
+	instead of crawling on:
+	say "You [verbword] on [the noun].".
+
+	instead of crawling over:
+	say "You [verbword] over [the noun].".
+
+	instead of crawling under:
+	say "You [verbword] under [the noun].".
+
+	instead of crawling through:
+	say "You [verbword] through [the noun].".
+
+	instead of crawling in front of:
+	say "You [verbword] in front of [the noun].".
+
+	instead of sitting in something:
+		if the noun is an enterable container:
+			say "You sit in [the noun].";
+			now yourself is on the noun;
+		otherwise:
+			say "You can't sit on [the noun]."
+
+	instead of sitting on something:
+		if the noun is an enterable supporter:
+			say "You sit on [the noun].";
+			now yourself is on the noun;
+		otherwise:
+			say "You can't sit on [the noun]."
+
+	instead of sitting under something:
+			say "You sit under [the noun]."	
+
+	instead of sitting behind something:
+			say "You sit behind [the noun]."
+
+	instead of standing on something:
+		if the noun is an enterable supporter:
+			say "You stand on [the noun].";
+			now yourself is on the noun;
+		otherwise:
+			say "You can't stand on [the noun]."
+
+	instead of standing in something:
+		if the noun is an enterable container:
+			say "You stand in [the noun].";
+			now yourself is in the noun;
+		otherwise:
+			say "You can't stand in [the noun]."
+
+	instead of standing behind something:
+			say "You stand behind [the noun]."
+
+	instead of standing under something:
+			say "You stand under [the noun]."
+
+	instead of lieing on something:
+		if the noun is an enterable supporter:
+			say "You lie on [the noun].";
+			now yourself is on the noun;
+		otherwise:
+			say "You can't lie on [the noun]."
+
+	instead of lieing in something:
+		if the noun is an enterable container:
+			say "You lie in [the noun].";
+			now yourself is in the noun;
+		otherwise:
+			say "You can't lie in [the noun]."
+
+	instead of lieing under something:
+	say "You lie under [the noun]."
 		
-	instead of clearing or pushing or moving or shifting 
-	something which is fixed in place:
+	instead of pushing or moving or shifting a portable thing:
+	say "You [verbword] [the noun].";
+
+	instead of attacking something which is not the lifeguard:
+	say "You [verbword] [the noun].";
+
+	instead of attacking something which is not the lifeguard with something:
+	say "You [verbword] [the noun] with [the second noun]." 
+
+	instead of buying the idol from the lifeguard:
+		say "He won't part with it for any price.".
+
+	instead of bribing the lifeguard:
+		say "He's too honest for that.".
+
+	instead of offering something to the lifeguard:
+		say "He doesn't want it.".
+			
+	instead of pushing or moving or shifting something which is fixed in place:
 	say "Impossible!".
 
 	a match is in Idyllic. the description is
 	"A plain old sulphur match.".
-	the match is blowable.
 	the match is either lit or unlit.
 	the match is either struck or unstruck.
 	the match is unstruck and unlit.
@@ -2378,9 +2383,24 @@ Example: ** Silliness - a small program for testing the extension.
 	the match can be extinguished.
 
 	a piece of paper is in Idyllic.
+	the paper is unfolded.
 	the description of the piece of paper is
 	"The paper is [if folded]folded.
 	[otherwise]unfolded.[end if]".
+
+	instead of unfolding the paper:
+		if the paper is folded:
+			now the paper is unfolded;
+			say "You unfold the paper.";
+		otherwise:
+			say "The paper is already unfolded.".
+
+	instead of folding the paper:
+		if the paper is unfolded:
+			now the paper is folded;
+			say "You fold the paper.";
+		otherwise:
+			say "The paper is already folded.".
 
 	instead of burning the paper:
 	try burning the paper with the match.
@@ -2401,32 +2421,30 @@ Example: ** Silliness - a small program for testing the extension.
 	"You caught this at a White Sox-Yankees game.".
 	understand "ball" as the baseball.
 
-	after throwing the baseball through the window
-	when the player is in Idyllic and the window
-	is closed:
-	Say "You'd break the glass of the closed window.";
-	
-
-	after throwing the baseball through the window 
-	when the player is in Idyllic
-	and the window is open:
+	instead of throwing the baseball through an open whole window 
+	when the player is in Idyllic:
 	now the baseball is in Kitchen;
-	say "You throw the ball through the window 
-	where it lands in the kitchen.";
+	say "You throw the ball through the open window. The ball lands in the kitchen.".
 	
+	instead of throwing the baseball through a closed whole window 
+	when the player is in Idyllic:
+	now the window is open;
+	now the window is broken;
+	now the baseball is in Kitchen;
+	say "You throw the ball through the closed window, breaking it. The ball lands in the kitchen.".
 
-	after throwing the baseball through the 
-	window when the player
-	is in Kitchen and the window is closed:
-	Say "You'd break the glass of the closed window.";
-	
-
-	after throwing the baseball through the 
-	window when the player is in Kitchen:
+	instead of throwing the baseball through an open whole window 
+	when the player is in Kitchen:
 	now the baseball is in Idyllic;
-	say "You throw the ball through the window 
-	where it lands outside.";
+	say "You throw the ball through the open window. The ball lands back outside.";
 	
+	instead of throwing the baseball through a closed whole window 
+	when the player is in Kitchen:
+	now the window is open;
+	now the window is broken;
+	now the baseball is in Idyllic;
+	say "You throw the ball through the closed window, breaking it. The ball lands back outside.";
+		
 	a machinegun is in Idyllic.
 	the printed name is "machine gun".
 	understand "gun" or "machine gun" as the machinegun.
@@ -2465,12 +2483,12 @@ Example: ** Silliness - a small program for testing the extension.
 	instead of unloading the drum,
 	try unloading the machinegun.
 
-	instead of removing the drum from the machinegun,
-	try unloading the machinegun.
+	before removing the drum from the machinegun:
+	try unloading the machinegun instead.
 
-	before shooting something when the machinegun is not 
-	carried by the player:
-	say "You haven't got the gun!" instead.
+	before shooting something:
+		if the machinegun is not carried by the player:
+			say "You haven't got the gun!" instead.
 	
 	before shooting something when the machinegun is unloaded:
 	say "The gun ain't loaded." instead.
@@ -2484,22 +2502,26 @@ Example: ** Silliness - a small program for testing the extension.
 	before shooting an unloaded machinegun at something:
 	say "The gun ain't loaded." instead.
 	
-	report shooting the machinegun:
-	if the machinegun is loaded begin;
-	say "You fire the machine gun into the air and make a 
-	hell of a racket while doing so.";
-	otherwise;
-	say "The gun ain't loaded.";
-	end if.
-	
+	instead of shooting the machinegun:
+		if the machinegun is loaded:
+			say "You fire the machine gun into the air and make a hell of a racket while doing so.";
+		otherwise:
+			say "The gun ain't loaded.".	
+
+	instead of shooting something which is not the machinegun:
+		if the machinegun is not carried by yourself:
+			say "You haven't got the gun.";
+		otherwise if yourself is carrying an unloaded machinegun:
+			say "The Gun ain't loaded!";
+		otherwise:
+			remove the noun from play;
+			say "You fire the gun at [the noun] and it disintegrates into nothingness.".
+		
 	before shooting the pool:
-	if the machinegun is loaded begin;
-	say "You send a wave of bullets into the water.";
-	stop;
-	otherwise;
-	say "The gun isn't loaded.";
-	stop;
-	end if.
+		if the machinegun is loaded:
+			say "You send a wave of bullets into the water." instead;
+		otherwise:
+			say "The gun isn't loaded." instead.
 
 	instead of shooting the pool with the machinegun:
 	try shooting the pool.
@@ -2507,10 +2529,10 @@ Example: ** Silliness - a small program for testing the extension.
 	instead of shooting the machinegun at the pool:
 	try shooting the pool.
 
-	instead of shooting the water with the machinegun:
+	instead of shooting the poolwater with the machinegun:
 	try shooting the pool.
 
-	instead of shooting the machinegun at the water:
+	instead of shooting the machinegun at the poolwater:
 	try shooting the pool.
 
 	before shooting the machinegun at the machinegun:
@@ -2538,17 +2560,12 @@ Example: ** Silliness - a small program for testing the extension.
 	instead of shooting the machinegun at the trashcan:
 	try shooting the trashcan.
 
-	after shooting the machinegun at something which is not the player:
-	say "You fire the gun at [the second noun]	
-	and it disintegrates into nothingness.";
+	instead of shooting the machinegun at something which is not the player:
+	say "You fire the gun at [the second noun] and it disintegrates into nothingness.";
 	remove the second noun from play;
-	
-	after shooting something which is not the player:
-	remove the noun from play;
-	say "You shoot [the noun] and it disintegrates into nothingness.";
-	
-	after shooting something which is not the player with the machinegun:
-	remove the noun from play;
+		
+	instead of shooting something which is not the player with the machinegun:
+	remove the second noun from play;
 	say "You fire the gun at [the second noun] and it disintegrates into nothingness.";
 		
 	before shooting the player:
@@ -2597,11 +2614,18 @@ Example: ** Silliness - a small program for testing the extension.
 	say "You can't jump through [the noun].";
 	
 	a balloon is in Idyllic.
-	the balloon is blowable and inflatable.
+	the balloon is inflatable.
 	The description is
 	"The balloon is [if deflated]deflated.[otherwise]inflated.[end if]".
 
-	after blowing in a deflated balloon:
+	instead of inflating a deflated balloon with the pump:
+		if the pump is broken:
+			say "The [second noun] is broken, you'll have to fix it.";
+		otherwise:
+			now the balloon is inflated;
+			say "You inflate the balloon with the bicycle pump."
+
+	instead of blowing in a deflated balloon:
 	now the balloon is inflated;
 	say "You inflate the balloon.";
 	
@@ -2647,7 +2671,7 @@ Example: ** Silliness - a small program for testing the extension.
 	after striking the match when the match is extinguished:
 	say "The match can no longer be struck.".	
 	
-	a warning is scenery in Idyllic.
+	a warning is part of yourself.
 
 	the dirt is scenery in Idyllic.
 	the indefinite article of the dirt is "a pile of".
@@ -2673,7 +2697,7 @@ Example: ** Silliness - a small program for testing the extension.
 	before emptying the hole:	
 	if the poolwater is in the hole begin;	
 	remove the poolwater from play;	
-	say "You empty the water in the hole back into the pool.";	
+	say "You [verbword] the water in the hole back into the pool.";	
 	stop;	
 	otherwise;	
 	say "The hole is empty.";	
@@ -2686,52 +2710,62 @@ Example: ** Silliness - a small program for testing the extension.
 	carry out emptying the hole when the poolwater is not in the hole	
 	and the number of things in the hole is not 0:
 	remove the poolwater from play;
-	say "You empty the [list of things in the hole] back onto the ground";	
+	say "You [verbword] the [list of things in the hole] back onto the ground";	
 	now all the things in the hole are in Idyllic;
 	
 	check inserting something into the hole when the poolwater is in the hole: 
 	say "The hole is already filled with water." instead.
 
-	carry out inserting something into an vacated hole:
+	carry out inserting something into an empty hole:
 	now the noun is in the hole;
 	say "You put [the noun] into the hole.".
 
-	check inserting something into the trashcan when the poolwater is in the trashcan: 
+	before inserting something into an unempty hole:
+	say "The hole is already filled with [the list of things in the hole]." instead.
+
+	check inserting something into the trashcan when the canwater is in the trashcan: 
 	say "The can is already filled with water." instead.
 	
-	instead of emptying the trashcan when the canwater is in the trashcan:
+	before inserting something into the trashcan:
+	if the canwater is in the trashcan,
+	say "The can is already filled with water." instead.
+
+	instead of inserting something into the trashcan:
+	if the noun is in the trashcan begin;
+	say "[The noun] is already in the trashcan.";
+	otherwise;
+	say "You put [the noun] into the trashcan.";
+	now the noun is in the trashcan;
+	end if.
+
+	instead of emptying the trashcan:
+	if the canwater is in the trashcan,
 	remove the canwater from play;
-	say "You empty the water from the pool on to the ground where it evaporates."	.
+	say "You [verbword] the water from the pool onto the ground where it evaporates.".
 
-	carry out emptying the trashcan into the pool when the canwater is in the trashcan:
+	instead of emptying the trashcan into the pool when the canwater is in the trashcan:
 	remove the canwater from play;
-	say "You empty the water in the can back into the pool.".
+	say "You [verbword] the water from the can back into the pool.".
 
-	check emptying the trashcan:
-	if the number of things in the trashcan is 0,
-	say "The can is empty." instead.
+	instead of emptying an unempty trashcan into the pool:
+	say "You [verbword] [the list of things in the trashcan] into the pool.";
+	now all the things in the trashcan are in the pool. 
 
-	before emptying the trashcan:
-	say "You empty [the list of things in the trashcan] out onto the ground.";
+	instead of emptying an unempty trashcan into the hole:
+	say "You [verbword] [the list of things in the trashcan] into the hole.";
+	now all the things in the trashcan are in the hole.
+
+	instead of emptying an unempty trashcan:
+	say "You [verbword] [the list of things in the trashcan] out onto the ground.";
 	now every thing in the trashcan is in the location instead.
 
-	report emptying the trashcan when the poolwater is in the trashcan:
-	remove the poolwater from play;
-	say "You empty the water in the trashcan into the pool.".
+	instead of emptying the trashcan into the pool when the canwater is in the trashcan:
+	remove the canwater from play;
+	say "You [verbword] the water in the can back into the pool.".
 
-	before emptying the trashcan:	
-	if the canwater is in the trashcan,	
-	remove the canwater from play;	
-	say "You empty the water from the pool on to the ground where it evaporates."	;
-	stop;
-
-	carry out emptying the trashcan into the pool when the canwater is in the trashcan:	
-	remove the canwater from play;	
-	say "You empty the water in the can back into the pool.".	
-			
-	carry out emptying the trashcan:	
-	now all the things in the trashcan are in the location;	
-	say "You empty the trashcan onto the ground.";	
+	instead of emptying an unempty trashcan:
+	now all the things in the trashcan are in the location;
+	say "You [verbword] the trashcan onto the ground." instead.	
 	
 	report searching the hole:	
 	if the hole is dug begin;	
@@ -2744,7 +2778,7 @@ Example: ** Silliness - a small program for testing the extension.
 	end if.
 
 	after searching the trashcan:	
-	say "[if the number of things in the trashcan  is 0]The trashcan is empty.
+	say "[if the number of things in the trashcan is 0]The trashcan is empty.
 	[otherwise]In the trashcan you see [a list of things in the trashcan]. [end if]";		
 
 	after climbing in the hole when the player is in the hole:
@@ -2769,7 +2803,7 @@ Example: ** Silliness - a small program for testing the extension.
 	say "There is no hole here to fill." instead
 		
 	before filling a dug hole with the dirt:
-	now the  hole is filled;
+	now the hole is filled;
 	now the hole is undug;
 	say "You fill the hole with dirt and it disappears." instead.
 	
@@ -2788,7 +2822,7 @@ Example: ** Silliness - a small program for testing the extension.
 	say "The hole is already filled with water.";
 	end if.
 
-	instead of filling the hole with the water,
+	instead of filling the hole with the poolwater,
 	try filling the hole from the swimming pool.
 
 	a shovel is in Idyllic.
@@ -2806,21 +2840,34 @@ Example: ** Silliness - a small program for testing the extension.
 	after attacking something with the idol:
 	say "You aren't strong enough to lift it.";
 	
-
 	a feather is in Idyllic.
-	the feather is blowable.
 	the description of the feather is "A feather from a bird.".
 
-	an open enterable container called 
-	a swimming pool is in Idyllic.
+	instead of blowing on the feather:
+	if the feather is not carried by yourself begin;
+	say "You blow on the feather it lands a short distance away from you.";
+	otherwise;
+	say "You blow on the feather and it sways between your fingers.";
+	end if.
+
+	an open enterable container called a swimming pool is in Idyllic.
 	the pool is swimmable and fixed in place.
 	the description of the pool is
-	"How they managed to place such a large pool in this area 
-	is beyond me! A diving board sits at the end of the pool.".
+	"How they managed to place such a large pool in this area is beyond me! A diving board sits at the end of the pool. There are thousands of gallons of water in the pool.".
+
+	instead of searching the pool:
+	if the number of things in the pool is greater than 1 begin;
+	say "In the pool in additon to the water, you see [a list of things in the pool].";
+	otherwise;
+	say "It's filled with thousands of gallons of chlorinated water.";
+	end if.
 
 	a bunch of leaves is in the swimming pool.
 	the description is "You don't understand how these leaves got here
 	since there are no trees in the immediate vicinity.".
+
+	instead of clearing a portable thing:
+	say "Not right now!".
 
 	instead of clearing the pool,
 	try clearing the leaves from the swimming pool.
@@ -2829,6 +2876,48 @@ Example: ** Silliness - a small program for testing the extension.
 	now the leaves is in Idyllic;
 	say "You clear the leaves from the pool and drop them on the ground."
 
+	instead of jumping in an undug hole:
+	say "What hole?" 
+
+	instead of jumping in something which is not a container:
+	say "Kinda hard to do that since [the noun] ain't a container.".
+
+	instead of jumping in a container:
+	say "You jump into [the noun].";
+	now yourself is in the noun.
+
+	instead of jumping on something:
+	say "You jump on the [noun].".
+
+	instead of jumping over something:
+	say "You jump over [the noun]."
+
+	instead of jumping under something:
+	say "You jump under [the noun]."
+
+	instead of jumping through something:
+	say "You jump through [the noun]."
+
+	before jumping off something which is not the diving board:
+	say "You jump off the noun." instead.
+
+	before jumping off the pool: 
+	say "Ridiculous!" instead.
+	
+	before jumping off the diving board:
+		if yourself is on the board: 
+			say "You jump off the board into the pool.";
+			now the player is in the swimming pool instead;
+		otherwise:
+			say "You're not on the diving board." instead.
+
+	before jumping from the diving board:
+		if yourself is on the board: 
+			say "You jump off the board into the pool.";
+			now the player is in the swimming pool instead;
+		otherwise:
+			say "You're not on the diving board." instead.
+	
 	instead of throwing something into the pool:
 	if the noun is not carried by the player begin;
 	say "You haven't got [the noun].";
@@ -2837,119 +2926,115 @@ Example: ** Silliness - a small program for testing the extension.
 	say "You [verbword] [the noun] into the pool.";
 	end if.
 
-	report filling the pool:
-	say "It's already filled with water. Get some glasses!";
+	before filling the pool:
+	try filling the pool with the poolwater.
 	
-	instead of filling the pool with water:
-	try filling the pool.
+	before filling the pool with the poolwater:
+	say "It's already filled with water. Get some glasses!" instead..
+
+	instead of filling the pool with the dirt:
+	if the hole is dug begin;
+	say "Filling the pool with the dirt would be highly counterproductive!";
+	otherwise;
+	say "What dirt?";
+	end if.
 
 	report standing on the pool:
 	say "When you learn to walk on water, let me know.";
 	
-	instead of sitting in the water:
+	instead of sitting in the poolwater:
 	try sitting in the pool.
 
-	instead of standing in the water:
+	instead of standing in the poolwater:
 	try standing in the pool.
 
-	the diving board is scenery and an enterable supporter in Idyllic.
-	the description is "A plain low board which allows 
-	the user to dive into the pool.".
+	the diving board is an enterable scenery supporter in Idyllic.
+	the description is "A plain low board which allows the user to dive into the pool.".
 
-	the water is a fixed in place thing in the pool.
-	the indefinite article of the water is "some".
-	the water is swimmable.
-	the description of the water is "Chlorinated H2O".
+	poolwater is a fixed in place thing in the pool.
+	the indefinite article of the poolwater is "some".
+	the poolwater is swimmable.
+	the description is "Chlorinated H2O.".
+	the printed name is "water from the pool".
+	understand "water" or "pool water" or "water from the pool" as the poolwater.
 
-	the poolwater is a thing.
-	the printed name is "some water from the pool".
-	
-	understand "water" as the poolwater.
-	understand "pool water" as the poolwater.
-	the description is "some water from the pool".
+	canwater is a thing.
+	the printed name is "water from the trashcan".
+	understand "water" or "can water" or "water from the trashcan" as the canwater.
+	the description is "This is the water you transfered from the pool.".
 
-	the canwater is a thing.
-	the printed name is "some water from the pool".	
-	understand "water" or "can water" as the canwater.
-	the description is "some water from the pool".
+	instead of swimming in the canwater:
+	say "Don't be silly!".
 
-	instead of sitting in the water:
+	instead of sitting in the poolwater:
 	try sitting in the pool.
 
-	instead of standing in the water:
+	instead of standing in the poolwater:
 	try standing in the pool.
 
 	before emptying the pool:
 	say "You have no place to store the water." instead.
 	
-	instead of emptying the water from the pool,
+	instead of emptying the poolwater from the pool,
 	try emptying the pool.
 
-	before taking the water:
+	instead of emptying the poolwater out of the pool,
+	try emptying the pool.
+
+	before taking the poolwater:
 	say "Unfortunately it slips through your fingers." instead.
 
-	report smelling the water:
+	report smelling the poolwater:
 	say "It smells highly of chlorine.".
 
 	understand "taste [something]" as eating.
 	understand "taste [something]" as drinking.
 
-	report tasting the water:
-	try drinking the water.
+	report tasting the poolwater:
+	try drinking the poolwater.
 
 	instead of unloading something:
 	say "You unload [the noun].";
 	
 	instead of drinking the pool:
-	try drinking the water.
+	try drinking the poolwater.
 
 	instead of drinking from the swimming pool,
-	try drinking the water.
+	try drinking the poolwater.
 
-	instead of drinking the water from the pool,
-	try drinking the water.
+	instead of drinking the poolwater from the pool,
+	try drinking the poolwater.
 
-	instead of drinking the water:
+	instead of drinking the poolwater:
 	say "The chlorine would poison you to death!"
 
-	an open enterable container called a trashcan is in Idyllic.
-	the trashcan  is fillable.
+	a closed openable enterable container called a trashcan is in Idyllic.
+	the trashcan is fillable.
 	understand "barrel" or "can" or "trash" as the trashcan.
 
+	before filling a closed trashcan:
+	say "You need to open the trashcan before doing that." instead.
+
+	before filling a closed trashcan with something:
+	say "You need to open the trashcan before doing that." instead.
+
 	instead of filling the trashcan from the swimming pool:
-	if the poolwater is not in the trashcan and the trashcan is unfilled begin;
+	try filling the trashcan with the poolwater.
+
+	instead of filling the trashcan with the poolwater:
+	if the canwater is not in the trashcan and the trashcan is unfilled begin;
 	now the trashcan is filled;
-	now the poolwater is in the trashcan;
+	now the canwater is in the trashcan;
 	say "You fill the trash can with some water from the pool.";
 	otherwise;
-	say "The trashcan is either filled with water 
-	or has something in it.";
+	say "The trashcan is either already filled with water or has something in it.";
 	end if.
-
-	instead of filling the trashcan with the water:	
-	if the poolwater is not in the trashcan and the trashcan is unfilled begin;
-	now the trashcan is filled;
-	now the poolwater is in the trashcan;
-	say "You fill the trash can with some water from the pool.";
-	otherwise;
-	say "The trashcan is either filled with water or has something in it.";
-	end if.
-
 	
 	instead of sitting in the trashcan,
 	say "You'd smell like garbage if you did so.".
 
 	instead of sitting on the trashcan,
 	say "It has no lid.".
-
-	report blowing on the feather when the feather 
-	is not carried by the player:
-	say "You blow on the feather and it lands a 
-	short distance away from you." instead.
-	
-	report blowing on the feather when the feather 
-	is carried by the player:
-	say "You blow on the feather and it sways between your fingers." instead.
 	
 	report blowing out the feather:
 	say "Impossible!" instead.
@@ -2969,7 +3054,7 @@ Example: ** Silliness - a small program for testing the extension.
 	check praying for something which is not rain:
 	say "Don't be silly!" instead.
 
-	check  praying to something which is not the idol:
+	check praying to something which is not the idol:
 	say "Don't be silly!" instead.
 	
 	a portable enterable supporter called a lounge chair is in Idyllic.
@@ -2982,20 +3067,107 @@ Example: ** Silliness - a small program for testing the extension.
 	try sitting on the chair.
 
 	Kitchen is a room.
-	"This kitchen looks like something out of Zork 1	
-	with the exception that the table, sack and bottle are holograms.".
+	"This kitchen looks like something out of Zork 1 with the exception that the table, sack and bottle are holograms.".
+
+	instead of exiting when yourself is in Kitchen:
+	if the window is closed begin;
+	say "The window isn't open.";
+	otherwise;
+	say "You climb out of the window and are now back in . . .";
+	now yourself is in Idyllic;
+	end if.
+
+	instead of going west when yourself is in Kitchen:
+	if the window is closed begin;
+	say "The window isn't open.";
+	otherwise;
+	say "You climb out of the window and are now back in . . .";
+	now yourself is in Idyllic;
+	end if.
+
+	a thing can be hologramic.
 
 	a table, a bottle and a sack are in Kitchen.
-	
-	the table is a supporter.
 
-	report taking something in the Kitchen:
-	say "Your hand passes right through it.";
-	
+	the table,bottle, and the sack are hologramic.
 
+	instead of taking a hologramic thing in the Kitchen:
+	say "Your hand passes right through it."
+	
 	the window is a door.
 	the window is east of Idyllic and west of Kitchen.
 	the window is closed, openable, scenery, and climbable.
+
+	instead of breaking the window:
+		if the window is whole:
+			now the window is broken;
+			now the window is open;
+			say "You [verbword] the window and the glass disappears into smithereens.";
+		otherwise if the window is broken:
+			say "You can't break it any more than you already have." 
+
+	before climbing in a closed window when yourself is in Idyllic:
+	say "The window is closed." instead.
+
+	before climbing out a closed window when yourself is in Kitchen:
+	say "The window is closed." instead.
+
+	before climbing out an open window when yourself is in Idyllic:
+	say "Try climbing in the window from this location." instead.
+	
+	before climbing in an open window when yourself is in Kitchen:
+	say "Try climbing out the window from this location." instead.
+
+	before climbing in a broken window when yourself is in Idyllic:
+	say "You climb in the broken window into the . . .";
+	now yourself is in Kitchen instead;
+
+	before climbing out a broken window when yourself is in Kitchen:
+	say "You climb out the broken window back into . . .";
+	now yourself is in Idyllic instead;
+
+	before climbing through a broken window when yourself is in Idyllic:
+	say "You climb through the broken window into the . . .";
+	now yourself is in Kitchen instead;
+
+	before climbing through a broken window when yourself is in Kitchen:
+	say "You climb through the broken window back into . . .";
+	now yourself is in Idyllic instead;
+
+	instead of closing a broken window:
+	say "How can you close a window with glass in it?".
+
+	instead of examining a closed whole window:
+	say "The window is closed.".
+
+	Instead of examining a broken window:
+	say "The window is totally broken and no glass remains." 
+
+	instead of examining an open whole window:
+	say "The window is open.".
+
+	instead of looking north: say "You look to the north.".
+	
+	instead of looking south: say "You look to the south.".
+
+	instead of looking east: say "You look to the east.".
+
+	instead of looking west: say "You look to the west.".
+
+	instead of looking northeast: say "You look to the northeast.".
+
+	instead of looking northwest: say "You look to the northwest.".
+
+	instead of looking southeast: say "You look to the southeast.".
+
+	instead of looking southwest: say "You look to the southwest.".
+
+	instead of looking up: say "You look up.".
+
+	instead of looking down: say "You look down.".
+
+	instead of looking behind something:
+	say "You look beind the [noun].".
 
 	instead of climbing through the window,
 	try climbing in the window.
@@ -3006,35 +3178,29 @@ Example: ** Silliness - a small program for testing the extension.
 	instead of climbing through the window when the player is in Kitchen,
 	try climbing out the window.
 
-	report climbing in the window when the window is closed:
+	report climbing in a whole closed window:
 	say "The window is closed.";
 	
-
 	report climbing out the window when the window is closed:
 	say "The window is closed.";
 	
-
 	report climbing in the window when the player is in Kitchen:
 	try climbing out the window;
 	
-
 	report climbing in the window when the window 
 	is open and the player is in Idyllic:
 	say "You climb into the window and are now in . . .";
-	now the player is in Kitchen;
-	
+	now the player is in Kitchen;	
 
 	report climbing out the window when the window is 
 	open and the player is in Kitchen:
 	say "You climb out of the window and are now back in . . .";
 	now the player is in Idyllic;
 	
-
 	report climbing out the window when the player 
 	is in Idyllic and the window is open:
 	say "Try climbing in or through the window instead.";
 	
-
 	instead of exiting when the player is in Kitchen 
 	and the window is open:
 	try climbing out the window.
@@ -3068,12 +3234,10 @@ Example: ** Silliness - a small program for testing the extension.
 	say "Read the description! [line break]	
 	You can't climb under this particular fence.";
 	
-
 	report climbing over the fence:
 	say "You climb over the fence and after looking around	
 	for awhile decide to go back where you came from.";
 	
-
 	the tree is a backdrop.
 	the tree is in Idyllic and TreeTop.
 	the tree is climbable.
@@ -3083,7 +3247,6 @@ Example: ** Silliness - a small program for testing the extension.
 	say "You climb to the top of the tree.";
 	now the player is in TreeTop;
 	
-
 	instead of going up when the player is in Idyllic,
 	try climbing up the tree.
 
@@ -3093,7 +3256,7 @@ Example: ** Silliness - a small program for testing the extension.
 	instead of climbing up the tree when the player is in Idyllic,
 	now the player is in TreeTop.
 
-	carry out climbing down the tree when the player is in TreeTop:
+	instead of climbing down the tree when the player is in TreeTop:
 	say "You climb back down the tree.";
 	now the player is in Idyllic;
 	
@@ -3104,19 +3267,88 @@ Example: ** Silliness - a small program for testing the extension.
 	try climbing down the tree.
 
 	TreeTop is a room. "From here you can see vast 
-	distances far beyond 	.	
-	[paragraph break] Below you, you see [a list of things in Idyllic].".
+	distances far beyond.[paragraph break]Below you, you see [a list of not scenery things in Idyllic].".
 
-	a man called a lifeguard is in Idyllic.
+	after deciding the scope of yourself while in TreeTop:
+	place Idyllic in Scope.
+
+	before multidropping when yourself is in TreeTop:
+		if the player is carrying nothing:
+			say "You aren't carrying anything." instead;
+		otherwise:
+			say "You drop [the list of things carried by yourself] down on the ground.";
+			now everything carried by yourself is in Idyllic instead.
+
+	a man called the lifeguard is in Idyllic.
 	understand "guard" or "man" as the lifeguard.
 	the description of the lifeguard is
 	"Although his jacket sports the title 'Lifeguard' he can't even swim a lick.".
+
+	instead of shouting at the lifeguard:
+	say "You [verbword] at the lifeguard.".
+
+	the lifeguard wears a jacket.
+	the description of the jacket is "It says 'L I F E G U A R D' on the back of it in big gaudy letters."
+
+	after examining the lifeguard:
+	say "He is wearing [a list of things worn by the lifeguard] and carrying [a list of things carried by the lifeguard].".
+
+	Instead of giving something to the lifeguard:
+	now the noun is carried by the lifeguard;
+	say "The lifeguard reluctantly accepts your offer of [the noun].".
+
+	instead of paying something:
+	say "You pay [the noun]."
+
+	instead of paying something to a second noun:
+	say "You pay [the noun] to [the second noun].".
+
+	instead of paying something for something:
+	say "You pay [the noun] for [ the second noun].".
 
 	instead of shouting the warning to the lifeguard:
 	say "You shout: 'Look out' to the lifeguard.".	
 	
 	instead of shouting the warning at the lifeguard:
 	say "You shout: 'The pool is overflowing!' at the lifeguard.".
+
+	instead of throwing something into something:
+	if the second noun is an open container begin;
+	now the noun is in the second noun;
+	say "You [verbword] [the noun] into [the second noun].";
+	otherwise;
+	if the second noun is a closed container,
+	say "[The second noun] isn't open.";
+	end if.
+
+	instead of throwing something at something:
+	now the noun is in the location;
+	say "You [verbword] [the noun] at [the second noun].".
+
+	instead of throwing something onto something:
+	if the second noun is a supporter begin;
+	now the noun is in the second noun;
+	say "You [verbword] [the noun] onto the [second noun].";
+	otherwise;
+	say "The [second noun] is not a supporter, so that won't fly here.";
+	end if.
+
+	instead of throwing something down something:
+	if the second noun is a container begin;
+	now the noun is in the second noun;
+	say "You [verbword] [the noun] down the [second noun].";
+	otherwise;
+	say "The [second noun] is not a container so that won't fly here.";
+	end if.
+
+	instead of throwing something over something:
+	say "You [verbword] [the noun] over [the second noun].";
+
+	instead of throwing something under something:
+	say "You [verbword] [the noun] under [the second noun].";
+
+	instead of throwing something through something:
+	say "You [verbword] [the noun] through [the second noun].";
 
 	instead of killing or attacking the lifeguard:
 	say "Leave the poor fellow alone! What[']s he ever done to you?".
@@ -3188,25 +3420,8 @@ Example: ** Silliness - a small program for testing the extension.
 	the player is not in the pool:
 	say "You're not on the diving board." instead.
 
-	before jumping off the diving board when the player is on the board:
-	say "You jump off the board into the pool.";
-	now the player is in the swimming pool instead.
-
-	report jumping from the diving board 
-	when the player is on the diving board:
-	say "You jump from the board into the pool.";
-	now the player is in the swimming pool.
-
-	report jumping off the diving board 
-	when the player is not on the board:
-	say "You're not on the diving board.";
-
-	report jumping from the diving board 
-	when the player is not on the diving board:
-	say "You're not on the diving board.";
-
 	report killing something which is not a person:
-	say  "How the hell can you [verbword]a non-living thing.?";
+	say "How the hell can you [verbword]a non-living thing.?";
 	
 	report lieing on the swimming pool:
 	say "Try entering it instead.";
@@ -3214,212 +3429,192 @@ Example: ** Silliness - a small program for testing the extension.
 	report lieing in the swimming pool:
 	say "Try entering it instead.";
 	
-	report swimming in the water:
-	try swimming in the pool;
-	
-	check swimming when the player is not in the pool:
-	say "You need to enter the pool first." instead.
-	
-	report swimming when the player is in the pool:
-	say "You swim in the pool.";
+	instead of swimming in the poolwater:
+	say "You swim in the water.".
 
-	report swimming in the pool:
-	say "You swim in the pool.";
-	
-	before swimming around the pool 
-	when the player is not in the pool:
-	say "You need to enter the pool first.";
-	
-	report swimming around the pool:
-	say "You swim around the pool.";
-	
+	before swimming:
+		if yourself is not in the pool:
+			say "You need to enter the pool first." instead;	
+		otherwise:
+			say "You swim in the pool." instead.
+		
+	before swimming in the pool:
+		if yourself is not in the pool: 
+			say "You need to enter the pool first." instead;	
+		otherwise:
+			say "You swim in the pool." instead.
+
+	before swimming around the pool:
+		if yourself is not in the pool:
+			say "You need to enter the pool first." instead;
+		otherwise:
+			say "You swim around the pool." instead.
+
+	before swimming across the pool:
+		if yourself is not in the pool:
+			say "You need to enter the pool first." instead;
+		otherwise:
+			say "You swim across the pool." instead.
+
 	report swimming over the pool:
 	say "Don't be ridiculous!";
-	
+
 	report swimming under the pool:
 	say "Don't be ridiculous!";
-	
-	report swimming under the water:
-	say "You dive under water and swim around 
-	till your lungs give out then you surface.";
-	
-	after throwing something:
-	say "You throw [the noun].";
-	
-	report throwing something at the second noun:
-	say "You throw [the noun] at the [second noun]."
 
-	carry out throwing something which is held into the pool:
-	now the noun is in the pool; 
+	instead of swimming under the poolwater:
+	say "You dive under water and swim around till your 
+	lungs give out then you surface.".
+
+	instead throwing something which is held by yourself into the pool:
+	now the noun is in the pool;
 	say "You throw [the noun] into the pool.".
 
-	report throwing something which is not held into the pool:
+	instead of throwing something which is not held into the pool:
 	say "You haven't got [the noun].".
 
 	[Test Scripts]
 
-	test attack with "attack chair/hit chair/belt chair/punch chair/ 
-	smack chair/	
-	damage pump/wack chair/wallop chair/hit idol with chair/ 
-	hit idol with trashcan".
+	test attack with "attack chair/hit chair/belt chair/punch chair/smack chair/
+attack pump/whack chair/wallop chair/hit idol with chair/ hit idol with trashcan".
 
-	test blow with "blow feather/take feather/blow feather/
-	drop feather/ blow in balloon/
-	deflate balloon/inflate balloon with pump/deflate balloon/ 
-	pump up balloon with pump	
-	/deflate balloon/x match/strike match/blow out match/
-	strike match/blow out match".
+	test blow with "blow feather/take feather/blow feather/drop feather/ blow in balloon/
+deflate balloon/inflate balloon with pump/deflate balloon/pump up balloon with pump/
+deflate balloon/x match/strike match/blow out match/strike match/blow out match".
 
 	test clean with "i/clean chair/rub chair/dust chair with cloth/
-	scrub pool/ rub feather	
-	/polish balloon/sweep pool/shine chair with cloth/wipe idol/ 
-	wipe idol with cloth".
+	scrub pool/ rub feather/polish balloon/sweep pool/shine chair with cloth/wipe idol/
+wipe idol with cloth".
 
-	test break with "break balloon/break feather/damage chair/smash pump/trash idol/
-	smash house/fracture fence"
+	test break with "break balloon/crack feather/crush chair/damage pump/destroy idol/
+fracture fence/ruin chair/shatter idol/smash house/snap guard/trash feather/wreck fence/
+vandalize pool"
 
-	test bribe with "bribe guard/bribe idol with rain/
-	bribe idol with chair".
+	test bribe with "bribe guard/bribe guard with rain/bribe guard with chair".
 
 	test buy with "buy idol/buy idol from guard"
 
-	test sell with "sell idol to guard"
-
-	test check with "check pool/check pool with machine/check chair/check idol/check idol with machine.".
+	test check with "check pool/check pool with machine/check chair/check idol/
+check idol with machine.".
 
 	test clear with "clear can/clear chair/clear idol/clear pool/clear leaves from pool".
 
-	test climb with "climb over fence/climb under fence/climb up tree/ 
-	climb down tree/climb in can/climb out can/climb in can/
-	climb out of can/ climb in window/open window/
-	climb in window/climb out window/climb through window/
-	climb thru window".
+	test climb with "climb over fence/climb under fence/climb up tree/ climb down tree/
+climb in can/climb out can/climb in can/climb out of can/ climb in window/open window/
+climb in window/climb out window/climb through window/climb thru window".
 
-	test cut with "cut rope/slash rope/slice rope/slit rope/
-	nick rope/prune rope/lacerate rope/scratch rope/cut rope with knife/
-	slash rope with knife/slit rope with knife/slash rope with knife/
-	scratch rope with knife/graze rope with knife/cut cloth with knife".
+	test crawl with "crawl/crawl around pool/crawl behind chair/crawl in front of chair/
+	crawl on chair/crawl over fence/crawl under idol/crawl through pool"
 
-	test dig with "dig ground/dig ground with match/take shovel/ 
-	dig ground with shovel/fill hole with dirt/dig ground with shovel/
-	fill hole with dirt/dig hole in ground."
+	test cut with "cut rope/slash rope/slice rope/slit rope/nick rope/prune rope/lacerate rope/
+scratch rope/cut rope with knife/slash rope with knife/slit rope with knife/slash rope with knife/scratch rope with knife/graze rope with knife/cut cloth with knife".
 
-	test dive with "dive into pool/exit/stand on board/
-	dive into pool/g/exit/ 
-	stand on board/dive off board/dive into pool/exit.".
+	test dig with "dig ground/dig ground with match/take shovel/ dig ground with shovel/
+fill hole with dirt/dig ground with shovel/fill hole with dirt/dig hole in ground."
 
-	test drink with "drink water/drink pool/drink from pool/
-	drink water from pool".
+	test dive with "dive into pool/exit/stand on board/dive into pool/g/exit/ stand on board/
+dive off board/dive into pool/exit.".
 
-	test drop with "take all/drop all but feather/take all/
-	drop all in pool/take all from pool/drop all but can in can/
-	take all from can/drop all/look".
+	test drink with "drink water/drink pool/drink from pool/drink water from pool".
 
-	test empty with "take all but idol, can,pool,guard/
-	put all in can/empty can/take all 
-	but idol,can,pool,guard/put all in can/empty can into pool".
+	test drop with "take all/drop all but feather/take all/drop all in pool/take all from pool/
+drop all but can in can/take all from can/drop all/look".
 
-	test examine with "x match/x paper/x machine gun/
-	x bullet drum/x bicycle pump/x hula hoop/x balloon/x shovel/
-	x idol/x feather/x pool/x trashcan/x chair/x house/x fence/
-	x tree/x lifeguard".
-
-	test feed with "feed idol/feed guard/feed guard with rain/
-	feed guard to idol/feed water to idol/feed guard with water/
-	feed idol with water/feed can with chair".
-
-	test fill with "take shovel/dig hole/fill hole from pool/
-	fill hole with water/fill can with water/fill can with dirt/
-	empty can/take shovel/dig hole/fill hole
-	with dirt".	
+	test empty with "take all/open can/put all in can/empty can/take all/put all in can/empty can into pool".
 	
-	test fix with "fix balloon/repair feather/mend chair/fix pump/fix pool with idol/
-	mend chair with pool/ fix pool with chair/ repair idol/repair idol with pump"
+	test examine with "x match/x paper/x machine gun/x bullet drum/x bicycle pump/x hula hoop/x balloon/
+x shovel/x idol/x feather/x pool/x trashcan/x chair/x house/x fence/x tree/x lifeguard".
+
+	test feed with "feed idol/feed guard/feed guard with rain/feed guard to idol/feed water to idol/
+feed guard with water/feed idol with water/feed can with chair".
+
+	test fill with "take shovel/dig hole/fill hole from pool/fill hole with water/fill can with water/open can/fill can with water/
+empty can/take shovel/dig hole/fill hole with dirt".	
+	
+	test fix with "fix balloon/repair feather/mend chair/fix pump/fix pool with idol/mend chair with pool/ 
+fix pool with chair/ repair idol/repair idol with pump"
 	
 	test fold with "x paper/fold paper/g/unfold paper/g".
 
-	test jump with "jump over chair/jump over idol/jump in pool/
-	exit/ jump through hoop/jump through chair/take shovel/
-	dig ground/jump in hole/exit/ stand on board/	
-	jump from board/exit/stand on board/jump off board".
+	test give with "take chair/hand chair over to guard/ask guard for chair/give chair to guard"
 
-	test kill with "kill me/kill lifeguard/murder lifeguard/
-	torture lifeguard/kill idol/kill feather/kill balloon".
+	test inflate with "blow in balloon/deflate balloon/smash pump/inflate balloon with pump/
+fix pump/inflate ballon with pump/deflate balloon/pump up balloon with pump/deflate balloon"
 
-	test lie with "lie on chair/lie in trashcan/lie on idol/
-	lie in pool/lie under chair/lie under idol/lie under tree".
+	test jump with "jump over chair/jump over idol/jump in pool/exit/ jump through hoop/
+jump on chair/take shovel/dig ground/
+	jump in hole/exit/fill hole with dirt/jump in hole/stand on board/jump on board/jump off 
+board/exit/jump from board".
 
-	test load with "take gun/take drum/load gun/unload gun/
-	load gun with bullets/load trashcan with gun/unload gun from can/load take feather/load chair with feather.".
+	test kill with "kill me/kill lifeguard/murder lifeguard/torture lifeguard/kill idol/kill feather/kill balloon".
 
-	test look with "look north/look south/look east/look west/	
-	look northeast/look northwest/look southeast/
-	look southwest/look up/look down/look behind idol/
-	look behind chair.".
+	test lie with "lie on chair/open can/lie in trashcan/lie on idol/lie in pool/lie under chair/lie under idol/lie under tree".
+
+	test load with "take gun/take drum/load gun/unload gun/load gun with bullets/load trashcan with gun/
+unload gun from can/take feather/load chair with feather.".
+
+	test look with "look north/look south/look east/look west/look northeast/look northwest/look southeast/
+look southwest/look up/look down/look behind idol/look behind chair.".
 
 	test move with "move chair/move can/move idol/move pool".
 
-	test offer with "offer chair to guard/ offer rain to idol"
+	test offer with "offer chair to guard/offer idol to gaurd/offer pool to guard"
 
-	test pay with "pay guard/pay guard for water/ 
-	pay idol/pay chair to idol/pay chair to idol".
+	test pay with "pay guard/pay guard for water/pay idol/pay chair to idol/pay chair to idol".
 	
 	test push with "push chair/push can/push idol/push pool".
+
+	test run with "run/run around pool/run behind chair/run in front of chair/run on chair/
+run over fence/run under idol/run through pool"
 	
-	test shoot with "shoot gun/take gun/shoot gun/load gun/
-	shoot pool/shoot guard/shoot idol/shoot match/shoot paper/shoot hoop/
-	shoot shovel/shoot gun at gun/shoot pump/shoot feather/
-	shoot gun at pool/shoot trashcan/shoot chair/shoot balloon".
+	test sell with "sell idol to guard"
 
-	test shout with "shout at lifeguard/scream at lifeguard/yell at lifeguard/
-	holler at lifeguard/bellow at lifeguard/shout warning at lifeguard/
-	shout warning to lifeguard".
+	test shoot with "shoot gun/take gun/shoot gun/load gun/shoot pool/shoot guard/shoot idol/
+shoot match/shoot paper/shoot hoop/shoot shovel/
+	shoot gun at gun/shoot pump/shoot feather/shoot gun at pool/shoot trashcan/shoot chair/shoot balloon".
 
-	test sit with "sit on chair/sit on lifeguard/sit in trashcan/
-	sit on trashcan/sit in chair/sit on idol/sit behind idol/sit under idol".
+	test shout with "shout at lifeguard/scream at lifeguard/yell at lifeguard/holler at lifeguard/
+bellow at lifeguard/shout warning at lifeguard/shout warning to lifeguard".
 
-	test stand with "stand on chair/stand on idol/stand on lifeguard/ 
-	stand on trashcan/stand in pool/stand in trashcan/
-	stand under idol/stand behind idol".
+	test sit with "sit on chair/sit on lifeguard/sit in trashcan/sit on trashcan/sit in chair/
+sit on idol/sit behind idol/sit under idol".
+
+	test stand with "stand on chair/stand on idol/stand on lifeguard/stand on trashcan/
+stand in pool/stand in trashcan/stand under idol/stand behind idol".
 
 	test talk with "talk to lifeguard/speak to lifeguard".
 
-	test swim with "swim in feather/swim in chair/swim under balloon/ 
-	swim over idol/enter pool/swim in pool/swim across pool/swim in water/
-	swim under water/swim through water/swim under pool/
-	swim over pool/swim around pool/exit".
+	test swim with "swim in feather/swim in chair/swim under balloon/swim over idol/
+enter pool/swim in pool/swim across pool/
+	swim in water/swim under water/swim through water/swim under pool/swim over pool/
+swim around pool/exit".
 
-	test pray with "pray/pray to idol/pray for idol/pray to pool/
-	pray for match/pray for rain/pray for me/pray to me".
+	test pray with "pray/pray to idol/pray for idol/pray to pool/pray for match/
+pray for rain/pray for me/pray to me".
 	
 	test shift with "shift pool/shift leaves/shift idol/shift guard"
 		
-	test steal with "give ball to guard/take ball/ 
-	steal ball from guard/give hoop to guard/steal hoop.".
+	test steal with "give ball to guard/take ball/steal jacket/ steal ball from guard/
+give hoop to guard/steal hoop.".
 
-	test throw with "take all/ toss pump in pool/
-	pitch balloon in pool/heave feather in pool/ 
-	hurl match in pool/throw gun in pool/	
-	toss shovel in pool/pitch hoop in pool/ 
-	throw drum in pool/heave chair in pool".
+	test throw with "take all/ toss pump in pool/pitch balloon in pool/heave feather in pool/
+hurl match in pool/throw gun in pool/toss shovel in pool/
+	pitch hoop in pool/ throw drum in pool/heave chair in pool".
 
-	test throwover with "take ball/ throw ball over pool/
-	take ball/ throw ball over trashcan/	
-	take ball/throw ball over idol/take ball/ 
-	throw ball over trashcan".
+	test throwover with "take ball/ throw ball over pool/take ball/ throw ball over trashcan/
+take ball/throw ball over idol/take ball/throw ball over trashcan".
 
-	test throwthru with "take ball/x ball/
-	throw ball through window/open window/	
-	throw ball through window/east/
-	take ball/throw ball through window/west/	
-	x ball/take ball".
+	test throwthru with "take ball/x ball/throw ball through window/open window/	
+throw ball through window/east/take ball/throw ball through window/west/x ball/take ball".
 
-	test throwunder with "take ball/throw ball under pool/
-	take ball/throw ball under idol/
-	take ball/throw ball under chair/
-	take ball/throw ball under trashcan".
+	test throwunder with "take ball/throw ball under pool/take ball/throw ball under idol/
+take ball/throw ball under chair/take ball/throw ball under trashcan".
 
-	test unload with "load gun/unload drum/
-	unload gun/load gun with bullets/	
-	unload gun/load drum/unload gun".
+	test unload with "load gun/unload drum/unload gun/load gun with bullets/unload gun/
+load drum/unload gun".	
+
+	test unfold with "x paper/unfold paper/g/fold paper/g".
+
+	test walk with "walk/walk around pool/walk behind chair/walk in front of chair/
+walk on chair/walk over fence/walk under idol/walk through pool"
 

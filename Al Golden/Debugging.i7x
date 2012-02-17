@@ -1,4 +1,4 @@
-Version 8 of Debugging by Al Golden begins here.
+Version 9 of Debugging by Al Golden begins here.
 
 Include (- 
 Verb meta 'recording' *          -> CommandsOn 
@@ -181,7 +181,16 @@ report conting:
 		say "[c]"
 
 after printing the name of a container (called receptacle) while conting:
-say " (in [the location of the receptacle])[line break]";   
+say " (in [the location of the receptacle])[line break]";  
+
+crittering is an action applying to nothing.
+understand "animals" as crittering.
+
+report crittering:
+	say "list of animals in the game: [line break]";
+	repeat with c running through animals:
+		say "[c][line break]"
+ 
 	
 Debugging ends here.
 
@@ -211,6 +220,8 @@ To see the objects: type "THINGS".
 To see Male NPCs: type "MEN" or "MALES"
 
 To see Female NPCs: type "WOMEN" or "FEMALES" 
+
+Tp see animals: type "ANIMALS"
 
 To see containers: type "CONTAINERS"
 

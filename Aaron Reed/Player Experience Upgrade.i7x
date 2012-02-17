@@ -1,4 +1,4 @@
-Version 1/110323 of Player Experience Upgrade by Aaron Reed begins here.
+Version 2/111127 of Player Experience Upgrade by Aaron Reed begins here.
 
 "A compilation extension to significantly improve player experience by improving the parser, correcting misspelled words, understanding more synonyms, providing more helpful library messages, and addressing common misconceptions."
 
@@ -97,8 +97,7 @@ Report requesting epistemic status of:
 
 Book - Approaches by Emily Short
 
-[Modified Version 3]
-[Note: same as existing v3 but replacing deprecated "change X to Y" phrases with "now X is Y"]
+[Version 4]
 
 A person can be staid or hurrying. A person is usually staid.
 A room can be proper-named or improper-named.
@@ -150,7 +149,7 @@ Check an actor approaching (this is the can't approach our current location rule
 
 The approach-finding rules are a rulebook.
 
-The approach-heading is a direction that varies.
+The approach-heading is an object that varies.
 The approach-destination is a room that varies.
 The final destination is a room that varies.
 
@@ -239,7 +238,7 @@ Report approaching when the location is the noun (this is the default looking on
 
 Book - Smarter Parser by Aaron Reed (for use without Smarter Parser by Aaron Reed)
 
-[Version 13/110317]
+[Version 14/110802]
 
 Chapter - Definitions
 
@@ -389,13 +388,25 @@ Definition: a thing is bestial if it is an animal.
 To say get noun example:
 	let fake_example be false;
 	let noun_example be indexed text;
-	if the number of visible appropriate for taking things which are not enclosed by the player > 0:
-		now noun_example is "[random visible appropriate for taking things which are not enclosed by the player]";
-	otherwise if the number of visible things which are not sp_alive > 0:
-		now noun_example is "[random visible thing which is not sp_alive]";
-	otherwise:
-		now noun_example is "flower";
-		now fake_example is true;
+	[Check to see if the player tried to reference something nearby]
+	let candidate be indexed text;
+	let first misunderstood word be indexed text;
+	now first misunderstood word is word number ( the number of words in the rejected command ) in the rejected command;
+	repeat with item running through things enclosed by location:
+		if item is visible:
+			now candidate is printed name of item in lower case;
+			repeat with wordcounter running from 1 to the number of words in candidate:
+				if word number wordcounter in candidate matches the regular expression "\b[first misunderstood word]":
+					now noun_example is the printed name of item;
+	if noun_example is empty:
+		[Otherwise, choose the most sensible example possible.]
+		if the number of visible appropriate for taking things which are not enclosed by the player > 0:
+			now noun_example is "[random visible appropriate for taking things which are not enclosed by the player]";
+		otherwise if the number of visible things which are not sp_alive > 0:
+			now noun_example is "[random visible thing which is not sp_alive]";
+		otherwise:
+			now noun_example is "flower";
+			now fake_example is true;
 	say "[noun_example in upper case][if fake_example is true] (if one were here)".
 
 To get person example, in normal case:
@@ -476,11 +487,146 @@ Carry out parser-debugging:
 
 Chapter - The Rules
 
-Section - Nothing Entered
-
-[Because blank lines are handled differently than all other kinds of parser errors (see the "Keyboard" routine in Parser.i6t), it's impossible to intervene other than through intercepting the library message (or replacing the whole Keyboard routine, something I'm loathe to do at the risk of reducing compatibility with other extensions). Unfortunately, only the action runs; the regular turn sequence rules do not, which means time will not advance, and if the story contains random events or helpful messages designed to encourage timid players, they will not be seen. I initially thought fiddling with the value of the "meta" variable could address this, but apparently it doesn't. Suggestions on fixing this are welcome.]
+[Because blank lines are handled differently than all other kinds of parser errors (see the "Keyboard" routine in Parser.i6t), it's impossible to intervene other than through intercepting the library message, which creates problems because the parser is in an unusual state at this point, or replace the whole Keyboard routine, which might create compatibility issues with other extensions. Both solutions are offered here.]
 
 Use normal blank lines translates as (- Constant USE_NORMAL_BLANK_LINES; -).
+		
+Section - Nothing Entered Advanced Version
+
+Include (- [ Keyboard  a_buffer a_table  nw i w w2 x1 x2;
+	sline1 = score; sline2 = turns;
+
+	while (true) {
+		! Save the start of the buffer, in case "oops" needs to restore it
+		for (i=0 : i<64 : i++) oops_workspace->i = a_buffer->i;
+	
+		! In case of an array entry corruption that shouldn't happen, but would be
+		! disastrous if it did:
+		#Ifdef TARGET_ZCODE;
+		a_buffer->0 = INPUT_BUFFER_LEN;
+		a_table->0 = 15;  ! Allow to split input into this many words
+		#Endif; ! TARGET_
+	
+		! Print the prompt, and read in the words and dictionary addresses
+		PrintPrompt();
+		DrawStatusLine();
+		KeyboardPrimitive(a_buffer, a_table);
+	
+		! Set nw to the number of words
+		#Ifdef TARGET_ZCODE; nw = a_table->1; #Ifnot; nw = a_table-->0; #Endif;
+	
+		! If the line was blank, get a fresh line
+		!if (nw == 0) {
+		!	@push etype; etype = BLANKLINE_PE;
+		!	players_command = 100;
+		!	BeginActivity(PRINTING_A_PARSER_ERROR_ACT);
+		!	if (ForActivity(PRINTING_A_PARSER_ERROR_ACT) == false) L__M(##Miscellany,10);
+		!	EndActivity(PRINTING_A_PARSER_ERROR_ACT);
+		!	@pull etype;
+		!	continue;
+		!}
+	
+		! Unless the opening word was OOPS, return
+		! Conveniently, a_table-->1 is the first word on both the Z-machine and Glulx
+	
+		w = a_table-->1;
+		if (w == OOPS1__WD or OOPS2__WD or OOPS3__WD) {
+			if (oops_from == 0) { L__M(##Miscellany, 14); continue; }
+			if (nw == 1) { L__M(##Miscellany, 15); continue; }
+			if (nw > 2) { L__M(##Miscellany, 16); continue; }
+		
+			! So now we know: there was a previous mistake, and the player has
+			! attempted to correct a single word of it.
+		
+			for (i=0 : i<INPUT_BUFFER_LEN : i++) buffer2->i = a_buffer->i;
+			#Ifdef TARGET_ZCODE;
+			x1 = a_table->9;  ! Start of word following "oops"
+			x2 = a_table->8;  ! Length of word following "oops"
+			#Ifnot; ! TARGET_GLULX
+			x1 = a_table-->6; ! Start of word following "oops"
+			x2 = a_table-->5; ! Length of word following "oops"
+			#Endif; ! TARGET_
+		
+			! Repair the buffer to the text that was in it before the "oops"
+			! was typed:
+			for (i=0 : i<64 : i++) a_buffer->i = oops_workspace->i;
+			VM_Tokenise(a_buffer,a_table);
+		
+			! Work out the position in the buffer of the word to be corrected:
+			#Ifdef TARGET_ZCODE;
+			w = a_table->(4*oops_from + 1); ! Start of word to go
+			w2 = a_table->(4*oops_from);    ! Length of word to go
+			#Ifnot; ! TARGET_GLULX
+			w = a_table-->(3*oops_from);      ! Start of word to go
+			w2 = a_table-->(3*oops_from - 1); ! Length of word to go
+			#Endif; ! TARGET_
+		
+			! Write spaces over the word to be corrected:
+			for (i=0 : i<w2 : i++) a_buffer->(i+w) = ' ';
+		
+			if (w2 < x2) {
+				! If the replacement is longer than the original, move up...
+				for (i=INPUT_BUFFER_LEN-1 : i>=w+x2 : i-- )
+					a_buffer->i = a_buffer->(i-x2+w2);
+
+				! ...increasing buffer size accordingly.
+				#Ifdef TARGET_ZCODE;
+				a_buffer->1 = (a_buffer->1) + (x2-w2);
+				#Ifnot; ! TARGET_GLULX
+				a_buffer-->0 = (a_buffer-->0) + (x2-w2);
+				#Endif; ! TARGET_
+			}
+		
+			! Write the correction in:
+			for (i=0 : i<x2 : i++) a_buffer->(i+w) = buffer2->(i+x1);
+		
+			VM_Tokenise(a_buffer, a_table);
+			#Ifdef TARGET_ZCODE; nw = a_table->1; #Ifnot; nw = a_table-->0; #Endif;
+		
+			return nw;
+		}
+
+		! Undo handling
+	
+		if ((w == UNDO1__WD or UNDO2__WD or UNDO3__WD) && (nw==1)) {
+			Perform_Undo();
+			continue;
+		}
+		i = VM_Save_Undo();
+		#ifdef PREVENT_UNDO; undo_flag = 0; #endif;
+		#ifndef PREVENT_UNDO; undo_flag = 2; #endif;
+		if (i == -1) undo_flag = 0;
+		if (i == 0) undo_flag = 1;
+		if (i == 2) {
+			VM_RestoreWindowColours();
+			VM_Style(SUBHEADER_VMSTY);
+			SL_Location(); print "^";
+			! print (name) location, "^";
+			VM_Style(NORMAL_VMSTY);
+			L__M(##Miscellany, 13);
+			continue;
+		}
+		return nw;
+	}
+]; -) instead of "Reading the Command" in "Parser.i6t".
+
+The blank line replacement is an indexed text variable.
+The blank line replacement is usually "look".
+
+After reading a command (this is the Smarter Parser advanced replace blank line rule):
+	let T be indexed text;
+	now T is the player's command;
+	if T is "":
+		if the normal blank lines option is inactive:
+			say ">[blank line replacement in upper case][command clarification break]";
+			change the text of the player's command to the blank line replacement;
+		otherwise:
+			issue miscellaneous library message number 10; ["I beg your pardon?"]
+			stop the action.
+
+Section - Nothing Entered - Fallback Version
+
+[Normally this will never be reached, but if the prior section is commented out, then things will fall through to this less intrusive implementation.]
 
 Rule for printing a parser error when the latest parser error is the I beg your pardon error (this is the do something useful with blank lines rule):
 	identify error as do something useful with blank lines rule;
@@ -490,68 +636,6 @@ Rule for printing a parser error when the latest parser error is the I beg your 
 		now the reborn command is "look";
 		announce the reparsed command;
 		try looking.
-
-Section - Incorrect Use of commas
-
-[Parsing commas also happens before normal rules can intervene. Commas can either be used to separate multiple items in a command (as in TAKE BELL, BOOK, CANDLE) or to give orders (THORIN, GET THE RUCKSACK). While the former is intuitive and sometimes spontaneously tried by IF novices, the latter is not, and responses for this error can be misleading in this context. (For instance, VERY WELL, GO NORTH leads to "You seem to want to talk to someone, but I can't see whom."
-
-Unfortunately, due to an omission in the Inform template layer as of this writing (http://inform7.com/mantis/view.php?id=525) there is no way to interfere with the comma section of the parser through an activity. Our options are to either throw the baby out with the bathwater by stripping commas from input entirely (thus losing the list-making ability) or replace this section of the parser with a large block of Inform 6 code. Once the issue above is fixed, we could try setting a flag when a comma is detected in input, which could then trigger a rule name that does something more sophisticated: if the error reveals that the command began with a this processing via an activity. ]
-
-[Use no comma-based orders translates as (- Constant USE_NO_COMMA_ORDERS; -). 
-
-comma_flag is a truth state variable.
-
-After reading a command (this is the Smarter Parser strip commas from commands rule):
-	if the no comma-based orders option is active:
-		let tmpcmd be indexed text;
-		now tmpcmd is the player's command;
-		if tmpcmd matches the text ",":
-			now comma_flag is true.
-
-Last before reading a command (this is the Smarter Parser cleanup comma checking rule):
-	now comma_flag is false.
-
-A Smarter Parser rule when sp_normal (this is the incorrect use of commas rule):
-	if comma_flag is true:
-		if the latest parser error is the can't see whom to talk to error or the latest parser error is the didn't understand addressee's last name error:
-			try stripping everything before the comma and reparsing;
-		otherwise:
-			print an error about not using commas and reject the command.]
-
-
-[		let new_cmd be indexed text;
-		now new_cmd is the player's command;
-		replace the regular expression ".*\p" in new_cmd with "";
-		now the reborn command is new_cmd;
-		announce the reparsed command;
-		say command clarification break;
-		change the text of the player's command to new_cmd.]
-
-
-	[	identify error as the incorrect use of commas rule;
-		let new_cmd be indexed text;
-		now new_cmd is the player's command;
-		now the reborn command is new_cmd;
-		now the rejected command is "///"; [so it looks different than the old cmd.]
-		reparse the command.]
-
-[Table of Smarter Parser Messages (continued)
-rule name	message
-incorrect use of commas rule	"Avoid the use of commas or other unnecessary punctuation to make your commands better understood."]
-
-
-[Section: Dealing with Commas
-
-The archaic THORIN, TAKE THE RUCKSACK syntax is rarely used in modern IF, and many of the default parser messages relates to commas assume players understands this convention, leading do confusion if they don't.  whereas new players who include a comma in their input and be confused by the response. If any people are visible when a misunderstood command including a comma is tried, Smarter Parser tries to better explain the expected syntax. Otherwise, the extension strips everything up to and including the comma and reparses the command (so YOU IDIOT, GO NORTH can succeed).
-
-If your story does not allow the player to order characters around (or uses an alternate syntax), you should trigger the second behavior in all cases by adding the following line:
-
-	Use no comma-based orders.
-
-You can stop Smarter Parser from interfering with commas like this:
-
-	Use no Smarter Parser comma interference.]
-
 
 Section - Stripping Punctuation
 
@@ -618,7 +702,7 @@ A smarter parser rule when sp_normal (this is the signs of confusion rule):
 
 Table of Smarter Parser Messages (continued)
 rule name		message
-signs of confusion rule		"[as the parser]Try typing LOOK for a description of your surroundings. Any compass directions indicate exits which you can use by typing [get direction example]. Some of the objects mentioned in the description might be worth a closer look with a command like EXAMINE [get noun example]. You can also TAKE or DROP some things, type INVENTORY to see a list of what you're carrying already, OPEN or CLOSE containers or doors, and so on.[as normal]"
+signs of confusion rule		"[as the parser]Try typing LOOK for a description of your surroundings. Any directions indicate exits which you can use by typing [get direction example]. Some of the objects mentioned in the description might be worth a closer look with a command like EXAMINE [get noun example]. You can also TAKE or DROP some things, type INVENTORY to see a list of what you're carrying already, OPEN or CLOSE containers or doors, and so on.[as normal]"
 
 
 Section - Stripping Niceties
@@ -653,8 +737,7 @@ A smarter parser rule when sp_normal (this is the stripping interjections rule):
 		otherwise:
 			identify error as signs of frustration rule;
 			reject the command.
-				
-		
+			
 
 Section - Signs of Frustration
 
@@ -746,7 +829,7 @@ A smarter parser rule when sp_normal (this is the stripping adverbs rule):
 
 Table of Smarter Parser Messages (continued)
 rule name	message
-stripping adverbs rule	"[as the parser]I didn't understand that. You used a word that ends in 'ly'; if it was an adverb like 'slowly' or 'carefully,' you don't usually need to type those in IF.[as normal]"
+stripping adverbs rule	"[as the parser]I didn't understand that. You used a word that ends in 'ly'; if it was an adverb like 'slowly' or 'carefully,' you don't usually need to be that specific.[as normal]"
 
 
 
@@ -807,7 +890,7 @@ A smarter parser rule when sp_normal (this is the unnecessary movement rule):
 
 Table of Smarter Parser Messages (continued)
 rule name		message
-unnecessary movement rule		"[as the parser]Most IF separates space into a series of locations, each containing a set of objects. If you can see an object, you can usually interact with it without worrying about positioning. [if player is enclosed by something](Since you're in or on something, you may need to type EXIT first.) [end if]Try a command like EXAMINE [get noun example] for a closer look, LOOK to get a new description of this location, or a compass direction like [get direction example] to move to a different location.[as normal]"
+unnecessary movement rule		"[as the parser]If you can see an object, you can usually just interact with it directly without worrying about your position[if player is enclosed by something] (although since you're in or on something, you may need to type EXIT first)[end if]. Try a command like EXAMINE [get noun example] for a closer look at something[if the number of sp_viable directions is at least 1], LOOK to get a new description of this location, or a direction like [get direction example] to move to a different location[otherwise], or LOOK to show the description of this location again.[as normal]"
 
 
 Section - Stripping Vague Words
@@ -877,14 +960,14 @@ A smarter parser rule when sp_normal (this is the generic surroundings rule):
 
 Table of Smarter Parser Messages (continued)
 rule name		message
-generic surroundings rule		"[as the parser]Look for specific nouns or directions in the description you see after typing LOOK; avoid general concepts like the floor and ceiling, or relative directions like left and right.[as normal]"
+generic surroundings rule		"[as the parser]Unless specifically mentioned by the text, avoid general concepts like the floor and ceiling, or relative directions like left and right. Try typing LOOK and then using verbs like TAKE or EXAMINE on the things you see mentioned.[as normal]"
 
 
 
 Section - Stripping Body Parts
 
 [can successfully parse things like "take Phil's arm" or "hit Phil with my hand," and at least prints a recognition of the body part word otherwise. ]
-
+[BUG: >BOB'S FACE reparses to EXAMINE BOB, but the response is on the same line...]
 
 A smarter parser rule when sp_normal (this is the stripping body parts rule):
 	replace the regular expression "\b(eye|head|skull|hair|nose|mouth|ear|cheek|forehead)s?\b" in reborn command with "_body";
@@ -1055,7 +1138,7 @@ Include (-
 
 Book - Numbered Disambiguation Choices by Aaron Reed
 
-[Version 5]
+[Version 6/111127]
 
 Chapter - Setup
 
@@ -1086,7 +1169,7 @@ Before printing the name of something (called macguffin) while asking which do y
 		now disambiguation-busy is true;
 		add macguffin to the list of disambiguables, if absent;
 		now the disambiguation id of macguffin is the number of entries in list of disambiguables;
-		say "[before disambiguation number text][number of entries in list of disambiguables][after disambiguation number text]".
+		say "[before disambiguation number text][the number of entries in list of disambiguables][after disambiguation number text]".
 
 After printing the name of something while asking which do you mean (this is the Numbered Disambiguation Choices cleanup disambiguation-busy flag rule):
 	now disambiguation-busy is false.
@@ -1094,11 +1177,12 @@ After printing the name of something while asking which do you mean (this is the
 Before asking which do you mean (this is the Numbered Disambiguation Choices reset disambiguables rule):
 	repeat with item running through list of disambiguables:
 		now disambiguation id of item is 0;
-	truncate list of disambiguables to 0 entries.	
+	truncate list of disambiguables to 0 entries.
 
 Chapter - Fix number error
 
-[Unfortunately, the above understand rules mean Inform thinks any misunderstood sentence is misunderstood because of a number, and will issue a confusing library error message (Misc #29). I can't think of a good way to fix this-- you'd have to loop over grammar lines and check if the player was using one that legitimately called for a number, or something-- so this just replaces the "number" message with the more general "sentence" message, which is still accurate.]
+[Unfortunately, the above understand rules mean Inform thinks any misunderstood sentence is misunderstood because of a number, and will issue a confusing library error message (Misc #29). I can't think of a good way to fix this-- you'd have to loop over grammar lines and check if the player was using one that legitimately called for a number, or something-- so this just replaces the "number" message with the more general "I didn't understand that sentence" message, which is still accurate.]
+
 Rule for printing a parser error when the latest parser error is the didn't understand that number error (this is the Numbered Disambiguation Choices don't use number rule):
 	now the latest parser error is the didn't understand error;
 	make no decision.
@@ -1113,6 +1197,17 @@ After reading a command (this is the Numbered Disambiguation Choices strip closi
 	let disam-cmd be the player's command;
 	replace the regular expression "\)" in disam-cmd with " ";
 	change the text of the player's command to disam-cmd.
+	
+Chapter - When to reset numbers
+
+[How long should the disambiguation ID number still be understood as referring to the assigned item? Some players will try to use the numbers on subsequent turns as shortcuts. However, keeping them indefinitely can create a problem with duplicate objects: the disambiguation ID property makes them distinguishable, so "two apples" will start being identified as "an apple" and "an apple." To address this, we reset the numbers as soon as the player enters a command which does not include a number.]
+
+After reading a command when the number of entries in list of disambiguables > 0 (this is the Numbered Disambiguation Choices reset disambiguation id when no numbers in command rule):
+	let disam-cmd be indexed text;
+	let disam-cmd be the player's command;
+	unless disam-cmd matches the regular expression ".*\d.*":
+		consider the Numbered Disambiguation Choices reset disambiguables rule.
+		
 
 Book - Small Kindnesses by Aaron Reed
 
@@ -1199,10 +1294,23 @@ Rule for supplying a missing noun when we are approaching (this is the Small Kin
 
 Chapter - Examining the room
 
-Understand "look at/around/in/into the/a/an/some [any player-enclosing room]" or "look at/around/in/into [any player-enclosing room]" or "look [any player-enclosing room]" or "x [any player-enclosing room]" or "examine [any player-enclosing room]" or "search [any player-enclosing room]" as overly elaborate looking. Overly elaborate looking is an action applying to one thing. Definition: a room is player-enclosing if it encloses the player.
+Understand "look at/around/in/into the/a/an/some [room]" or "look at/around/in/into [room]" or "look [room]" or "x [room]" or "examine [room]" or "search [room]" as overly elaborate looking. Overly elaborate looking is an action applying to one thing. 
+
+After deciding the scope of the player when overly elaborate looking (this is the Small Kindnesses place the room in scope while looking rule):
+   place the location in scope, but not its contents.
 
 Carry out overly elaborate looking (this is the Small Kindnesses overly elaborate looking rule):
-	instead try looking;
+	instead try looking.
+	
+Chapter - Leave to exit
+
+Understand "leave [room]" or "exit [room]" or "flee [room]" as getting off.
+
+After deciding the scope of the player when getting off (this is the Small Kindnesses place the room in scope while getting off rule): place the location in scope, but not its contents.
+
+Instead of getting off the location (this is the Small Kindnesses overly elaborate exiting rule), try exiting.
+
+Understand "leave room/area/place/here" as exiting.
 
 
 Chapter - Show valid directions after going nowhere
@@ -1352,7 +1460,7 @@ To decide if intervened in action message:
 
 Book - Neutral Library Messages by Aaron Reed
 
-[Version 1/110323]
+[Version 2/110709]
 
 Chapter - Messages
 
@@ -1422,12 +1530,13 @@ touching action	1	"[as the parser]You can't touch [the noun][can't-addendum].[as
 squeezing action	1	"[as the parser]You can't squeeze [the noun][can't-addendum].[as normal]" ["Keep your hands to yourself."]
 Kissing action	1	"[as the parser]You can't kiss [the noun][can't-addendum].[as normal]" ["Keep your mind on the game."]
 Waking action	1	"[as the parser][if noun is player]As far as you know, you're already awake.[otherwise]You can't wake [the noun][can't-addendum].[end if][as normal]" ["That seems unnecessary."]
+--	72	"[as the parser]You can't order [the person asked] to do that[can't-addendum].[as normal]" ["Bob has  better things to do."]
 
 To say yourself-or-other: say "[if noun is player]yourself[otherwise]other characters".
 
 Section - Generic action acceptance messages
 
-[Some actions succeed by default. We want to take care to describe these successes in the vaguest possible terms, so as not to contradict any author-written text. Even the cautious default for some of these, "Nothing obvious happens," seems too suggestive that something non-obvious might be happening elsewhere. The default examining message has been very slightly softened, to reduce the incongruity of rare objects being called "nothing special," and to bring it in line with the other default sensory messages.
+[Some actions succeed by default. We want to take care to describe these successes in the vaguest possible terms, so as not to contradict any author-written text. Even the cautious default for some of these, "Nothing obvious happens," seems too suggestive that something non-obvious might be happening elsewhere. The default examining message has been very slightly softened, to reduce the incongruency of rare objects being called "nothing special," and to bring it in line with the other default sensory messages.
 
 Conversation actions that succeed mean the parser must admit the action took place, without implying anything about the NPC's reaction: "The detective is unimpressed" can be particularly misleading if you've just shown him a bloody weapon. The solution adopted here is to narrate the player's action, not the NPC's response.]
 
@@ -1976,7 +2085,7 @@ For saying the location name of a supporter (this is the Remembering saying supp
 
 Book - Extended Grammar by Aaron Reed
 
-[Version 5]
+[Version 6/110706]
 
 Section - Extended Grammar for Attack
 
@@ -2004,6 +2113,8 @@ Section - Extended Grammar for Drop
 
 Understand the command "toss" or "fling" or "hurl" as "drop".
 
+Understand "put [something preferably held] on floor/ground" as dropping.
+
 Section - Extended Grammar for Examine
 
 Understand the command "view" or "observe" or "inspect" as "examine".
@@ -2013,7 +2124,7 @@ Section - Extended Grammar for Enter
 Understand the command "board" as "enter".
 Understand "climb on/onto/in/into [something enterable]" as entering.
 Understand "exit [a door]" or "exit through/using/by/out [a door]" as entering.
-Understand "sit [something]" as entering.
+Understand "sit [something]" as entering. [Note: This breaks I7 [recap of command] / I6 PrintCommand, which expects the player has typed a grammatical command. Thus we might get messages like "What do you want to sit?"]
 Understand "sit down on/in [something]" as entering.
 Understand "jump on/in/into/onto [something]" as entering.
 Understand "sit down" as entering.
@@ -2119,61 +2230,75 @@ Simply including the extension is all that's necessary to gain its benefits, whi
 	KICK CAN
 	HUG DR. PHIL
 	USE BLENDER
-	
-	
-	
 
 Section: Details
 
 Player Experience Upgrade bundles ten extensions focused on improving various aspects of player experience, to save authors (especially new authors) from reinventing old wheels. The included extensions have been tested and tweaked to work together with a minimum of hands-on fuss. The full list of included extensions is:
 
-	Approaches by Emily Short
+	Approaches by Emily Short (Version 4)
 	 -- Allows players to GO BACK or GO TO a location by name. Addresses the common complaint among new players that compass directions are unintuitive.
 	
-	Smarter Parser by Aaron Reed 
+	Smarter Parser by Aaron Reed (Version 14)
 	 -- Scours misunderstood inputs looking for common mistakes and either reparses the command or explains what went wrong.
 	
-	Poor Man's Mistype by Aaron Reed
+	Poor Man's Mistype by Aaron Reed (Version 7)
 	 -- Corrects typing mistakes.
 	
-	Numbered Disambiguation Choices by Aaron Reed
+	Numbered Disambiguation Choices by Aaron Reed (Version 6)
 	 -- Ensures ambiguously named objects are always selectable.
 	
-	Default Messages by Ron Newcomb
+	Default Messages by Ron Newcomb (Version 3)
 	 -- Allows for easy replacement of library messages.
 	
-	Neutral Library Messages by Aaron Reed
+	Neutral Library Messages by Aaron Reed (Version 2)
 	 -- Replaces misleading or inappropriate default messages with more helpful or neutral alternatives.
 	
-	Remembering by Aaron Reed
+	Remembering by Aaron Reed (Version 8)
 	 -- Tells the player where they last saw something out-of-scope they're trying to interact with.
 	
-	Extended Grammar by Aaron Reed
+	Extended Grammar by Aaron Reed (Version 6)
 	 -- Adds a number of verb and command form synonyms to the standard actions.
 	
-	Punctuation Removal by Emily Short
+	Punctuation Removal by Emily Short (Version 4)
 	 -- Allows the player to type titles like MR. without the period causing problems.
 	
-	Small Kindnesses by Aaron Reed
+	Small Kindnesses by Aaron Reed (Version 12)
 	 -- Adds many small player aids like a smart USE verb, auto-listing exits after bad movement, and intelligently picking the right way to go for IN or OUT.
 	
 Nothing here alters the default behavior of the Standard Rules or introduces any new mandatory syntax. Authors do not need to learn anything or change their habits to benefit from this extension.
 
-More experienced authors may wish to simply cherry pick the individual extensions they'd like to use and download and include them individually, although note that each extension is given its own "Book" level heading for easy replacement, and if you include a newer version of component extension after Player Experience Upgrade, the new version will take precedence.
+More experienced authors may wish to simply cherry pick the individual extensions they'd like to use and download and include them individually, although note that each extension is given its own "Book" level heading within Player Experience Upgrade for easy replacement. For example, to remove just "Remembering," add the following as an empty heading, maybe at the end of your source text:
+
+Book - No Remembering (in place of Book - Remembering by Aaron Reed in Player Experience Upgrade by Aaron Reed)
+
+If newer versions of component extensions have been released than the ones compiled here, you can simply include them after including Player Experience Upgrade, and the new version will take precedence.
 
 Section: Replacing Default Messages
 
-The individual extensions by this author have been standardized in the way they name rules and print messages. Every rule begins with the name of the extension it's part of, as in the "Small Kindnesses don't implicitly take unwearables rule." Messages generated by the extensions redirect to library messages whenever possible; when new messages must be created, they're placed in a table called the "Table of <Extension> Responses" with columns rule name and message. You can amend this table to adjust these messages:
+The individual extensions by this author have been standardized in the way they name rules and print messages. Every rule begins with the name of the extension it's part of, as in the "Small Kindnesses don't implicitly take unwearables rule." Messages generated by the extensions redirect to library messages whenever possible; when new messages must be created, they're placed in a table called the "Table of <Extension> Responses" with two columns: rule name, and message. You can amend this table to adjust these messages:
 
 	Table of Small Kindnesses Responses (amended)
 	rule name	message
 	Small Kindnesses carry out using rule	"You'll have to give me an exact verb."
 	
-The exception to this is Neutral Library Messages; to adjust these messages, see the documentation for Default Messages by Ron Newcomb, but in brief, do this:
+Library and action messages not specific to Player Experience Upgrade are changed by continuing the Table of Custom Library Messages, like this:
 
 	Table of custom library messages (continued)
 	library-action	library-message-id	library-message-text
-	Jumping action	1	"You jump on the spot, fruitfully."
+	--	21	"[as the parser]There's nothing to repeat![as normal]" 
+	dropping action	4	"Okay, you drop it."
+
+Messages from the parser should be wrapped in the [as the parser] and [as normal] tags, as seen in the first line above. Messages from the narrator can omit these tags.
+
+The best way to determine the action and number of a message is to open the extension and search for a few consecutive words in the text. (Keep in mind some words like "You" or "their" may be procedurally generated and thus not searchable.) Doing so will also demonstrate the say statements needed to appropriate generate the right text (such as [Cap That's-They're noun], which prints "That's" or "They're" based on whether the noun in question is singular or plural).
+
+Section: Common Snafus
+
+If your story includes implemented body parts, common clothing items, adverbs, implementations of room boundaries like walls and floors, or nontraditional movement, you may want to look through the "Smarter Parser" section of the extension code and consider replacing or overriding some of its default behavior (see above).
+
+Stories with nontraditional movement might also want to take a look at "Small Kindnesses" and "Approaches" to be sure neither are stepping on your toes.
+
+If your story includes fuller implementations of any of the built-in stub verbs Inform provides (including jump, kiss, sing, rub, swing, and quite a few more: see the Actions tab of the Index panel) you should check that "Neutral Library Messages" does not include messages that might mislead your players, and change them if necessary.
 	
 Section: Style of Parser Messages	
 	
@@ -2205,7 +2330,7 @@ Via Approaches by Emily Short, the extension allows players to GO TO any previou
 	
 Section: Stories without directional movement
 
-To disable the message listing room exits upon going nowhere:
+If the player moves in a direction that does not lead anywhere, the extension will show a list of the valid exits. To disable this:
 
 	Use no normal movement tricks. Understand the command "exits" as something new.
 	
@@ -2215,16 +2340,20 @@ Smarter Parser can cause slower processing of misunderstood input, which may be 
 
 	Use empty Smarter Parser rulebook.
 	
-...and players can do so by typing:
+...or players can do so by typing:
 
 	>NOVICE OFF
 	
 Section: Blank Line
-	
-Entering a blank line with no input, one of the most common new player reactions, maps to LOOK; you can disable this with:
+
+If the player presses enter at a prompt, Player Experience Upgrade makes the story respond as if they had typed LOOK. You can disable this with:
 
 	Use normal blank lines.
-		
+
+...or replace the substituted action with a new string:
+
+	The blank line replacement is "wait".
+
 Section: Compatibility
 
 The extension is known to be compatible with Locksmith by Emily Short, Keyword Interface by Aaron Reed, and probably many others.

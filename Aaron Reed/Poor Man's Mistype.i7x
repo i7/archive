@@ -1,8 +1,9 @@
-Version 7 of Poor Man's Mistype by Aaron Reed begins here.
+Version 8 of Poor Man's Mistype by Aaron Reed begins here.
 
-"Adds basic typo correction by checking the first few letters of misunderstood input against the printed names of nearby objects. Requires Smarter Parser by Aaron Reed."
+"Adds basic typo correction by checking the first few letters of misunderstood input against the printed names of nearby objects. Requires version 15 of Smarter Parser by Aaron Reed. Supports Scope Caching by Mike Ciul for faster performance."
 
 [Versions:
+ -- Version 8: Added support for Scope Caching for faster speed; moved position of first bad word check into Smarter Parser, so this now requires v15 of that.
  -- Version 7: Fixed a bug in GetFirstNonDictWord that was leaving the word counter in an unexpected place.
  -- Version 6: Doesn't try to correct one or two character words; catches misspelled articles and a few common misspelled verbs.
  -- Version 5: Documentation updates.
@@ -11,11 +12,12 @@ Version 7 of Poor Man's Mistype by Aaron Reed begins here.
  -- Version 2: Removed checking for misspelled verbs, since this has caused problems for some people; simplified removal of Smarter Parser rules.
 ]
 
+
 Chapter - Compatibility
 
 Section - Inclusions
 
-Include Version 12 of Smarter Parser by Aaron Reed.
+Include Version 15 of Smarter Parser by Aaron Reed.
 
 Chapter - Sequence
 
@@ -56,32 +58,29 @@ A smarter parser rule (this is the most common verb misspellings rule):
 		if input contains "^(tkae)":
 			identify error as most common verb misspellings rule;
 			replace the regular expression text matching subexpression 1 in the reborn command with "take";
-			reparse the command.	
-					
-Chapter - Utilities
-					
-To decide which number is the position of first bad word: (- GetFirstNonDictWord() -).
+			reparse the command.
+			
+Chapter - Faster Mistype (for use with Scope Caching by Mike Ciul)
 
-Include (-
+The faster Poor Man's Mistype rule is listed instead of the Poor Man's Mistype rule in the smarter parser rules.
 
-[ GetFirstNonDictWord myword   twn;
-	twn=wn;
-	wn = 1;
-	myword = 0;
-	while (myword ~= -1) {
-		myword = NextWordStopped();
-		if (myword == 0) {
-			myword=wn-1;
-			wn=twn;
-			return wn-1;
-		}
-	}
-	myword=wn-1;
-	wn=twn;
-	return -1;	
-];
-
--).
+This is the faster Poor Man's Mistype rule:
+	let wnum be the position of first bad word;
+	if wnum > 0:
+		let badword be indexed text;
+		now badword is word number wnum in reborn command;
+		if the number of characters in badword < 3, no match;
+		let first3 be indexed text;
+		now first3 is "[character number 1 in badword][character number 2 in badword][character number 3 in badword]";
+		let candidate be indexed text;
+		repeat with item running through marked visible things:
+			now candidate is printed name of item in lower case;
+			if candidate matches the regular expression "\b[first3]":
+				repeat with wordcounter running from 1 to the number of words in candidate:
+					if word number wordcounter in candidate matches the regular expression "\b[first3]":
+						replace the regular expression "\b[badword]\b" in the reborn command with "[word number wordcounter in candidate]";
+						identify error as the Poor Man's Mistype rule;
+						reparse the command.
 		
 
 Poor Man's Mistype ends here.
@@ -94,7 +93,7 @@ The extension requires version 12 or higher of Smarter Parser by Aaron Reed, whi
 
 	Use empty Smarter Parser rulebook.	
 
-Example: * Potatoe Farm
+Example: * Potatoe Farm -
 
 	*: "Potatoe Farm".
 

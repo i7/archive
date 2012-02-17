@@ -1,9 +1,10 @@
-Version 5 of Numbered Disambiguation Choices by Aaron Reed begins here.
+Version 6/111127 of Numbered Disambiguation Choices by Aaron Reed begins here.
 
 "Numbers the options in disambiguation questions, to help new players and solve the 'disambiguation loop' problem caused by indistinguishable objects."
 
 [
 Updates:
+Version 6: Fixed an infelicity with indistinguishable objects reported by Victor Gijsbers. Started to fix a bug to do with animate people reported by Simon; this turns out to be a bug in Inform (http://inform7.com/mantis/view.php?id=700) which is not easy to work around, so leaving unfixed for now.
 Version 5: updated for Player Experience Upgrade.
 Version 4: fixed the misleading error message "I didn't understand that number" from appearing; thanks to Wade for reporting.
 Version 3: fixed an obscure bug reported by Matt W.; thanks!
@@ -39,7 +40,7 @@ Before printing the name of something (called macguffin) while asking which do y
 		now disambiguation-busy is true;
 		add macguffin to the list of disambiguables, if absent;
 		now the disambiguation id of macguffin is the number of entries in list of disambiguables;
-		say "[before disambiguation number text][number of entries in list of disambiguables][after disambiguation number text]".
+		say "[before disambiguation number text][the number of entries in list of disambiguables][after disambiguation number text]".
 
 After printing the name of something while asking which do you mean (this is the Numbered Disambiguation Choices cleanup disambiguation-busy flag rule):
 	now disambiguation-busy is false.
@@ -47,11 +48,12 @@ After printing the name of something while asking which do you mean (this is the
 Before asking which do you mean (this is the Numbered Disambiguation Choices reset disambiguables rule):
 	repeat with item running through list of disambiguables:
 		now disambiguation id of item is 0;
-	truncate list of disambiguables to 0 entries.	
+	truncate list of disambiguables to 0 entries.
 
 Chapter - Fix number error
 
-[Unfortunately, the above understand rules mean Inform thinks any misunderstood sentence is misunderstood because of a number, and will issue a confusing library error message (Misc #29). I can't think of a good way to fix this-- you'd have to loop over grammar lines and check if the player was using one that legitimately called for a number, or something-- so this just replaces the "number" message with the more general "sentence" message, which is still accurate.]
+[Unfortunately, the above understand rules mean Inform thinks any misunderstood sentence is misunderstood because of a number, and will issue a confusing library error message (Misc #29). I can't think of a good way to fix this-- you'd have to loop over grammar lines and check if the player was using one that legitimately called for a number, or something-- so this just replaces the "number" message with the more general "I didn't understand that sentence" message, which is still accurate.]
+
 Rule for printing a parser error when the latest parser error is the didn't understand that number error (this is the Numbered Disambiguation Choices don't use number rule):
 	now the latest parser error is the didn't understand error;
 	make no decision.
@@ -66,6 +68,16 @@ After reading a command (this is the Numbered Disambiguation Choices strip closi
 	let disam-cmd be the player's command;
 	replace the regular expression "\)" in disam-cmd with " ";
 	change the text of the player's command to disam-cmd.
+	
+Chapter - When to reset numbers
+
+[How long should the disambiguation ID number still be understood as referring to the assigned item? Some players will try to use the numbers on subsequent turns as shortcuts. However, keeping them indefinitely can create a problem with duplicate objects: the disambiguation ID property makes them distinguishable, so "two apples" will start being identified as "an apple" and "an apple." To address this, we reset the numbers as soon as the player enters a command which does not include a number.]
+
+After reading a command when the number of entries in list of disambiguables > 0 (this is the Numbered Disambiguation Choices reset disambiguation id when no numbers in command rule):
+	let disam-cmd be indexed text;
+	let disam-cmd be the player's command;
+	unless disam-cmd matches the regular expression ".*\d.*":
+		consider the Numbered Disambiguation Choices reset disambiguables rule.
 
 Numbered Disambiguation Choices ends here.
 
@@ -75,7 +87,7 @@ This extension is designed to solve two problems with disambiguation questions. 
 
 Numbered Disambiguation Choices addresses both issues by printing (and then understanding) numbers before each object in a disambiguation question. Players can type just the number (or an identifying word or new command, as normal) to continue.
 
-By default, the extension will not reset the numbers until another disambiguation question is asked. This is because in testing players would often try to refer to other objects in the disambiguation list by their number in subsequent turns. If you want to change this so numbers can only be used immediately after a disambiguation question is asked, add the following to your code:
+By default, the extension will reset the numbers as soon as the player types a command which does not contain a number. This is because in testing players would often try to refer to other objects in the disambiguation list by their number in subsequent turns. If you want to change this so numbers can only be used immediately after a disambiguation question is asked, add the following to your code:
 
 	Every turn: follow the reset disambiguables rule.
 

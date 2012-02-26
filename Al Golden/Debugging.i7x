@@ -1,4 +1,4 @@
-Version 9 of Debugging by Al Golden begins here.
+Version 10 of Debugging by Al Golden begins here.
 
 Include (- 
 Verb meta 'recording' *          -> CommandsOn 
@@ -130,16 +130,16 @@ understand "women" or "females"  as wnpcing.
 
 report mnpcing:
 	say "list of Male NPCs in the game: [line break]";
-	repeat  with m running through things which are a man:
-		say "[m]";
+	repeat  with M running through things which are a man:
+		say "[M]";
 
 after printing the name of a man (called guy) while mnpcing:
 say " (in [the location of the guy])[line break]";   
 		
 report wnpcing:
 	say "list of Female NPCs in the game: [line break]";
-	repeat  with w running through things which are a woman:
-		say "[w]";
+	repeat  with W running through things which are a woman:
+		say "[W]";
 
 after printing the name of a woman (called gal) while wnpcing:
 say " (in [the location of the gal])[line break]";   
@@ -169,16 +169,24 @@ understand "regions" as regeing.
 
 report regeing:
 	say "list of regions in the game. [line break]";
-	repeat with r running through regions:
-		say "[r] [line break]"
+	repeat with R running through regions:
+		say "[R] [line break]"
+
+supping is an action applying to nothing.
+understand "supporters" as supping.
+
+report supping:
+	say "list of supporters in the game: [line break]";
+	repeat with SP running through supporters:
+		say "[SP] [line break]"
 
 conting is an action applying to nothing.
 understand "containers" as conting.
 
 report conting:
 	say "list of containers in the game: [line break]";
-	repeat with c running through containers:
-		say "[c]"
+	repeat with C running through containers:
+		say "[C]"
 
 after printing the name of a container (called receptacle) while conting:
 say " (in [the location of the receptacle])[line break]";  
@@ -188,8 +196,8 @@ understand "animals" as crittering.
 
 report crittering:
 	say "list of animals in the game: [line break]";
-	repeat with c running through animals:
-		say "[c][line break]"
+	repeat with A running through animals:
+		say "[A][line break]"
  
 	
 Debugging ends here.
@@ -224,6 +232,8 @@ To see Female NPCs: type "WOMEN" or "FEMALES"
 Tp see animals: type "ANIMALS"
 
 To see containers: type "CONTAINERS"
+
+To see supporters: type "SUPPORTERS"
 
 To see backdrops: type "BACKDROPS"
 

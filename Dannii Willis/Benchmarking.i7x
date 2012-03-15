@@ -109,25 +109,25 @@ Array PowersOfTen --> 1 10 100 1000 10000 100000 1000000 10000000 100000000 1000
 	if (prec > 8)
 		prec = 8;
 	pow10 = PowersOfTen --> prec;
-	
+
 	! Knock off the sign bit first.
 	if (val & $80000000) {
 		@streamchar '-';
 		val = val & $7FFFFFFF;
 	}
-	
+
 	@jisnan val ?IsNan;
 	@jisinf val ?IsInf;
 
 	! Take as an example val=123.5, with precision=6. The desired result
 	! is "123.50000".
-	
+
 	extra0 = 0;
 	@fmod val $3F800000 frac fint; ! $3F800000 is 1.0.
 	@ftonumz fint int;
 	! This converts the integer part of the value to an integer value;
 	! in our example, 123.
-	
+
 	if (int == $7FFFFFFF) {
 		! Looks like the integer part of the value is bigger than
 		! we can store in an int variable. (It could be as large
@@ -157,7 +157,7 @@ Array PowersOfTen --> 1 10 100 1000 10000 100000 1000000 10000000 100000000 1000
 	@streamchar '.';
 
 	! Now we need to print the frac part, which is .5.
-	
+
 	@log frac sp;
 	@fdiv sp $40135D8E log10val; ! $40135D8E is log(10)
 	@numtof prec sp;
@@ -172,14 +172,14 @@ Array PowersOfTen --> 1 10 100 1000 10000 100000 1000000 10000000 100000000 1000
 	! exactly the (post-decimal-point) digits we want to print.
 
 	.DoPrint;
-	
+
 	if (idig >= pow10) {
 		! Rounding errors have left us outside the decimal range of
 		! [0.0, 1.0) where we should be. I'm not sure this is possible,
 		! actually, but we'll just adjust downward.
 		idig = pow10 - 1;
 	}
-	
+
 	@div pow10 10 pow10;
 	for (ix=0 : ix<prec : ix++) {
 		@div idig pow10 sp;
@@ -228,7 +228,7 @@ To decide which real number is (a - real number) rounded up:
 
 To decide which real number is the square root of (a - real number):
 	(- sqrt({a}) -).
-	
+
 To decide which real number is (a - real number) to the power of (b - real number):
 	(- pow({a}, {b}) -).
 
@@ -297,7 +297,7 @@ Include (-
 			+ (current_time2-->2 - current_time-->2);
 	}
 	(+ the minimum timer resolution +) = sample / 30;
-	
+
 	! The minimum time each test case must be run for to achieve a percent uncertainty of at most 1%.
 	(+ the minimum sample time +) = (+ the minimum timer resolution +) * 50;
 ];
@@ -482,7 +482,7 @@ Rule for timing a test case (called test case) (this is the running a test case 
 		[ Estimate how long it will take to reach the minimum sample time. ]
 		now count is
 			(remaining time as a real number divided by (
-				the elapsed time of the test case as a real number 
+				the elapsed time of the test case as a real number
 				divided by count as a real number)
 			) rounded up
 			as a number;
@@ -491,10 +491,10 @@ Rule for timing a test case (called test case) (this is the running a test case 
 			now count is 1;
 	[ Update the predicted sample count. ]
 	now the predicted sample count of the test case is
-		(the iteration count of the test case as a real number 
+		(the iteration count of the test case as a real number
 		times the minimum sample time as a real number
-		divided by the iteration time of the test case) 
-		rounded up 
+		divided by the iteration time of the test case)
+		rounded up
 		as a number;
 
 Part 2 - The interface unindexed
@@ -504,7 +504,7 @@ There is a room.
 
 [ Extra styles for the results table. ]
 Table of User Styles (continued)
-style name	justification	obliquity	indentation	first-line indentation	boldness	fixed width	relative size	glulx color 
+style name	justification	obliquity	indentation	first-line indentation	boldness	fixed width	relative size	glulx color
 bold-style	--	--	--	--	--	--	--	g-green
 
 [ Status line variables. ]
@@ -657,7 +657,7 @@ A last when play begins rule (this is the benchmark framework is taking over rul
 
 Benchmarking ends here.
 
----- DOCUMENTATION ---- 
+---- DOCUMENTATION ----
 
 Section: Introduction
 
@@ -704,7 +704,7 @@ Version 1/120218: Initial (non-beta) release
 Example: * Text matching - Avoiding slow Regular Expressions.
 
 	*: "Text matching"
-	
+
 	Include Benchmarking by Dannii Willis.
 
 	Search text is a text variable. Search text is "pineapple".

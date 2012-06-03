@@ -1,4 +1,4 @@
-Version 5 of Conversation Responses by Eric Eve begins here.
+Version 6 of Conversation Responses by Eric Eve begins here.
 
 Include Conversation Framework by Eric Eve.
 
@@ -136,6 +136,7 @@ The standard response rule is listed first in the report showing it to rules.
 The standard response rule is listed first in the report saying yes rules. 
 The standard response rule is listed first in the report saying no rules. 
 The standard response rule is listed first in the report saying sorry rules.
+The standard response rule is listed first in the report answering it that rules.
 
 The first report rule for saying goodbye to someone (this is the standard report farewell rule):
   if farewell type is implicit, abide by the implicit farewell response rules for the noun;

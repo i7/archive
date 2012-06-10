@@ -1,4 +1,4 @@
-Version 9 of Conversation Framework by Eric Eve begins here.
+Version 10 of Conversation Framework by Eric Eve begins here.
 
 "A framework for conversations that allows saying hello and goodbye, abbreviated forms of ask and tell commands for conversing with the current interlocutor, and asking and telling about things as well as topics."
 
@@ -8,7 +8,7 @@ Include Epistemology by Eric Eve.
 
 Book  1 - Actions for asking and telling about things
 
-Chapter  1 - Definitions
+Chapter  1 - Action Definitions
 
 Section 1 - New actions and grammar
 
@@ -136,7 +136,7 @@ After reading a command when the player's command matches "a [thing]" and the cu
 
 Book 3 - Greeting Protocols
 
-Chapter 1 - Definitions
+Chapter 1 - Greeting Definitions
 
 Asking someone about something is conversing.
 Telling someone about something is conversing.
@@ -397,7 +397,7 @@ The command HELLO by itself will start a conversation with a randomly chosen int
 
 In all these commands, GOODBYE may be abbreviated to BYE.
 
-The actions corresponding to HELLO and GOOBYE are called hailing and leavetaking - but since these are usually rerouted to saying hello to and saying goodbye to, we probably shan't need to worry about them much.
+The actions corresponding to HELLO and GOODBYE are called hailing and leavetaking - but since these are usually rerouted to saying hello to and saying goodbye to, we probably shan't need to worry about them much.
 
 The default responses to the commands aren't very interesting ("You say hello to Fred." and "You say goodbye to Bill") so you'll probably want to provide your own, e.g.:
 

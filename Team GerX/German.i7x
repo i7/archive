@@ -1,11 +1,11 @@
-Version 3/111222 of German by Team GerX begins here.
+Version 3/120621 of German by Team GerX begins here.
 
 "GerX: An extension to make German the language of play, written by Banbury,
 Christian Blümke and Michael Baltes. Designed for I7 releases 6G60 and 6F95."
 
 "based on deform release 6/11 by Martin Oehm"
 
-[v3.33]
+[v3.34]
 
 Part - I7 additions and replacements
 
@@ -89,7 +89,7 @@ To set the/-- current case to (C - a case): (- short_name_case = {C}-1; -).
 To decide which case is the current case: (- (short_name_case + 1) -).
 
 
-Section - Gender
+Section - Traditional Gender Attributes
 
 [---- ALT ----]
 [A thing can be female. A thing can be male. A thing can be neuter.
@@ -129,12 +129,13 @@ A woman is never male. A woman is never neuter. A woman is never plural-named.
 
 The male property translates into I6 as "male".
 
-Gender is a kind of value.
-The genders are Mehrzahl, männlich, weiblich, and sächlich.
+[Aus Kompatibilitätsgründen werden die seit Mai 2012 nicht mehr vergebenen Attribute
+male, female und neuter mit Definitionen für den GG nachgebildet.]
 
-The specification of gender is "Gender represents genders of a thing as one
-of the values männlich, weiblich, sächlich, and Mehrzahl in addition to the
-properties female, male, neuter, and plural-named."
+Definition: an object is male if its grammatical gender is masculine-gender.
+Definition: an object is female if its grammatical gender is feminine-gender.
+Definition: an object is neuter if its grammatical gender is neuter-gender.
+
 
 Section - Grammatical Gender
 
@@ -145,12 +146,11 @@ neuter, or plural-named).]
 A grammatical gender is a kind of value. The grammatical genders are
 masculine-gender [1], feminine-gender [2], neuter-gender [3], and no-specified-gender [4]. 
 
-[Damit das herkömmliche Verfahren mit Attributen weiterhin funktioniert,
-bekommt jedes Objekt zunächst einmal einen Default-Wert no-specified gender,
-der anzeigt, dass der Autor den grammatical gender (noch) nicht für
-ein Objekt festgelegt hat.]
-
 An object has a grammatical gender. The grammatical gender of an object is usually no-specified-gender.
+
+Definition: an object is masculine-gendered if its grammatical gender is masculine-gender.
+Definition: an object is feminine-gendered if its grammatical gender is feminine-gender.
+Definition: an object is neuter-gendered if its grammatical gender is neuter-gender.
 
 The grammatical gender property translates into I6 as "grammatical_gender".
 
@@ -158,81 +158,145 @@ Include (-
 Property grammatical_gender;
 -) after "Definitions.i6t".
 
+Gender is a kind of value.
+The genders are Mehrzahl, männlich, weiblich, and sächlich.
 
-Section - Alternative Gender Definitions
+The specification of gender is "Gender represents genders of a thing as one
+of the German language values männlich, weiblich, sächlich, and Mehrzahl. Mainly
+for the use in output texts."
+
+
+Section - In-line Gender Definitions
 
 [von Martin Oehm, 02.12.2011]
 
 [The grammatical gender of an object can be defined in the printed name, by
 adding one of the text substitutions m, f, n, or p directly after the name.]
 
-Use alternative gender definitions translates as (- Constant ALTERNATIVE_GENDER; -).
-
-An object can be marked for alternative genderisation.
 
 To say m:
-	Now the previously named noun is marked for alternative genderisation;
-	Now the grammatical gender of the previously named noun is masculine-gender.
+	now the previously named noun is singular-named;
+	now the grammatical gender of the previously named noun is masculine-gender.
 
 To say f:
-	Now the previously named noun is marked for alternative genderisation;
-	Now the grammatical gender of the previously named noun is feminine-gender.
+	now the previously named noun is singular-named;
+	now the grammatical gender of the previously named noun is feminine-gender.
 
 To say n:
-	Now the previously named noun is marked for alternative genderisation;
-	Now the grammatical gender of the previously named noun is neuter-gender.
+	now the previously named noun is singular-named;
+	now the grammatical gender of the previously named noun is neuter-gender.
 
 To say p:
-	Now the previously named noun is marked for alternative genderisation;
-	Now the grammatical gender of the previously named noun is no-specified-gender;
-	Now the previously named noun is not neuter;
-	Now the previously named noun is plural-named.
-
+	now the previously named noun is plural-named;
+	now the grammatical gender of the previously named noun is neuter-gender.
+	
 Include (- 
 
-#ifdef ALTERNATIVE_GENDER;
-Array gobble_buffer->256;
+#ifdef TARGET_GLULX;
 
-[ Gobble s length;
-    SetPreviouslyNamedNoun(s);
-    #ifdef TARGET_GLULX;
-    length = Glulx_PrintAnyToArray(gobble_buffer, 253, der, s);
-    #ifnot;
-    @output_stream 3 gobble_buffer;
-    der(s);
-    @output_stream -3;
-    length = gobble_buffer-->0;
-    if (gobble_buffer->(256 - 1) ~= 0) print "[*** Gobble: buffer overflow! ***]";
-    #endif;
-];
+	[ Gobble s;
+		Glulx_PrintAnyToArray(buffer3, 0, der, s);
+		RunParagraphOn();
+	];
+
 #ifnot;
-[ Gobble s length; rfalse; ];
+
+	[ Mute;
+        @output_stream -1;
+        if ($10->0 & 1) {
+            @set_window 1;
+        }
+    ];
+
+    [ Unmute;
+        @output_stream 1;
+        if ($10->0 & 1) {
+            @set_window 0;
+        }
+    ];
+    
+    [ Gobble s;
+		Mute();
+		der(s);
+		RunParagraphOn();
+		Unmute();
+	];
+    
 #endif;
+
 -).
 
 To gobble (o - an object): (- gobble({o}); -).
 
-[The printee is an object that varies.
-Before printing the name of an object (called the item)
-(this is the set printee rule): now the printee is the item.]
+
+Section - Genderisation
+
+To purge the/-- gender attributes for (item - an object):
+	now the item is not male;
+	now the item is not female;
+	now the item is not neuter.
+	
+To decide if (O - an object) is/are male-attributed: (- {O} has male -).
+To decide if (O - an object) is/are female-attributed: (- {O} has female -).
+To decide if (O - an object) is/are neuter-attributed: (- {O} has neuter -).
+
+To convert the/-- remaining gender attributes for (item - an object):
+	if the grammatical gender of the item is no-specified-gender:
+		if the item is plural-named:
+			now the grammatical gender of the item is neuter-gender; [GG darf später nicht no-specified-gender sein]
+		otherwise if the item is male-attributed:
+			now the item is singular-named;
+			now the grammatical gender of the item is masculine-gender;
+		otherwise if the item is female-attributed:
+			now the item is singular-named;
+			now the grammatical gender of the item is feminine-gender;
+		otherwise if the item is neuter-attributed:
+			now the item is singular-named;
+			now the grammatical gender of the item is neuter-gender;
+	purge the gender attributes for the item.
 				
 To genderise (sexless - an object):
-	if the alternative gender definitions option is active and the sexless is not the player:
-		now the grammatical gender of the sexless is no-specified-gender;
-		gobble sexless;
-		if the sexless is marked for alternative genderisation:
-			if the grammatical gender of sexless is no-specified-gender:
-				now sexless is not neuter;
-				now sexless is plural-named;
-			otherwise:
-				now sexless is not plural-named.
+	convert remaining gender attributes for sexless;
+	gobble sexless;
+	
+To re-genderise (item - an object) to (new printed name - a text),
+acting plural or acting masculine or acting feminine or acting neuter and/or
+with definite article or with no article or with yours and/or
+as proper-named:
+	now the printed name of the item is the new printed name;
+	if acting plural:
+		now the item is plural-named;
+		now the grammatical gender of the item is neuter-gender; [wahllos, weil irrelevant]
+	if acting masculine:
+		now the item is singular-named;
+		now the grammatical gender of the item is masculine-gender;
+	if acting feminine:
+		now the item is singular-named;
+		now the grammatical gender of the item is feminine-gender;
+	if acting neuter:
+		now the item is singular-named;
+		now the grammatical gender of the item is neuter-gender;
+	if with definite article:
+		now the special indefinite article of the item is definite article;
+	otherwise if with no article:
+		now the special indefinite article of the item is no article;
+	otherwise if with yours:
+		now the special indefinite article of the item is yours;
+	otherwise:
+		now the special indefinite article of the item is pending;
+	if as proper-named:
+		now the item is proper-named;
+	otherwise:
+		now the item is not proper-named;		
+	genderise the item.
 				
-When play begins (this is the genderise everything rule):
-	if the alternative gender definitions option is active:
-		Repeat with item running through things:
-			genderise the item;
-		Repeat with item running through rooms:
-			genderise the item.
+When play begins (this is the initially genderise everything rule):
+	Repeat with item running through things:
+		genderise the item;
+	Repeat with item running through rooms:
+		genderise the item;
+	Repeat with item running through directions:
+		genderise the item;
 
 
 Section - Values - Gender
@@ -363,7 +427,9 @@ usually unmarked for listing.
 A direction can be male. A direction can be female. A direction can be neuter.
 A direction can be plural-named.
 
-A direction is usually male. A neuter direction is never male.
+[A direction is usually male.]
+
+A neuter direction is never male.
 A female direction is never male. A plural-named direction is never male.
 
 A direction has a direction called an opposite.
@@ -421,65 +487,40 @@ The verb to be mapped below implies the mapping down relation.
 [Deutsche Synonyme und angezeigte Objektnamen für die Richtungen.]
 
 Understand "Norden" as north.
-The printed name of north is "Norden[-s]".
+The printed name of north is "Norden[-s][m]".
 
 Understand "Nordosten" or "no" as northeast.
-The printed name of northeast is "Nordosten[-s]".
+The printed name of northeast is "Nordosten[-s][m]".
 
 Understand "Nordwesten" as northwest.
-The printed name of northwest is "Nordwesten[-s]".
+The printed name of northwest is "Nordwesten[-s][m]".
 
 Understand "Sueden" as south.
-The printed name of south is "Süden[-s]".
+The printed name of south is "Süden[-s][m]".
 
 Understand "Suedosten" or "so" as southeast.
-The printed name of southeast is "Südosten[-s]".
+The printed name of southeast is "Südosten[-s][m]".
 
 Understand "Suedwesten" as southwest.
-The printed Name of southwest is "Südwesten[-s]".
+The printed Name of southwest is "Südwesten[-s][m]".
 
 Understand "Osten" or "o" as east.
-The printed name of east is "Osten[-s]".
+The printed name of east is "Osten[-s][m]".
 
 Understand "Westen" as west.
-The printed name of west is "Westen[-s]".
+The printed name of west is "Westen[-s][m]".
 
 Understand "hoch", "h", "rauf", "hinauf" and "oben" as up.
-The printed name of up is "oben". Up is proper-named and neuter.
+The printed name of up is "oben". Up is proper-named.
 
 Understand "runter", "r", "hinunter" and "unten" as down.
-The printed name of down is "unten". Down is proper-named and neuter.
+The printed name of down is "unten". Down is proper-named.
 
-Understand "rein" or "drinnen" as inside.
-The printed name of inside is "drinnen". Inside is proper-named and neuter.
+Understand "rein", "innen" or "drinnen" as inside.
+The printed name of inside is "drinnen". Inside is proper-named.
 
-Understand "raus" or "draussen" as outside.
-The printed name of outside is "drau[ß]en". Outside is proper-named and neuter.
-
-[(12.05.2011) Um in LanguageIsVerb() Richtungen sinnvoll ausgeben zu können,
-zieht IsDirectionVerb() nun zusätzlich diese Tabelle heran, da die Synonyme nicht
-mehr wie in I6 in der name-Property definiert werden.]
-
-Include (-
-Array LanguageDirectionWords table
-!-----------------------------------------------------------------------
-! I7-Richtung   Vokabular                                 Zeilenende = 0
-!-----------------------------------------------------------------------
-(+ north +)     'n//'  'norden'                                        0 
-(+ northeast +) 'ne'   'nordosten'  'no'                               0
-(+ northwest +) 'nw'   'nordwesten'                                    0
-(+ south +)     's//'  'sueden'                                        0
-(+ southeast +) 'se'   'suedosten'  'so'                               0
-(+ southwest +) 'sw'   'suedwesten'                                    0
-(+ east +)      'e//'  'osten'      'o//'                              0
-(+ west +)      'w//'  'westen'                                        0
-(+ up +)        'u//'  'hoch'       'h//' 'rauf'     'hinauf' 'oben'   0
-(+ down +)      'd//'  'runter'     'r//' 'hinunter' 'unten'           0
-(+ inside +)    'rein' 'drinnen'                                       0
-(+ outside +)   'raus' 'draussen'                                      0
-!-----------------------------------------------------------------------
-;
--) after "Definitions.i6t".
+Understand "raus", "aussen" or "draussen" as outside.
+The printed name of outside is "drau[ß]en". Outside is proper-named.
 
 
 Section - Remove most of the English commands
@@ -893,7 +934,7 @@ Understand "geh [direction]" as going.
 Understand "geh nach [direction]" as going.
 Understand "geh richtung [direction]" as going.
 Understand "geh in richtung [direction]" as going.
-Understand "geh nach draussen" as exiting.
+Understand "geh nach draussen/aussen" as exiting.
 Understand "geh raus/hinaus/heraus" as exiting.
 Understand "geh rein/hinein/herein" as going into.
 Understand the commands "lauf", "renn", "wander", "fluecht", "flieh", "schreit", and "spazier" as "geh".
@@ -1174,7 +1215,7 @@ Understand the command "sperr" as "schliess".
 Understand "verschliess [a lockable thing] mit [dativ] [something preferably held]" as locking it with.
 Understand "verschliess [something]" as closing.
 Understand "verschliess [something] mit [dativ] [something preferably held]" as closing it with.
-Understand the commands "verriegel", "veriegl" and "versperr" as "verschliess".
+Understand the commands "verriegel", "verriegle" and "versperr" as "verschliess".
 
 Understand "schlag [someone alive]" as attacking.
 Understand "schlag [noun hinein]" as attacking.
@@ -1219,7 +1260,7 @@ Understand "toet [someone alive]" as attacking.
 Understand "toet [someone alive] mit [dativ] [something preferably held]" as attacking it with.
 Understand "toet [something]" as attacking.
 Understand "toet [something] mit [dativ] [something preferably held]" as attacking it with.
-Understand the commands "attackier", "ermord", "mord", "bekaempf", "folter", "quael" and "pruegel" as "toet".
+Understand the commands "attackier", "ermord", "mord", "bekaempf", "folter", "quael", "pruegle" and "pruegel" as "toet".
 
 Understand "kaempf mit [dativ] [someone alive]" as attacking.
 Understand "kaempf mit [dativ] [something]" as attacking.
@@ -1278,7 +1319,7 @@ Understand "streif [something]" as touching.
 Understand "streif [a worn thing] ab" as taking off.
 Understand "streif [something] ab" as taking off.
 
-Understand "pfeif" or "traeller" or "jodel" or "sing" as singing.
+Understand "pfeif", "traeller", "jodel", "jodle" or "sing" as singing.
 
 Understand "kletter [something] hoch" as climbing.
 Understand "kletter auf [something] [darauf]" as climbing.
@@ -1338,11 +1379,14 @@ Understand "denk ueber [text] nach" as thinking about.
 Understand "denk nach ueber [text]" as thinking about.
 Understand "denk an [text]" as thinking about.
 
+Understand "erinner [dich] an [text]" as thinking about.
+Understand "erinner [text]" as thinking about.
+
 Understand "riech" as smelling.
 Understand "riech [something]" as smelling.
 Understand "riech an [dativ] [something]" as smelling.
 Understand "riech [noun daran]" as smelling.
-Understand the commands "schnueffl" and "schnueffel" and "schnupper" and "beschnupp" and "beschnuef" as "riech".
+Understand the commands "schnueffle", "schnueffel", "schnupper", "beschnupper", "beschnueffel" and "beschnueffle" as "riech".
 
 Understand "hoer" as listening to.
 Understand "hoer [something]" as listening to.
@@ -1368,7 +1412,7 @@ Understand "wisch [something]" as rubbing.
 Understand "wisch an [dativ] [something]" as rubbing.
 Understand "wisch [something] mit [dativ] [something preferably held] [ab]" as rubbing it with.
 Understand "wisch mit [dativ] [something preferably held] [something] [ab]" as rubbing it with.
-Understand the commands "reinig" and "putz" and "reib" and "schrubb" and "saeuber" and "polier" and "glaett" and "schmirgel" and "buerst" as "wisch".
+Understand the commands "reinig", "putz", "reib", "schrubb", "saeuber", "polier", "glaett", "schmirgel", "schmirgle" and "buerst" as "wisch".
 
 Understand "bind [something]" as tying it to.
 Understand "bind [something] an [something]" as tying it to.
@@ -2139,12 +2183,12 @@ Verb
 "ausgaenge"
 "beide"
 
-When play begins (this is the initialise auxiliary synonyms rule):
+When play begins (this is the initialise debug synonyms table rule):
 	initialise the auxiliary synonyms.
 	
 To initialise the/-- auxiliary synonyms: (- InitialiseLanguageSynonyms2(); -).
 
-The initialise auxiliary synonyms rule is listed first in the when play begins rulebook.
+The initialise debug synonyms table rule is listed first in the when play begins rulebook.
 
 
 Section - Tables of special vocabulary
@@ -2211,6 +2255,262 @@ when the item is part of a person [and the item is proper-named]
 			set definite-mode suffixes from the item with C;
 			say "[printed name of item] [des holder of item]";
 	now the previously named noun is the item;
+	
+	
+Section - Understanding umlauts in Glulx dictionary words (for Glulx only)
+
+Use umlauts in Glulx dictionary words translates as (- #ifdef TARGET_GLULX; Constant UMLAUT_DICT_WORDS; #endif; -).
+
+Use maximum number of umlauts of at least 4 translates as (- #ifdef TARGET_GLULX; Constant MAX_UMLAUT_NUMBER = {N}; #endif; -).
+
+Include (-
+#ifdef UMLAUT_DICT_WORDS;
+
+! *** (08.06.2012) Umlaute und ß in Glulx-Vokabeln zulassen.
+!     Dazu muss die Option "Use umlauts in Glulx dictionary words."
+!     aktiv sein.
+
+Constant MAX_UMLAUT_BUFFER = 2 * MAX_UMLAUT_NUMBER + MAX_UMLAUT_NUMBER + 1;
+
+Array ul_parse    --> 4 * WORDSIZE;
+Array ul_buffer   buffer INPUT_BUFFER_LEN;
+Array ul_pointer  -> MAX_UMLAUT_BUFFER;
+
+
+! *** Hier werden erst einmal ein paar Routinen, die es in der Lib
+!     schon gibt, so nachgebaut, dass man sie auch für andere
+!     Arrays als buffer und parse benutzen kann. Default sind
+!     weiterhin buffer und parse.
+
+[ GenericWordAddress wordnum buf par;
+	if (buf == 0) buf = buffer;
+	if (par == 0) par = parse;
+	return buf + par-->(wordnum*3);
+];
+
+[ GenericWordLength wordnum par;
+	if (par == 0) par = parse;
+	return par-->(wordnum*3-1);
+];
+
+! *** GernericPruneWord() ist ein Klon von PruneWord(), nur für beliebige
+!     Arrays. Hier wird ein Wort w in buf so lange beschnitten, bis in par
+!     eine Form vorliegt, die im Wörterbuch vorhanden ist.
+
+[ GenericPruneWord w buf par   start length;
+    if (w < 1 || w > NumberOfWords()) return false;
+    if (buf == 0) buf = buffer;
+    if (par == 0) par = parse;
+
+    start = GenericWordAddress(w, buf, par);
+    length = GenericWordLength(w, par);
+
+    if (start->(length - 1) == 'e' or 'n' or 's'
+        && DictionaryLookup(start, length - 1)) {
+        start->(length - 1) = ' ';
+        VM_Tokenise(buf, par);
+        return true;
+    }
+
+    if (start->(length - 2) == 'e'
+        && start->(length - 1) == 'm' or 'n' or 'r' or 's'
+        && DictionaryLookup(start, length - 2)) {
+        start->(length - 1) = ' ';
+        start->(length - 2) = ' ';
+        VM_Tokenise(buf, par);
+        return true;
+    }
+];
+
+! *** Es wird eine Kopie des Worts wn im Array ul_buffer
+!     erstellt. Danach wird das Wort nach Umschreibungen für Umlaute
+!     und ß (ae, oe, ue, ss) durchsucht und der Befund im Array ul_pointer
+!     für die späteren Ersetzungen hinterlegt.
+!
+!     Hier wird immer von dem Worst-Case-Szenario, das LTI uns freundlicherweise
+!     hinterlässt, ausgegangen: Der Spieler hat sämtliche Umlaute und ß als
+!     Umschreibungen eingetippt.
+!
+!     ul_pointer->0 enthält die Anzahl der möglichen Kandidaten für eine
+!     Rück-Umwandlung von Umschreibungen in Umlaute/ß. Danach werden
+!     die Position und das entprechende Zeichen des Kandidaten im
+!     Array abgelegt.
+
+[ GetUmlautWord wn    wlen wpos i; 
+
+	wlen = parse-->(3*wn-1);
+	wpos = parse-->(3*wn);
+	
+	if (wlen > DICT_WORD_SIZE) wlen = DICT_WORD_SIZE;
+	
+	! *** Das Wort aus der Spielereingabe in den Hilfspuffer ul_buffer
+	!     kopieren und die Änderungen dort vornehmen.
+	
+	for ( i = wpos : i < wpos + wlen : i++ ) {
+		ul_buffer->(i-wpos + WORDSIZE) = buffer->i;
+	}
+	
+	ul_buffer-->0 = wlen;
+	return wlen;
+];
+
+[ InitUmlautBuffer wn    start end ul_max_num try_char   i;
+
+	GetUmlautWord(wn);
+	
+	start = WORDSIZE;
+	end   = WORDSIZE + ul_buffer-->0;
+	
+	ul_pointer->0 = 0;
+	
+	! *** Das gesamte Array ul_buffer von start bis end nach
+	!     Umschreibungen durchsuchen und try_char setzen, wenn
+	!     eine Umschreibung gefunden wurde:
+	
+	! *** 15 Umlaute in einem Wort sind das absolute Maximum
+	if (MAX_UMLAUT_NUMBER > 15) ul_max_num = 15;
+	else ul_max_num = MAX_UMLAUT_NUMBER;
+
+	for (i = start : i < end && ul_pointer->0 < ul_max_num : i++ ) {
+		try_char = 0;
+		if (ul_buffer->i == 'a' && ul_buffer->(i+1) == 'e')
+			try_char = 'ä';
+		else if (ul_buffer->i == 'o' && ul_buffer->(i+1) == 'e')
+			try_char = 'ö';
+		else if (ul_buffer->i == 'u' && ul_buffer->(i+1) == 'e')
+			try_char = 'ü';
+		else if (ul_buffer->i == 's' && ul_buffer->(i+1) == 's')
+			try_char = 'ß';
+			
+		if (try_char) {
+			
+			! *** Wenn Umschreibung gefunden: Anzahl der gefundenen
+			!     Kandidaten um 1 erhöhen.
+			(ul_pointer->0)++;
+			
+			! *** Position im Array ul_buffer bunkern (inkl. Backup) ...
+			ul_pointer->((ul_pointer->0)*2-1) = i;
+			ul_pointer->(MAX_UMLAUT_BUFFER-ul_pointer->0) = i;
+			
+			! *** ... und das entprechende Zeichen noch dazu.
+			ul_pointer->((ul_pointer->0)*2) = try_char;
+			
+			! *** Eine Stelle überspringen, wenn eine Umschreibung
+			!     gefunden wurde, denn eine Umschreibung belegt zwei
+			!     Stellen:
+			i++;
+		}
+	}
+];
+
+[ ReplaceUmlautTranscription  ul_num     ul_pos ul_char i;
+
+	! *** Hier wird die Umschreibung in einen Umlaut/ß umgewandelt.
+	!     Dazu werden die Informationen in ul_pointer herangezogen.
+	!     Das letzte Zeichen von ul_buffer wird gelöscht und
+	!     die Position im Pointer-Array ul_pointer wird um eine
+	!     Stelle nach links verschoben.
+	
+	! *** Position und Ersetzung aus dem Pointer-Array ul_pointer holen:
+	ul_pos  = ul_pointer->(ul_num*2-1);
+	ul_char = ul_pointer->(ul_num*2);
+
+	! *** Umschreibung "ae/oe/ue/ss" durch "ä/ö/ü/ß" ersetzen
+	ul_buffer->ul_pos = ul_char;
+	LTI_Delete(ul_pos + 1, ul_buffer);
+	
+	! ***  Obsolet gewordenes letztes Zeichen mit Leerzeichen überschreiben:
+	ul_buffer->(WORDSIZE + ul_buffer-->0) = ' ';
+	
+	! *** ul_buffer wieder in Tokens aufsplitten und die Endungen abschneiden:
+	VM_Tokenise(ul_buffer, ul_parse);
+	GenericPruneWord(1, ul_buffer, ul_parse);
+	
+	! *** Position für die folgenden Elemente im Pointer-Array nach links
+	!     verschieben (um eins verringern):
+	for (i = ul_num : i < ul_pointer->0 : i++ ) {
+		(ul_pointer->( ((i+1)*2)-1 ) )--;
+	}
+];
+	
+[ Glulx_CheckUmlautDictWords     nw i w wlen wpos  nu j k possib ul_pos ul_char;
+
+	! *** Anzahl der Wörter in der Spielreingabe ermitteln:
+	nw = parse-->0;
+
+	for (i = 1 : i <= nw : i++ ) {
+		! *** Adresse des Wörterbucheintrags für Wort i holen:
+		w = parse-->(3*i-2);
+		
+		! *** Länge des Wortes i holen:
+		wlen = parse-->(3*i-1);
+	
+		! *** Wenn das Wort bekannt ist, braucht es keine weitere Bearbeitung.
+		!     Ebenso können Worte, die nur ein Zeichen lang sind, vernachlässigt
+		!     werden. In diesen Fällen wird die Umlaut-Prüfung für das Wort i
+		!     beendet.
+		
+		if (w || wlen < 2) continue;
+		
+		! *** Alles auf Anfang und das Pointer-Array initialisieren:
+		
+		InitUmlautBuffer(i);
+		nu = ul_pointer->0;
+		
+		! *** Die Anzahl possib der möglichen Kombinationen aller gefundenen
+		!     Kandidaten ermitteln. Da es für jede Umschreibung nur zwei
+		!     Möglichkeiten gibt (ersetzt oder nicht ersetzt), kann man in
+		!     Zweierpotenzen rechnen:
+		
+		possib = IncreasingPowersOfTwo_TB-->nu;
+
+		! *** Alle Kombinationen Umschreibung/Umlaut durchspielen, d.h.
+		!     binär hochzählen. Wenn eine kombinierte Zeichenkette im 
+		!     Wörterbuch vorhanden ist, wird der Vorgang
+		!     abgebrochen, in Tokens aufgelöst und das Wort
+		!     noch einmal beschnitten, wenn möglich.
+		
+		for (j = 1 : j < possib && w == 0 : j++) {
+			GetUmlautWord(i);
+			
+			! *** Positionen im Pointer-Array wiederherstellen.
+			for (k = 0 : k < ul_pointer->0 : k++) {
+				ul_pointer->((k+1)*2-1) = ul_pointer->(MAX_UMLAUT_BUFFER-k-1);
+			}
+			
+			! *** Umschreibungen ersetzen, wenn sie an der Reihe sind:
+			for (k = 0 : k < nu : k++) {
+				if (j & IncreasingPowersOfTwo_TB-->k) {
+					ReplaceUmlautTranscription(k+1);
+				}
+			}
+			
+			! *** Neu aufsplitten, beschneiden und gucken, ob das Ergebnis im
+			!     Wörterbuch zu finden ist. Das Resultat wird in w gespeichert.
+			
+			VM_Tokenise(ul_buffer, ul_parse);
+			GenericPruneWord(1, ul_buffer, ul_parse);
+			w = ul_parse-->1;
+		}
+		
+		! *** Alle Möglichkeiten sind durchgeprüft. Wurde ein Wort
+		!     gefunden, das im Wörterbuch existert?
+		!     Wenn ja, wird das gefundene Wort in den Eingabepuffer
+		!     geschrieben und neu in Tokens aufgesplittet.
+		!     Der Parser arbeitet dann mit dem gefundenen Wort weiter.
+		
+		if (w) {
+		    wpos = parse-->(3*i);
+			for (j = wpos : j < wpos + wlen : j++ ) {
+				buffer->j = ul_buffer->(j - wpos + WORDSIZE);
+			}
+			VM_Tokenise(buffer, parse);
+		}
+	}
+];  
+		
+#endif; ! UMLAUT_DICT_WORDS
+-).
 
 
 Part - Translations of built-in extensions 1
@@ -2357,7 +2657,7 @@ Understand the commands "open" and "uncover" and "unwrap" as something new.
 Understand the commands "schliess" and "sperr" as something new.
 Understand the command "oeffne" as something new.
 
-Understand the commands "verriegel", "veriegl" and "versperr" as something new.
+Understand the commands "verriegel", "verriegle" and "versperr" as something new.
 
 
 Understand "schliess [something] mit [dativ] [something] auf" as unlocking it with.
@@ -2394,7 +2694,7 @@ Understand "schliess [lockable thing] auf" as unlocking keylessly.
 Understand "entsperr [something]" as unlocking keylessly.
 Understand "entsperr [a locked lockable thing]" as unlocking keylessly.
 Understand "entsperr [lockable thing]" as unlocking keylessly.
-Understand the command "entriegel" as "entsperr".
+Understand the commands "entriegel" and "entriegle" as "entsperr".
 
 The German standard keylessly unlocking rule is listed instead of
 the standard keylessly unlocking rule in the carry out unlocking keylessly rules.
@@ -2433,7 +2733,7 @@ Understand "schliess [lockable thing] ab/zu" as locking keylessly.
 Understand "verschliess [something]" as locking keylessly.
 Understand "verschliess [a locked lockable thing]" as locking keylessly.
 Understand "verschliess [lockable thing]" as locking keylessly.
-Understand the commands "verriegel", "veriegl" and "versperr" as "verschliess".
+Understand the commands "verriegel", "verriegle" and "versperr" as "verschliess".
 
 The German standard keylessly locking rule is listed instead of
 the standard keylessly locking rule in the carry out locking keylessly rules.
@@ -2802,6 +3102,8 @@ Constant BLANKLINE_PE = 20; ! Not formally a parser error, but used by I7 as if
 Include (-
 !Constant LanguageVersion = "GerX 3";
 
+Global verb_prep  = -1; ! *** (17.03.2012) Zum Merken einer Präposition im Infinitiv
+
 Constant APPEND_BIT     32768;      ! Hängt die Inhalte der gelisteten Objekte
                                     ! an, anstatt sie in einem Nebensatz zu
                                     ! erwähnen
@@ -2832,7 +3134,8 @@ Global pnn = selfobj;               ! *** previously named noun, für [ist] [hat
 
 #Stub PreInformese      0;          ! *** Diese Einhänger in |LanguageToInformese()|
 #Stub PostInformese     0;          !     können für die Erstellung von Extensions
-                                    !     nützlich sein (vgl. z.B. German Mistype).
+#Stub HandlePunctuation 0;          !     nützlich sein (vgl. z.B. German Mistype).
+                                    
 -) after "Definitions.i6t".
 
 
@@ -3034,12 +3337,12 @@ Global short_name_case;
     ! *** (21.09.2010) Genus-Definitionen der Objekte, die mit "some" definiert
     !     wurden, bereinigen:
     
-    objectloop (obj has pluralname
-                && obj has neuter or male or female) {
-	    give obj ~neuter;
-	    give obj ~male;
-	    give obj ~female;
-    }
+    !objectloop (obj has pluralname
+    !           && obj has neuter or male or female) {
+	!    give obj ~neuter;
+	!    give obj ~male;
+	!    give obj ~female;
+    !}
     
 #ifdef DIALECT_SWISS;
     string 30 "ss";
@@ -3262,6 +3565,7 @@ Array LanguageSynonyms table
 Array LanguageTwins table
     'bis' 'auf'     "ausser"
     'nur' 'nicht'	"ausser"
+	THEN1__WD THEN1__WD "."
     ;
 
 !   Die Einträge in LanguageVerbPreps sind mögliche Kandidaten für den
@@ -3449,25 +3753,25 @@ Array UmlautAux -> 12;
 [ IsDirectionWord w    obj i index;
     objectloop (obj in Compass) {
         if (WordInProperty(w, obj, name)) return obj;
-        
-        #ifdef LanguageDirectionWords;
-        
-        ! *** (12.05.2011) Wenn die Synonyme nicht in der name-Property
-		!     stehen (was sehr wahrscheinlich ist), wird das Feld
-		!     LanguageDirectionWords herangezogen (wenn vorhanden):
-		
-		for (i = 1 : i <= LanguageDirectionWords-->0 : i++) {
-			if (LanguageDirectionWords-->i ~= obj) continue;
-			index = i + 1;
-			while (LanguageDirectionWords-->index) {
-			    if (LanguageDirectionWords-->index == w) return obj;
-			    index++;
-			}
-		}
-		
-		#endif;
     }
-    rfalse;
+	
+	! *** (07.03.2012) Direkter Abgleich ohne Array LanguageDirectionWords
+
+	switch (w) {
+		'norden', 'n//': return (+ north +);
+		'nordosten', 'no', 'ne': return (+ northeast +);
+		'nordwesten', 'nw': return (+ northwest +);
+		'sueden', 's//': return (+ south +);
+		'suedosten', 'so', 'se': return (+ southeast +);
+		'suedwesten', 'sw': return (+ southwest +);
+		'osten', 'o//', 'e//': return (+ east +);
+		'westen', 'w//': return (+ west +);
+		'hoch', 'rauf', 'hinauf', 'oben', 'h//', 'u//': return (+ up +);
+		'runter', 'hinunter', 'unten', 'r//', 'd//': return (+ down +);
+		'rein', 'drinnen', 'innen': return (+ inside +);
+		'raus', 'draussen', 'aussen': return (+ outside +);
+		default: rfalse;
+    }
 ];
 
 [ LastCharacterAddress i j        length start ch pos;
@@ -3490,7 +3794,7 @@ Array UmlautAux -> 12;
     return ch;
 ];
 
-[ AddressMatchesText a s     i length1 length2 start match;
+[ AddressMatchesText a s     i length1 length2 start;
 
     ! *** (04.05.2011) Eine Vokabel a mit einem String s vergleichen.
     !     Als Hilfsarrays werden UmlautAux und HLAuxBuffer2
@@ -3567,7 +3871,7 @@ Array UmlautAux -> 12;
     if (CheckTableOfInfinitives(i)) return true;
 
     switch (i) {
-        'l//': print "schauen";
+        'l//', 'lage': print "schauen";
         'z//': print "warten";
         'j//': print "ja";
         'x//','u//','b//': print "betrachten";
@@ -3627,8 +3931,14 @@ Array UmlautAux -> 12;
         ! *** Imperative mit -le und -re
 
         'baumle':		 print "baumeln";
+        'beschnueffle':  print "beschnueffeln";
+        'entriegle':     print "entriegeln";
+        'jodle':         print "jodeln";
         'klettre':		 print "erklimmen";
+        'schmirgle':     print "schmirgeln";
+        'schnueffle':    print "schüffeln";
         'streichle':     print "streicheln";
+        'verriegle':     print "verriegeln";
         'wedle': 		 print "wedeln";
 
         default:
@@ -3856,6 +4166,32 @@ Include (-
 	rfalse;
 ];
 
+! *** (17.03.2012) Wiederherstellung des Buffers in CheckInfinitiveClause(),
+!     wenn nach der Abtrennung einer Präposition immer noch kein Verb
+!     gefunden wurde.
+
+[ RestoreBuffer        ze i;
+
+    #ifdef TARGET_ZCODE;
+    ze = 2 + orig_buffer->1;
+    #ifnot; ! TARGET_GLULX
+    ze = WORDSIZE + orig_buffer-->0;
+    #endif; ! TARGET_
+
+    for (i = 0 : i < ze : i++) buffer->i = orig_buffer->i;
+
+    #ifdef TARGET_GLULX;
+    for (i=1 : i<=MAX_BUFFER_WORDS : i++) orig_position-->i = i;
+    #ifnot;
+    for (i=1 : i<=16 : i++) orig_position-->i = i;
+    #endif;
+    orig_position-->0 = ze;
+    
+    verb_prep = -1;
+    LanguageToInformese();
+    VM_Tokenise(buffer, parse);
+ ];
+ 
 [ CheckInfinitiveClause    ws we wd wl wa1 wa2 swap i j ll length olength;
 
 !   Hier wird der Satz umgewandelt von "Tasche aufheben" in "heb tasche auf"
@@ -3884,7 +4220,6 @@ Include (-
     if (wd && ((wd->#dict_par1) & 1) ~= 0) {
         swap = true;
     } else {
-
         ll = LanguageVerbPreps-->0;
         olength = WordLength(we);
         for (i = 1 : i <= ll : i++) {
@@ -3892,15 +4227,23 @@ Include (-
             length = WordMatch(LanguageVerbPreps-->i);
             if (length == 0) continue;
             if (length == olength) continue;
+            
+            !*** (17.03.2012) Vorangestellte Präposition merken, damit bei der
+            !    impliziten Vervollständigung des Kommandos (in PrintCommand)
+            !    die Ausgabe der Präposition am Ende des Satzes unterdrückt
+            !    werden kann.
+            
+            verb_prep = LanguageVerbPreps-->i;
+            
             wa2 = WordAddress(we) - buffer;
             LTI_Insert(wa2 + length, ' ');
             we++;
             VM_Tokenise(buffer, parse);
             (orig_position-->0)++;
-            (orig_position-->(orig_position-->0))--;
-            for (j == NumberOfWords() : j > we : j-- ) {
-                (orig_position-->j)++;
-            }
+			(orig_position-->(orig_position-->0))--;
+			for (j == NumberOfWords() : j > we : j-- ) {
+				(orig_position-->j)++;
+			}
             PruneWord(we);
             wn = we;
             wd = NextWord();
@@ -3915,14 +4258,7 @@ Include (-
                 !     einer der Präpositionen aus der Tabelle LanguageVerbPreps
                 !     beginnen, wie z.B. "Eingang" oder "Ausgang".
 
-                LTI_Delete(wa2 + length);
-                we--;
-                VM_Tokenise(buffer, parse);
-                (orig_position-->0)--;
-                (orig_position-->(orig_position-->0))++;
-                for (j == NumberOfWords() : j > we : j-- ) {
-                    (orig_position-->j)--;
-                }
+                RestoreBuffer();
             }
             break;
         }
@@ -3963,8 +4299,13 @@ Array SynonymBuffer string 24;
     #endif;
 ];
 
+!!! BEGIN MO
+
+! Die beiden Routinen CheckSynonym/Twin geben jetzt einen Erfolgswert zurück, 
+! der aber nicht benutzt wird.
+
 [ CheckSynonym w s     i n wd start length newlength offset;
-    wn = w; wd = NextWord(); if (~~wd) return;
+    wn = w; wd = NextWord(); if (~~wd) return false;
     #ifdef TARGET_ZCODE;
     offset = WORDSIZE;
     #ifnot;
@@ -3999,8 +4340,9 @@ Array SynonymBuffer string 24;
         for (w++ : w<=n : w++)
             orig_position-->w = orig_position-->w + length;
         orig_position-->0 = orig_position-->0 - length;
-        return;
+        return true;
     }
+	return false;
 ];
 
 [ CheckTwin w s   i n wd1 wd2 start length newlength offset;
@@ -4010,7 +4352,7 @@ Array SynonymBuffer string 24;
     #ifnot;
     offset = 0;
     #endif;
-    if (~~wd1) return; if (~~wd2) return;
+    if (~~wd1) return; if (~~wd2) return false;
 
     !   Die Tabelle durchackern
     n = (s-->0);
@@ -4041,10 +4383,11 @@ Array SynonymBuffer string 24;
         for (w++ : w<=n : w++)
             orig_position-->w = orig_position-->w + length;
         orig_position-->0 = orig_position-->0 - length;
-        return;
+        return true;
     }
+	return false;
 ];
-
+!!! END MO
 
 #ifdef COMPOUND_HEADS;
 [ CheckCompoundHeads w   n i start length olength cheads;
@@ -4237,7 +4580,10 @@ Array SynonymBuffer string 24;
        #endif; ! TARGET_
     }
 
-    for (i=0 : i<ze-1 : i++) {
+	!!! BEGIN MO
+	i = ze - 1;
+	while (i-- ) {	! Lerrzeichen nach i--, weil es sonst als Ende des I6-Einschubs interpretiert wird
+    !for (i=0 : i<ze-1 : i++) {
         #ifdef Twins;
         CheckTwin(i + 1, Twins);
         #endif;
@@ -4248,6 +4594,7 @@ Array SynonymBuffer string 24;
         ze = parse-->0;
         #endif; ! TARGET_
     }
+	!!! END MO
 
     #ifdef COMPOUND_HEADS;
     for (i=0 : i<ze : i++) {
@@ -4274,12 +4621,17 @@ Array SynonymBuffer string 24;
 !   (vi)
 !   Ausrufe- und Fragezeichen behandeln, falls gewünscht.
 
-    !HandlePunctuation();
+    HandlePunctuation();
+    
+    #ifdef UMLAUT_DICT_WORDS;		
+		Glulx_CheckUmlautDictWords(buffer, parse);
+	#endif;
 
 !   (vii)
 !   Der Autor bekommt noch einmal Kontrolle über die Informisierung.
 
     if (PostInformese()) rtrue;
+
 ];
 -) instead of "Translation" in "Language.i6t".
 
@@ -4398,17 +4750,6 @@ Global CG_pointer;
     }
 ];
 
-[ HasGrammaticalGender obj;
-
-    ! *** (08.12.2011) Hier wird festgestellt, ob für ein Objekt
-    !     der grammatical gender zur Genusdefinition genutzt wird,
-    !     also ob sein Wert nicht no-specified-gender (4) ist.
-     
-    if (obj provides grammatical_gender
-        && obj.grammatical_gender ~= 4) rtrue;
-    rfalse;
-];
-
 [ Gender obj flag   g;
 
     if (obj == nothing) return;
@@ -4429,17 +4770,25 @@ Global CG_pointer;
     ! Genus zurücksetzen
     if (~~printing_command) GenderNotice(obj, 0);
     
-    ! *** (30.11.2011) Grammatical Gender benutzt?
-    if (HasGrammaticalGender(obj)) {
-		if (obj has pluralname) return 0;
-		return obj.grammatical_gender;
-	}
-
-    ! Übliches Verfahren nach Attributen
+    ! Übliches Verfahren nach Plural-Attribut/grammatical_gender:
+    
     if (obj has pluralname) return 0;
-    if (obj has male) return 1;
-    if (obj has female) return 2;
-    return 3;
+    
+    ! *** (22.05.2012) evtl. im Spiel hinzugefügte Gender-Attribute
+    !     werden gegenüber dem GG bevorzugt behandelt, denn der Autor muss
+    !     sie absichtlich vergeben haben. Sie werden hier gleich in
+    !     den grammatical gender übersetzt, jedoch nicht gelöscht.
+
+	if (obj has male) {
+		obj.grammatical_gender = 1;
+	}
+	else if (obj has female) {
+		obj.grammatical_gender = 2;
+	}
+	else if (obj has neuter) {
+		obj.grammatical_gender = 3;
+	}
+	return obj.grammatical_gender;
 ];
 -) instead of "Articles" in "Language.i6t".
 
@@ -4491,7 +4840,7 @@ Include (-
 ! *** Die Printed Inflections aus dem Original wurden komplett gestrichen
 !     und durch neue Routinen ersetzt.
 
-[ SetPreviouslyNamedNoun obj; !!!print "{* ", obj, " *}";
+[ SetPreviouslyNamedNoun obj;
     ! *** nur I7/GerX: Für Textersetzungen, die sich auf das zuletzt genannte
     !     Objekt beziehen (z.B. [ist], [hat], [wird] usw.).
     pnn = obj;
@@ -5121,7 +5470,7 @@ Include (-
         2:  "Du kannst nichts auf sich selbst ablegen.";
         3:  "Dinge auf ", (den) x1, " zu tun bringt vermutlich nichts.";
         4:  "Dir fehlt die nötige Geschicklichkeit.";
-        5:  print "(Du ziehst ", (den) x1, " erst aus)^"; say__p = 0; return;
+        5:  print "(Du ziehst ", (den) x1, " erst aus.)^"; say__p = 0; return;
         6:  "Es ist kein Platz mehr auf ", (dem) x1, ".";
         7:  "In Ordnung.";
         8:  print "Du ";
@@ -5452,24 +5801,22 @@ Include (-
 [ GetGNAOfObject obj case gender;
     if (obj hasnt animate) case = 6;
     
-    ! *** (07.12.2011) Den grammatical gender berücksichtigen, wenn vorhanden.
+    ! *** (07.12.2011) Den grammatical gender berücksichtigen.
     !     Das muss hier gemacht werden, damit bei Verwendung der Objekteigenschaft
     !     grammatical gender die Pronomen richig gesetzt werden.
     
-    if (HasGrammaticalGender(obj)) {
-		switch (obj.grammatical_gender) {
-			1: gender = male;
-			2: gender = female;
-			default: gender = neuter;
-		}
+	switch (obj.grammatical_gender) {
+		1: gender = male;
+		2: gender = female;
+		default: gender = neuter;
 	}
 	
-	! *** Ansonsten greift das herkömmliche Verfahren über Attribute.
-	else {
-		if (obj has male) gender = male;
-			else if (obj has female) gender = female;
-					 else if (obj has neuter) gender = neuter;
-	}
+	! *** Ansonsten greift das herkömmliche Verfahren über Attribute. (auskommentiert 22.05.2012)
+	!else {
+	!	if (obj has male) gender = male;
+	!		else if (obj has female) gender = female;
+	!				 else if (obj has neuter) gender = neuter;
+	!}
 	if (gender == 0) {
 			if (case == 0) gender = LanguageAnimateGender;
 			else gender = LanguageInanimateGender;
@@ -6164,7 +6511,9 @@ Include (-
                (line_token-->(token_n+1) ~= ENDIT_TOKEN))
                 RunTimeError(13);
             do o = NextWordStopped();
-            until (o == -1 || PrepositionChain(o, token_n+1) ~= -1);
+			!!!  BEGIN MO
+            until (o == -1 or THEN1__WD || PrepositionChain(o, token_n+1) ~= -1);
+			!!! END MO
             wn--;
             consult_words = wn-consult_from;
             if (consult_words == 0) return GPR_FAIL;
@@ -6359,11 +6708,33 @@ Include (-
 
 [ Parser Letter A ]
 Include (-
-if (held_back_mode == 1) {
+    !!! BEGIN MO
+    if (held_back_mode > 0) {
+
+	    ! Neu eingefügt
+		verb_wordnum = held_back_mode / 256;
+		wn = held_back_mode % 256;
+        i = WordAddress(verb_wordnum);
+        j = WordAddress(wn);
         held_back_mode = 0;
+
+        for (: i<j : i++) i->0 = ' '; ! *** (16.04.2012) vormals in Parser Letter K zu finden.
+        i = NextWord();
+        !if (i == AGAIN1__WD or AGAIN2__WD or AGAIN3__WD) {
+        if (is_again_word(i)) {
+            ! Delete the words "then again" from the again buffer,
+            ! in which we have just realised that it must occur:
+            ! prevents an infinite loop on "i. again"
+
+            i = WordAddress(wn-2)-buffer;
+            if (wn > num_words) j = INPUT_BUFFER_LEN-1;
+            else j = WordAddress(wn)-buffer;
+            for (: i<j : i++) buffer3->i = ' ';
+        }
         VM_Tokenise(buffer, parse);
         jump ReParse;
     }
+	!!! END MO
 
   .ReType;
 
@@ -6387,8 +6758,10 @@ if (held_back_mode == 1) {
     ! *** (12.05.2011) pcount und pcount2 zurücksetzen, da es sonst Probleme
     !      mit PrintCommand() geben kann. So gab etwa PrintCommand() für >SÜDEN
     !      das Objekt des vorigen Kommandos mit an: "den Tisch nach Süden gehen".
-    
+
     pcount = 0; pcount2 = 0;
+    
+    verb_prep = -1; !*** (17.03.2012)
 
     max_wn = -1; ! *** max_wn schon hier initialisieren (siehe Parser Letter E)
     pronominal_adverb_flag = false;
@@ -6759,7 +7132,9 @@ Include (-
                 if (wn <= num_words) {
                     l = NextWord();
                     if (l == THEN1__WD or THEN2__WD or THEN3__WD or comma_word) {
-                        held_back_mode = 1; hb_wn = wn-1;
+					    !!! BEGIN MO
+                        held_back_mode = verb_wordnum * 256 + wn; hb_wn = wn-1;
+						!!! END MO
                     }
                     else {
                         for (m=0 : m<32 : m++) pattern2-->m = pattern-->m;
@@ -6831,7 +7206,9 @@ Include (-
                 ! ...and return from the parser altogether, having successfully matched
                 ! a line.
 
-                if (held_back_mode == 1) {
+				!!! BEGIN MO
+                if (held_back_mode) {
+				!!! END MO
                     wn=hb_wn;
                     jump LookForMore;
                 }
@@ -6933,7 +7310,6 @@ Include (-
 -) instead of "Parser Letter I" in "Parser.i6t".
 
 [ Parser Letter K. ]
-[ AGAINx__WDs durch |is_again_word| ersetzt ]
 
 Include (-
     ! At this point, the return value is all prepared, and we are only looking
@@ -6943,31 +7319,21 @@ Include (-
 
     if (wn > num_words) rtrue;
 
+	!!! BEGIN MO
     i = NextWord();
     if (i == THEN1__WD or THEN2__WD or THEN3__WD or comma_word) {
         if (wn > num_words) {
            held_back_mode = false;
            return;
         }
-        i = WordAddress(verb_wordnum);
-        j = WordAddress(wn);
-        for (: i<j : i++) i->0 = ' ';
-        i = NextWord();
-        !if (i == AGAIN1__WD or AGAIN2__WD or AGAIN3__WD) {
-        if (is_again_word(i)) {
-            ! Delete the words "then again" from the again buffer,
-            ! in which we have just realised that it must occur:
-            ! prevents an infinite loop on "i. again"
-
-            i = WordAddress(wn-2)-buffer;
-            if (wn > num_words) j = INPUT_BUFFER_LEN-1;
-            else j = WordAddress(wn)-buffer;
-            for (: i<j : i++) buffer3->i = ' ';
-        }
-        VM_Tokenise(buffer,parse);
-        held_back_mode = true;
+		
+		! Hier wurde früher etwas vorschnell der jetzige Befehl gelöscht.
+		! *** Dies geschieht nun ganz am Anfang von Parser Letter A.
+		
+        held_back_mode = verb_wordnum * 256 + wn;
         return;
     }
+	!!! END MO
     best_etype = UPTO_PE;
     jump GiveError;
 -) instead of "Parser Letter K" in "Parser.i6t".
@@ -7380,13 +7746,16 @@ Include (-
 -) instead of "BestGuess" in "Parser.i6t".
 
 Include (-
-[ IsToken p t; ! *** hinzugefügt von CB
+[ IsToken p t tt; ! *** hinzugefügt von CB
 
     ! *** IsToken() prüft, ob ein GPR-Token an Position p im
-    !     Satzmuster vom Token-Typ t ist (GPR = General Parsing Routine).
+    !     Satzmuster vom Token-Typ t ist (GPR = General Parsing Routine)
+    !     (19.04.2012) tt kann übergeben werden, wenn ein anderer
+    !     Token-Typ geprüft werden soll.
     
     if (p < 0) rfalse;
-    if (line_ttype-->(p) == GPR_TT && line_tdata-->(p) == t) rtrue;
+    if (tt == 0) tt = GPR_TT;
+    if (line_ttype-->(p) == tt && line_tdata-->(p) == t) rtrue;
     rfalse;
 ];
 
@@ -7516,10 +7885,33 @@ Include (-
     }
 ];
 
-[ PrintCommand from dative_flag           i k spacing_flag prep_before;
+! *** (19.03.2012) Ist das letzte Wort der Eingabe eine nachgestellte Verb-Präposition?
+
+[ CheckLastWordPreposition pp     num_words last_word i index;
+	if (pp ~= -1) return pp;
+	
+	num_words = NumberOfWords();
+	
+	#ifdef TARGET_ZCODE; 
+	index = num_words*2-1;
+	#ifnot;
+	index = num_words*3-2;
+	#endif;
+
+	last_word = parse-->index;
+	for (i = 1 : i <= LanguageVerbPreps-->0 : i++) {
+		if (AddressMatchesText(last_word, LanguageVerbPreps-->i)) { return LanguageVerbPreps-->i; }
+	}
+	return pp;
+];
+
+[ PrintCommand from dative_flag           i k spacing_flag prep_before prep;
     printing_command = true;
     k = from;                   ! Das Verb wird als Infinitiv hintenangestellt
     if (k==0) k = 1;            ! und muss hier korrigiert werden.
+    
+    verb_prep = CheckLastWordPreposition(verb_prep);
+			
     for ( : k<pcount : k++) {
         i = pattern-->k;
         if (i == PATTERN_NULL) {
@@ -7527,12 +7919,23 @@ Include (-
             dative_flag = IsToken(k-1, DATIVE_TOKEN);
             continue;
         }
-        if (spacing_flag) print (char) ' ';
+        if (from > 0) {
+            if (spacing_flag && verb_prep == -1) print (char) ' ';
+        }
+        else {
+			if (spacing_flag) print (char) ' ';
+	    }
         if (verb_word == 'no.verb') {
             if (i == 0 or 1) jump TokenPrinted;
         } else {
 	        if (i == 0) { print (string) THOSET__TX; jump TokenPrinted; }
-            if (i == 1) { print (string) THAT__TX;   jump TokenPrinted; }
+            if (i == 1) { ! *** (19.04.2012)
+                if (IsToken(k-1, TOPIC_TOKEN, ELEMENTARY_TT)) {
+                    print "~"; RunCapitalised(PrintSnippet, parsed_number); print "~";
+                }
+                else print (string) THAT__TX;
+                jump TokenPrinted;
+            }
         }
         if (i >= REPARSE_CODE) {
 	        ! *** hier wird unterschieden zwischen "Platz nehmen" und "aufheben"
@@ -7542,21 +7945,36 @@ Include (-
                 prep_before = false;
             }
             else {
-                print (UmlautAddress) VM_NumberToDictionaryAddress(i-REPARSE_CODE);
-                spacing_flag = true;
-                prep_before = true;
+                ! *** (17.03.2012) Wenn eine Infinitiv-Form mit einer vorangehenden
+                !     Präposition eingegeben wurde, wird die wiederholte Ausgabe der Präposition
+                !     am Ende des Satzes einer Kommando-Vervollständigung unterdrückt.
+                
+                prep = VM_NumberToDictionaryAddress(i-REPARSE_CODE);
+                if  (AddressMatchesText(prep, verb_prep) == false || from == 0) {
+                    print (UmlautAddress) prep;
+                    spacing_flag = true;
+                    prep_before = true;
+                }
             }
             continue;
         } else {
-            if (i ofclass (+ Direction +) && LanguageVerbLikesAdverb(verb_word))
-                print "nach ", (LanguageDirection) i;
+            if (i ofclass (+ Direction +) && LanguageVerbLikesAdverb(verb_word)) {
+                !print "nach ", (LanguageDirection) i;
+                ! *** (17.03.2012) geändert, um die doppelte Ausgabe von "nach" zu verhindern:
+                !     (Das "nach" wird schon im ersten Durchlauf aus dem Satzmuster gezogen.)
+                print (WithoutArt) i;
+            }
             else {
                 ! *** "mit dem Ding etwas tun":
                 !     verb_word ist 'no.verb', wenn für Aktionen gar kein
                 !     Verb angegeben wurde, z.B. in
                 !     Understand "[something]" as examining.
 
-                if (verb_word == 'no.verb') { dative_flag = 1; print "mit "; }
+                ! *** (15.03.2012) Der Ausdruck "mit dem <Objekt> etwas tun"
+                !     wird nur ausgegeben, wenn from==0 ist (z.B. bei recap of command).
+                !     Ansonsten wird die Teilphrase "den/dem <Objekt> ..." geschrieben.
+                
+                if (verb_word == 'no.verb' && from == 0) { dative_flag = 1; print "mit "; }
 
                 if (dative_flag) print (dem) i;
                 else print (den) i;
@@ -7569,8 +7987,8 @@ Include (-
     }
 
     ! *** Hier wird das Dich-Token berücksichtigt, um Infintive für
-    !     reflexive Verbformen zu schreiben:
-    !     "Worauf willst du dich setzen?"
+    !     reflexive Verbformen zu schreiben: "Worauf willst du dich setzen?"
+    
     if (IsToken(k-2, DICH_TOKEN)) {
         print "@22";
         spacing_flag = true; prep_before = false;
@@ -7595,7 +8013,9 @@ Section - Output
 
 Include (-
 
-Object Compass "Windrose" has female concealed;
+Object Compass "Windrose"
+  with grammatical_gender 2,
+   has concealed;
 
 -) instead of "Compass" in "Output.i6t".
 
@@ -9547,17 +9967,15 @@ Array LibcheckIgnoreVerbs table
 !     auf 'e' oder 'en' enden. Diese werden beim Verben-Libcheck ignoriert,
 !     damit nur die vom Autor neu hinzugefügten Verben geprüft werden.
 
-! *** (14.11.2011) 'fuerwoerter' und 'scheibenkleister' hinzugefügt,
-!      um bei Vokabellängen von 10, 11 und 15 Einträgen falsche
-!      Meldungen des Libchecks zu verhindern.
-
-    'baumle'    'durchstoeber' 'ende'    'fuerwoerter' 'klettre' 'konsultier'
-    'lage'      'meldungen'    'nee'     'noe'         'oeffne'
-    'pronomen'  'punkte'       'restore' 'save'        'scheibenkleister' 'schnueffel'
-    'scope'     'score'        'showme'  'streichle'   'superbrief'
-    'trace'     'tree'         'verbose' 'verschliess' 'wedle'
-    'durchschneid'             'praesentier'           'zertruemmer'
-    'lade'      'laden'
+    'baumle'     'beschnueffle' 'durchstoeber' 'ende'    'entriegle'
+    'fuerwoerter' 'jodle'       'klettre'
+    'konsultier' 'lage'         'meldungen'    'nee'     'noe'   'oeffne'
+    'pronomen'   'pruegle'      'punkte'       'restore' 'save'  'scheibenkleister'
+    'schmirgle'  'schnueffel'
+    'schnueffle' 'scope'        'score'        'showme'  'streichle'
+    'superbrief' 'trace'        'tree'         'verbose' 'verriegle' 'verschliess'
+    'wedle'      'durchschneid'                'praesentier'  'zertruemmer'
+    'lade'       'laden'
 
 ! *** Die Vokabeln der Standard-Lib, die Umlaute
 !     enthalten, werden ebenfalls übergangen.
@@ -9573,8 +9991,11 @@ Array LibcheckIgnoreVerbs table
     LibcheckAnnounce(2);
 ];
 
+#ifdef UMLAUT_DICT_WORDS;
+[ UmlautCheck; rfalse; ];
+#ifnot;
 [ UmlautCheck i letter length start invalid;
-    !if (i < 256) return; ! für Changing Gender
+    
     #ifdef TARGET_GLULX;
     length = Glulx_PrintAnyToArray(StorageForShortName, 24, i);
     start = 0;
@@ -9593,6 +10014,7 @@ Array LibcheckIgnoreVerbs table
     }
     return invalid;
 ];
+#endif;
 
 [ DictWordCorrection i max    letter length start umlaute;
     #ifdef TARGET_GLULX;
@@ -9780,16 +10202,26 @@ Array LibcheckIgnoreVerbs table
                 
     errors = 0;
 
-    objectloop (o has mark_as_room || o has mark_as_thing || o in Compass) {
+	!objectloop (o has mark_as_room || o has mark_as_thing || o in Compass) {
+    objectloop (o has mark_as_room || o has mark_as_thing) {
        
+		! *** (25.05.2012)
 		n = 0;
-		if (o has male) n++;
-		if (o has female) n++;
-		if (o has neuter) n++;
-		if (o has pluralname) n++;
-		
-		if (o provides grammatical_gender
-		    && o.grammatical_gender < 4 && o has pluralname) n++;
+
+        if (o.grammatical_gender == 4) { ! == no-specified-gender (I7)
+        
+			! *** Die kompletten Attribute nur für nicht-genderisierte Objekte
+			!     prüfen, da Attribute nur noch vorhanden sein können, wenn
+			!     die initially genderise everything rule aus den Rulebooks
+			!     entfernt wurde.
+			
+			if (o has male) n++;
+			if (o has female) n++;
+			if (o has neuter) n++;
+			if (o has pluralname) n++;
+			!!!print "{n = ", n, "}";
+		}
+		else n = 1;
 
 		if (n ~= 1) {
 			LibcheckAnnounce(1);
@@ -9803,17 +10235,19 @@ Array LibcheckIgnoreVerbs table
 
         ! *** Vokabeln mit Umlauten und 'ß' in der name-Property eines
         !     Objekts identifizieren
-
-        for (n = 0 : n<o.#name/WORDSIZE : n++) {
-            if (UmlautCheck(o.&name-->n)) {
-                LibcheckAnnounce(1);
-                errors++;
-                if (errors == 1) print "Objektdefinitionen:^^";
-                print "Die Vokabel '", (address) o.&name-->n,
-                	"' von Objekt ", o, " (", (der) o, ") enthält
-                	Umlaute oder 'ß'.^";
-            }
-        }
+        
+		#ifndef UMLAUT_DICT_WORDS;
+			for (n = 0 : n<o.#name/WORDSIZE : n++) {
+				if (UmlautCheck(o.&name-->n)) {
+					LibcheckAnnounce(1);
+					errors++;
+					if (errors == 1) print "Objektdefinitionen:^^";
+					print "Die Vokabel '", (address) o.&name-->n,
+						"' von Objekt ", o, " (", (der) o, ") enthält
+						Umlaute oder 'ß'.^";
+				}
+			}
+        #endif;
     }
     if (errors == 0) {
         if (LC_notice_printed || ~~silent) {
@@ -9826,14 +10260,9 @@ Array LibcheckIgnoreVerbs table
         print " Fehler bei den Objektdefinitionen.";	
         if (gender_error) { print "^^Achtung: Mehrdeutige oder fehlende
             Genus-Definitionen sollten nicht vorkommen.
-            Möglicherweise wurde das Attribut ~plural-named~ zusätzlich
-            zu einem ~grammatical gender~ vergeben oder der Genus
-            als Attribut einer Klasse (Kind) zugewiesen, anstatt ihn direkt
-            beim Objekt zu definieren.
             ^^
-            Die Ursachen dafür könnten
-            aber auch in eingebundenem Inform-6-Code liegen oder ein Fehler in
-            GerX sein.^";
+            Möglicherweise werden Attribute zur Laufzeit oder
+            in eingebundenem I6-Code vergeben.^";
         }
         else {
 	        if (errors) print " Siehe Korrekturvorschlag in der Gesamtliste
@@ -9893,7 +10322,11 @@ Array LibcheckIgnoreVerbs table
 	            warnings++;
 	            if (warnings == 1) {
     	            LibcheckAnnounce(1,1);
+    	            #ifdef UMLAUT_DICT_WORDS;
+    	            print "^Folgende Verben haben Endungen:^^";
+    	            #ifnot;
     	            print "^Folgende Verben haben Endungen und/oder enthalten Umlaute/ß:^^";
+    	            #endif;
 	            }
                 print warnings, ": ";
                 SuffixAddress(i, mode);
@@ -9941,7 +10374,15 @@ Array LibcheckIgnoreVerbs table
       }   
 ];
 
-[ XLibcheck3        n index par errors word orig syn;
+[ __PrintPrepSnip s   i;
+    VM_PrintToBuffer(HLAuxBuffer1, 128, s);
+    while (HLAuxBuffer1->(i + WORDSIZE) ~= 32) {
+		print (char) HLAuxBuffer1->(i + WORDSIZE);
+		i++;
+	}
+];
+
+[ XLibcheck3        n index par errors word orig orig2 syn;
     say__p = 1;
     n = LanguageSynonyms2-->0;
     
@@ -9952,15 +10393,17 @@ Array LibcheckIgnoreVerbs table
         
 		errors++;
 		orig = LanguageSynonyms2-->index;
+		orig2 = LanguageSynonyms-->index;
 		syn = LanguageSynonyms2-->(index+1);
 		if (errors == 1) {
 			LibcheckAnnounce(1,1);
 			print "^Folgende Wörter in Understand-Definitionen können niemals verstanden werden:^^";
 		}
 		print errors, ": ", (address) word;
-		if (par & $$00001000) print " [Bestandteil eines oder mehrerer Satzmuster]";
-		if (par & $$10000000) print " [Bestandteil eines oder mehrerer Objekt-Synonyme]";
-		print " [Korrekturvorschlag: ~", (PrintText) syn, "~]^";
+		if (par & $$00001000) print " (Bestandteil eines oder mehrerer Satzmuster)";
+		if (par & $$10000000) print " (Bestandteil eines oder mehrerer Objekt-Synonyme)";
+		print " [Korrekturvorschlag: ~", (__PrintPrepSnip) syn, "~ vor [Satzbaustein], ansonsten ~",
+			(PrintText) syn, "~]^";
     }
     if (errors) {
         print "^Hintergrund: Einige Wörter in der Spielereingabe werden
@@ -9972,10 +10415,17 @@ Array LibcheckIgnoreVerbs table
             unter keinen Umständen verstanden werden.^^";
             
         print "Tipp: Die Understand-Definitionen sollten gemäß
-            der Korrekturvorschläge angepasst werden. Nur so werden die
+            der Korrekturvorschläge angepasst werden.
+            Vor einem Understand-Token (Satzbaustein), wie z.B.
+            [something], sollte nur die
+            Präposition angegeben werden, da der bestimmte Artikel
+            überlesen wird. Folgt im Satzmuster kein Satzbaustein,
+            muss die vollständige Auflösung der Verschmelzung
+            angegeben werden. Nur so werden die
             ursprünglichen und die ersetzten Formen (z.B. ~",
             (address) orig, "~ und ~", (PrintText) syn, "~)
-            gleichermaßen verstanden.^^";
+            gleichermaßen verstanden.^";
+            
     }
 ];
  
@@ -10018,8 +10468,8 @@ Include (-
 	n = LanguageSynonyms2-->0 = LanguageSynonyms-->0;
 	for (index = 1 : index < n : index = index + 2) { 
 		word = LanguageSynonyms-->index; ! Ein String ...
-		VM_PrintToBuffer(buffer, 24, word);
-		VM_Tokenise(buffer, parse);
+		VM_PrintToBuffer(buffer3, 24, word);
+		VM_Tokenise(buffer3, parse);
 		word = parse-->1; ! ... und jetzt ein Wörterbuch-Eintrag (eine Vokabel)!
 		LanguageSynonyms2-->index = word;
 		LanguageSynonyms2-->(index+1) = LanguageSynonyms-->(index+1);
@@ -10105,7 +10555,7 @@ Chapter: Vokabeln
 
 Section: Was sind Vokabeln?
 
-Vokabeln sind die Wörter im Lexikon eines Spiels, die mit der Spieler-Eingabe abgeglichen werden, um das Kommando zu verstehen. Dies sind zum einen die vordefinierten Verben, aber auch die vom Autor neu definierten Kommandos und Synonyme für Objekte. Damit auf Deutsch möglichst viele verschiedene Formen (Imperativ oder Infinitv für Verben, Adjektive und Substantive mit Endungen) verstanden werden können, wird die Eingabe des Spielers vor der Auswertung informisiert, d.h. sie wird von Deutsch nach "Informesisch", der Muttersprache des Parsers, übersetzt. (Siehe hierzu auch Kap. 8.1: Die Informisierung der Spielereingabe.)
+Vokabeln sind die Wörter im Lexikon eines Spiels, die mit der Spieler-Eingabe abgeglichen werden, um die Anweisung zu verstehen. Dies sind zum einen die vordefinierten Verben, aber auch die vom Autor neu definierten Kommandos und Synonyme für Objekte. Damit auf Deutsch möglichst viele verschiedene Formen (Imperativ oder Infinitv für Verben, Adjektive und Substantive mit Endungen) verstanden werden können, wird die Eingabe des Spielers vor der Auswertung informisiert, d.h. sie wird von Deutsch nach "Informesisch", der Muttersprache des Parsers, übersetzt. (Siehe hierzu auch Kap. 8.1: Die Informisierung der Spielereingabe.)
 
 Zunächst werden die Umlaute (ä, ö, ü) in "ae", "oe" und "ue" umgewandelt; das Eszett (ß) wird zu "ss". Deshalb müssen sämtliche Vokabeln (Verben, Substantive, Adjektive, Präpositionen usw.) vom Autor ohne ä, ö, ü oder ß angegeben werden, wobei für Umlaute die Umschreibungen "ae", "oe" und "ue", für das Eszett "ss" zu verwenden sind. Vokabeln, die Umlaute enthalten, werden vom Spiel nicht verstanden.
 
@@ -10125,9 +10575,9 @@ Nomen und Adjektive sollten immer ohne Endungen angegeben werden. Umlaute und "�
 	Understand "Reisepass" and "Fuehrerschein" as Dokumente.
 	Understand "gruen" as the Kobold.
 
-Section: Verben und Satzmuster (Kommandos)
+Section: Verben (Kommandos) und Satzmuster
 
-Bevor man ein neues Verb definiert, sollte man prüfen, ob das Verb mit dem dazugehörigen Satzmuster schon besteht und, falls ja, welche Aktion es auslöst. Sämtliche aktuell für ein Projekt existierenden Kommandos werden im Actions-Index von Inform 7 aufgelistet.
+Bevor man ein neues Verb definiert, sollte man prüfen, ob das Verb mit dem dazugehörigen Satzmuster schon besteht und, falls ja, welche Aktion es auslöst. Sämtliche aktuell für ein Projekt existierenden Kommandos und Satzmuster werden im Actions-Index von Inform 7 aufgelistet.
 
 Verben sollten immer in der Imperativ-Form für die 2. Person Singular angegeben werden, wobei der Spieler das Spiel (und auch andere Personen im Spiel) konventionsgemäß duzt. Im Deutschen haben die regelmäßigen Verben meist zwei Imperativ-Formen, die sich nur durch ein angehängtes "e" unterscheiden ("denk" / "denke"). Das Kommando-Verb sollte nur in der Form ohne "e" angegeben werden, damit diese beiden Formen sowie der Imperativ für die 2. Person Plural ("denkt") und der Infinitiv ("denken") verstanden werden.
 
@@ -10174,11 +10624,21 @@ Section: Konflikte zwischen Vokabeln
 
 In seltenen Fällen kann es vorkommen, dass sich Verben und Hauptwörter überschneiden.
 
-	The Pumpe is a female thing.
+	The pump is a thing. The printed name of the pump is "Pumpe[f]". Understand "pumpe[f]" as the pump.
 
 	Pumping is an action applying to nothing. Understand "pump" as pumping.
 
-Das Vorhandensein der Vokabel 'pumpe' verhindert, dass Spielereingaben auf "pump" heruntergekürzt werden, da bei "pumpe" Schluss ist. Gibt der Spieler etwa ">PUMPE" ein, so wird das nicht als "pump" verstanden, sondern als "pumpe". Hier muss man das Vokabular fürs Pumpen erweitern:
+Das Vorhandensein der Vokabel 'pumpe' verhindert, dass Spielereingaben auf "pump" heruntergekürzt werden, da bei "pumpe" Schluss ist. Gibt der Spieler etwa ">PUMPE" ein, so wird das nicht als "pump" verstanden, sondern als "pumpe".
+
+Die einfachste Lösung dafür ist, die Vokabel für die Pumpe ohne -e zu definieren:
+
+	Understand "pump[f]" as the pump.
+	
+Will man jedoch die Vokabel mit -e definieren, z.B., wenn man deutsche Bezeichner benutzt, die ins Vokabular übernommen werden (publically-named), wird es etwas komplizierter:
+
+	The Pumpe is a publically-named thing.
+
+Nun muss man das Vokabular fürs Pumpen (die Aktion pumping) erweitern:
 
 	Understand "pumpe" as pumping.
 	
@@ -10199,6 +10659,67 @@ In so einem Fall kann man das betreffende Wort in die fortgeführte Tabelle "Tab
 	
 	>PUMPE BETRACHTEN
 	Du siehst nichts Besonderes an der Pumpe.
+	
+Auch bei der Verwendung von Gesprächsthemen (Topics) kann es zu Überschneidungen mit bestehendem Vokabular geben:
+
+	Instead of asking the teacher about "Frage/Fragen" ...
+	Understand "Fragebogen/Frage/Fragen" as "[Fragebogen-Topic]".
+	
+In diesen Fällen werden die Vokabeln 'frage' und 'fragen' im Wörterbuch angelegt, was verhindert, dass die Imperative "frage" und der Infinitiv "fragen" vom Parser verstanden werden können, da die Verben in der Spieleringabe nicht mehr auf "frag" heruntergekürzt werden.
+
+Die einfachste Lösung ist hier wohl, in den Gesprächsthemen die kürzeste Form zu verwenden:
+
+	Instead of asking the teacher about "Frag" ...
+	Understand "Fragebogen/Frag" as "[Fragebogen-Topic]".
+	
+Der Spieler kann nun aber auch die verkürzte Form, die nicht korrekt ist, benutzen
+
+	*>FRAGE DEN LEHRER NACH DER FRAG
+	
+Wer das nicht möchte, muss wie oben beschrieben vorgehen:
+
+	Understand the commands "frage" and "fragen" as "frag".
+	
+	Table of verb-noun collisions (continued)
+	Verb
+	"frage"
+	"fragen"
+
+Nun muss aber auch noch die Infinitv-Form für das Kommando "fragen" geändert werden, weil bei der Verwendung des Infinitivs in der Eingabe die Wiedergabe des Kommandos ("[recap of command]") einen falschen Infinitiv schreibt: "fragenen". Also:
+
+	Table of Infinitives (continued)
+	Verb		Infinitive
+	"fragen"	"fragen"
+	
+	
+Section: Umlaute und Eszetts in Glulx-Vokabeln verwenden (experimentell)
+
+Standardmäßig müssen Umlaute und Eszetts (ß) bei der Vokabeldefinition umschrieben werden (ae, oe, ue, ss). Nur so wird gewährleistet, dass der Spieler Umlaute, aber auch deren Umschreibungen benutzen kann. Spielereingaben sollen auch immer auf einer Tastatur ohne deutsche Umlaute und ß getätigt werden können.
+
+Seit Juni 2012 gibt es eine vorerst experimentelle Option, bei der der Autor auch Umlaute und ß in seinen Vokabeldefinitionen verwenden kann, wenn er nach Glulx compiliert. Für den Spieler ändert sich nichts; er kann weiter die Umlaute/ß sowie deren Umschreibungen in seiner Eingabe benutzen.
+
+	*: Use umlauts in Glulx dictionary words.
+	
+Damit die Option Wirkung zeigt, muss sichergestellt werden, dass in den Einstellungen als Zielformat "Glulx" ausgewählt wurde. Für Z-Code ist die Verwendung von Vokabeln wenig praktikabel, da die Sonderzeichen jeweils schon vier Stellen in der maximal 9 Stellen langen Z-Vokabel belegen.
+
+Beispiel:
+
+	The hearing aid is a device in the lab. The printed name of the hearing aid is "Hörgerät[n]".
+	
+	Understand "Gerät" and "Hörgerät" as the hearing aid.
+	
+	The bowl is a container in the lab. The printed name is "groß[^] Schüssel[f]".
+	
+	Understand "groß", "Schüssel" and "Schale" as the bowl.
+	
+Damit sämtliche Endungen verstanden werden können, sollten in den Vokabeln, wie bei der Standardvariante auch, nur die Formen ohne Endungen verwendet werden.
+
+Standardmäßig werden vier Umlaute/ß pro Vokabel verstanden. Dieser Wert sollte für die meisten Fälle ausreichend sein. Wenn mehr Umlaute/ß in einer Vokabel enthalten sind, kann man das Limit erhöhen, was im ungünstigsten Fall zu Performance-Einbußen führen kann.
+
+	*: Use maximum number of umlauts of at least <N>.
+	
+N muss eine ganze Zahl größer als 4 und kleiner als 16 sein.
+
 
 Chapter: Das Definieren von Dingen
 
@@ -10218,15 +10739,15 @@ Section: Methode I: Die Denglisch-Variante (Standard)
 
 Es müssen deutsche Objektnamen und englische Arten-Bezeichnungen verwendet werden, was zu einem etwas unschönen Sprachen-Mix führt:
 
-	The Keller is a male room.
+	The Keller is a room. The grammatical gender of the Keller is masculine-gender.
 
-	The Kiste is a female container in the Keller, fixed in place.
+	The Kiste is a container in the Keller, fixed in place. The grammatical gender of the Kiste is feminine-gender.
 
-	The grün Apfel is a male edible thing in the Kiste. The printed name is "grün[^] Apfel". Understand "gruen" as the Apfel.
+	The grün Apfel is an edible thing in the Kiste. The printed name is "grün[^] Apfel[-s][m]". Understand "gruen" as the Apfel.
 
-	The Oelkanne is a female thing in the Keller. The printed name is "Ölkanne".
+	The Oelkanne is a thing in the Keller. The printed name is "Ölkanne[f]".
 
-	A Karotte is a kind of thing. It is female and edible. The printed plural name is "Karotten". Understand "Karotte" and "Moehre" as a Karotte. Understand "Karotten" and "Moehren" as the plural of Karotte.
+	A Karotte is a kind of thing. It is edible. The grammatical gender of the Karotte is feminine-gender. The printed plural name is "Karotten". Understand "Karotte" and "Moehre" as a Karotte. Understand "Karotten" and "Moehren" as the plural of Karotte.
 	
 	In the box are six Karotten.
 
@@ -10237,19 +10758,19 @@ Das Beispiel A "Die Jadestatue" im Anhang dieser Dokumentation benutzt die Dengl
 
 Section: Methode II: Die einsprachige Variante
 
-Um den unschönen Sprachen-Mix zu vermeiden, kann man die Arten (kinds) "thing" und "room" als "privately-named" deklarieren (im Gegensatz zu "publically-named"). Das bedeutet, dass der interne Bezeichner nicht ans Vokabular weitergegeben wird. Das betrifft dann auch sämtliche Unter-Arten von "room" und "thing" ("supporter", "container" usw.). Man kann die Objekte in seinem Quelltext also nennen, wie man möchte, vor allem aber englische Bezeichner und Arten verwenden. Das hat den Vorteil, dass der Quelltext natürlicher wirkt; der Nachteil allerdings ist, dass der angezeigte Objektname (printed name) und die Synonyme explizit für jedes Objekt angegeben werden müssen. Bei mehreren Objekten derselben Art müssen zudem noch der angezeigte Plural-Objektname (printed plural name) und das Plural-Vokabular nachgeliefert werden.
+Um den uneleganten Sprachen-Mix zu vermeiden, kann man die Arten (kinds) "thing" und "room" als "privately-named" deklarieren (im Gegensatz zu "publically-named"). Das bedeutet, dass der interne Bezeichner nicht ans Vokabular weitergegeben wird. Das betrifft dann auch sämtliche Unter-Arten von "room" und "thing" ("supporter", "container" usw.). Man kann die Objekte in seinem Quelltext also nennen, wie man möchte, vor allem aber englische Bezeichner und Arten verwenden. Das hat den Vorteil, dass der Quelltext natürlicher wirkt; der Nachteil allerdings ist, dass der angezeigte Objektname (printed name) und die Synonyme explizit für jedes Objekt angegeben werden müssen. Bei mehreren Objekten derselben Art müssen zudem noch der angezeigte Plural-Objektname (printed plural name) und das Plural-Vokabular nachgeliefert werden.
 
 	*: A thing is usually privately-named. A room is usually privately-named.
 
 Beispiele:
 
-	The basement is a male room. The printed name is "Keller". Understand "Keller" as the basement.
+	The basement is a room. The printed name is "Keller[m]". Understand "Keller" as the basement.
 
-	The box is a male container in the basement, fixed in place. The printed name is "Kasten". Understand "Kasten" as the box.
+	The box is a container in the basement, fixed in place. The printed name is "Kasten[m]". Understand "Kasten" as the box.
 
-	The green apple is a male edible thing in the box. The printed name is "grün[^] Apfel". Understand "gruen" and "Apfel" as the apple.
+	The green apple is an edible thing in the box. The printed name is "grün[^] Apfel[-s][m]". Understand "gruen" and "Apfel" as the apple.
 
-	A carrot is a kind of thing. It is female and edible. The printed name is "Karotte". The printed plural name is "Karotten". Understand "Karotte" and "Moehre" as a carrot. Understand "Karotten" and "Moehren" as the plural of a carrot.
+	A carrot is a kind of thing. It is edible. The printed name is "Karotte[f]". The printed plural name is "Karotten". Understand "Karotte" and "Moehre" as a carrot. Understand "Karotten" and "Moehren" as the plural of a carrot.
 
 	In the box are six carrots.
 
@@ -10262,27 +10783,176 @@ Das Beispiel B "Der Mantel der Finsternis" im Anhang dieser Dokumentation benutz
 
 Section: Angabe des grammatischen Geschlechts (Genus)
 
-Für die drei Genera (Maskulinum, Femininum, Neutrum) stehen die Adjektive male, female und neuter zur Verfügung. Der Numerus eines Objekts ist standardmäßig Singular (singular-named). Für Objekte mit Namen im Plural ("die Wolken") ist das Adjektiv plural-named zu verwenden.
+Das grammatische Geschlecht (Genus) des Objekts ist für die Bildung der korrekten Formen bei der Textausgabe entscheidend und entspricht dem Genus des angezeigten Objektnamens (printed name). Jedes Objekt besitzt als Eigenschaft einen "grammatical gender", der die Werte masculine-gender (männlich), feminine-gender (weiblich) oder neuter-gender (sächlich) annehmen kann. Der grammatical gender eines Objekts ist standardmäßig neuter-gender.
 
-Personen werden wie gewohnt als man oder woman deklariert (man kann aber auch male person bzw. female person schreiben). Auch Räume können ein Geschlecht zugewiesen bekommen, was dann sinnvoll ist, wenn der Raumname mit Artikel in einem Say-Text ausgegeben werden soll.
+(Bitte nicht wundern: Es gibt noch einen weiteren grammatical gender, den Wert no-specified-gender, der auch im Index angezeigt wird. Dieser Wert dient lediglich zu internen Kontrollzwecken bei der Initialisierung des Spiels und wird danach nicht mehr gebraucht. Der Autor kann diesen Wert getrost ignorieren.)
 
-	The garden is a male room. The library is female.
+Objekte mit einem printed name im Plural bekommen das Attribut (Adjektiv) plural-named. Der grammatical gender ist bei Plural-Objekten irrelevant und wird deshalb auf den (beliebigen) Wert neuter-gender gesetzt.
 
-	The Kutsche is here. It is female.
+Man kann den grammatical gender für ein Objekt auf zwei Arten festlegen:
 
-	The desk is a male supporter in the office, fixed in place.
+(1) Direkt im printed name wird mit einer Textersetzung, die als Kennzeichnung dient, der grammatical gender gesetzt. Das ist praktisch, weil sich das Objekt-Genus ohnehin immer nach dem printed name richtet; so können mögliche Diskrepanzen zwischen Objekt-Genus und -Namen leicht vermieden werden.
 
-	The Pergamonmuseum is a neuter backdrop in Berlin-Mitte.
+Für jedes Objekt, das auf diese Weise gekennzeichnet werden soll, muss also gesondert ein printed name angegeben werden. Für Autoren, die die "einsprachige" Privately-Named-Methode (siehe Section 4.3) benutzen, bedeutet das allerdings keinen Mehraufwand, da der printed name und das Vokabular ohnehin explizit definiert werden müssen. Aber auch bei der Standard-Methode (siehe Section 4.2) muss der printed name häufig von Hand definiert werden, um die Textersetzungen für die Endungen nachzuliefern.
 
-	Frau Holle is a woman in the Märchenwald.
+Die Genus-Textersetzungen entsprechen formal den Genus-Satzbausteinen (understand tokens) beim Changing Gender (siehe Section 4.6: Feststellen und Anzeigen des grammatischen Geschlechts (Genus)):
 
-Wird kein Genus angegeben, wird ein Ding automatisch zum Neutrum erklärt. Personen, die nicht als "woman" oder "man" definiert wurden, sind ebenfalls, anders als im englischen Original, standardmäßig Neutren. So auch die Spielerfigur, wenn der Autor nichts Anderes festlegt.
+	"[m]" (Maskulinum, männlich)
+	"[f]" (Femininum, weiblich)
+	"[n]" (Neutrum, sächlich)
+	"[p]" (Plural, Mehrzahl)
+	
+Wichtig ist, dass die Textersetzung ohne ein zusätzliches Leerzeichen im printed name steht.
+	
+Beispiel:
 
+	A thing is usually privately-named. A room is usually privately-named.
+	
+	The lab is a room. "Du bist hier im geheimen Labor des Doktor Saratow.". The printed name is "Labor[n]". Understand "Labor[n]" as the lab.
+	
+	The apple is a thing in the lab. The printed name is "Apfel[-s][m]". Understand "Apfel" as the apple.
+
+	The pear is a thing in the lab. The printed name is "Birne[f]". Understand "Birne" as the pear.
+	
+	The peculiar item is in the lab. The printed name is "eigenartig[^] Ding[n], das Du irgendwo schon einmal gesehen hast". Understand "eigenartig", "Ding" as the peculiar item.
+	
+(2) Wenn keine Genus-Kennzeichnung im printed name verwendet wird, kann der grammatical gender auch direkt zugewiesen werden, was etwas mehr Schreibarbeit bedeutet, aber prinzipiell das gleiche bewirkt, wie die Kennzeichnung im printed name:
+
+	The grammatical gender of the apple is masculine-gender.
+	The grammatical gender of the pear is feminine-gender.
+	
+Um ein Plural-Objekt zu definieren, muss das Attribut plural-named vergeben werden:
+
+	The marbles are plural-named.
+	
+
+Section: Ändern des grammatischen Geschlechts (Genus) während des Spiels
+
+Wenn sich der printed name eines Objekts während des Spiels ändert, muss natürlich auch das dazugehörige grammatische Geschlecht angepasst werden. Das geht mit der Anweisung "re-genderise <OBJECT> to <TEXT>, <PHRASE OPTIONS>" in einem Aufwasch:
+
+	re-genderise the vase to "Scherbenhaufen[m]";
+	
+Das bewirkt Folgendes: Der printed name des Objekts vase wird zu "Scherbenhaufen[m]", und der grammatical gender des Objekts vase bekommt den Wert masculine-gender.
+	
+Die re-genderise-Phrase bietet zusätzliche Optionen:
+
+	acting plural
+	acting masculine
+	acting feminine
+	acting neuter
+	
+Eine dieser vier Optionen kann hinzugefügt werden, wenn kein Genus im neuen printed name angegeben wird, z.B.
+
+	re-genderise the vase to "Scherbenhaufen", acting masculine.
+	
+Weitere Optionen sind:
+
+	with definite article
+	with no article
+	with yours
+	
+Eine dieser Möglichkeiten setzt den special indefinite article (siehe Section 4.8) eines Objekts. Wird keine dieser Optionen angegeben, fällt der special indefinite gender zurück auf den Wert PENDING.
+
+Um einen Eigennamen zu definieren steht folgende Optionen zur Verfügung:
+
+	as proper-named (Eigenname)
+	
+Wird die Option nicht angegeben, wird implizit das Attribut improper-named vergeben (kein Eigenname).
+
+Die Optionen können durch ein Komma miteinander kombiniert werden, z.B.
+
+	re-genderise the vase to "Scherbenhaufen[m]";
+	re-genderise the vase to "Scherbenhaufen[m]", with definite article; 
+	re-genderise the vase to "Scherbenhäufchen", acting neuter, with yours;
+	re-genderise the vase to "Annas Vase[f]", as proper-named;
+	
+Praxis-Beispiel:
+	
+	The girl is a woman in the lab. "[Ein girl] ist hier." The printed name is "Mädchen[n]". Understand "Anna[f]" and "Maedchen[n]" as the girl.
+	
+	After examining the girl when the girl is not proper-named:
+		re-genderise the girl to "Anna[f]", as proper-named;
+		say "Das Mädchen sagt: 'Ich heiße übrigens [girl]. Und ich bin [gender of girl].'"
+	
+
+Section: Feststellen und Anzeigen des grammatischen Geschlechts (Genus)
+
+Um herauszufinden, welches grammatische Geschlecht ein Objekt hat, ist der grammatical gender eines Objekts auschlaggebend.
+
+	if the grammatical gender of the noun is masculine-gender, ...
+	
+Man kann auch eines der folgenden Adjektive verwenden, was zum Beispiel beim Schreiben von Listen notwendig ist:
+
+	masculine-gendered
+	feminine-gendered
+	neuter-gendered
+	
+	if the noun is feminine-gendered, ...
+	say "[the list of feminine-gendered things]";
+
+	
+Den Plural testet man mit
+
+	if the noun is plural-named, ...
+	say "[a list of plural-named things]";
+	
+
+Möchte man aber das Genus/den Plural als Wert auf Deutsch benutzen, beispielsweise in einem Ausgabetext, bietet sich die Phrase "the gender of" an. Die Werte der Genera sind "Mehrzahl", "männlich", "weiblich", "sächlich". ("Mehrzahl" ist eigentlich kein Genus, aber der Einfachheit halber wird der Plural hier gleich mitgeliefert.)
+
+	if the gender of the noun is Mehrzahl, ...
+	if the gender of the noun is männlich, ...
+	if the gender of the noun is weiblich, ...
+	if the gender of the noun is sächlich, ...
+
+Die Phrase "the gender of" kann auch in Say-Texten verwendet werden:
+
+	say "Das Genus [des noun] ist [the gender of the noun]."
+
+Um das geänderte Genus (Changing Gender) einen Zug lang zu befragen, gibt es die Phrase "the changing gender of":
+
+	if the changing gender of the box is sächlich, ...
+
+Auch diese Phrase kann in Say-Texten verwendet werden:
+
+	say "Das geänderte Genus von [dem noun] ist [the changing gender of the noun]."
+	
+
+Section: Die traditionellen Genus-Attribute male, female und neuter
+
+Die Verwendung der Attribute male, female und neuter ist im Mai 2012 umgestellt worden. Die Attribute werden bei Spielbeginn automatisch in den grammatical gender übersetzt und gelöscht. Das Verhalten der Attribute wird aber noch simuliert, um die Kompatibilität mit dem traditionellen Verfahren nicht aufzugeben. Wer mag, kann also weiterhin Definitionen mit den Adjektiven male, female und neuter verwenden:
+
+	The apple is a male edible thing in the garden.
+	The pear is a thing in the garden. It is female.
+	The girl is neuter.
+	
+Auch das Ändern des Genus über die traditionellen Attribute male, female und neuter wird weiterhin unterstützt:
+
+	now the vase is male;
+	now the apple is female;
+	now the lady is neuter;
+	
+Die traditionellen Attribute male, female und neuter können weiterhin zum Abfragen des Genus verwendet werden, auch wenn sie intern nicht mehr vergeben werden:
+
+	if the noun is male, ...
+	if the noun is female, ...
+	if the noun is neuter, ...
+	
+	say "[a list of male fruit in the garden]";
+	
+Wenn die Attribute bei Spielbeginn nicht gelöscht werden sollen, kann die dafür zuständige Regel entfernt werden:
+
+	*: The initially genderise everything rule is not listed in any rulebook.
+	
+Die Attribute bleiben bestehen, der grammatical gender wird parallel zu ihnen gesetzt, aber nicht für die Bestimmung des Genus herangezogen. Die Verwendung der Genus-Tags im printed name sollte ohne die "initially genderise everything rule" nicht verwendet werden.
+	
 Section: Angabe des Genus für Synonyme mit abweichendem Geschlecht (Changing Gender)
 
-Häufig kommt es vor, dass Objekte Synonyme bekommen, die ein anderes Geschlecht als das Objekt selbst haben.
+Für jedes per Understand-Anweisung definierte Objektsynonym kann das Genus des Wortes mitgeliefert werden. Formal entspricht dies der Genus-Kennzeichnung im printed name. Das grammatische Geschlecht einer Vokabel wird jedoch nur zum Setzen der entsprechenden Pronomen benutzt. Für die Textausgabe ist der Changing Gender (CG) irrelevant.
 
-	The Anorak is a male wearable thing in the dressing room. The description is "Eine richtig dicke Winterjacke." Understand "Jacke" and "Winterjacke" as the Anorak.
+Häufig kommt es vor, dass Objekte Synonyme bekommen, die ein anderes Geschlecht als das Objekt (genauer: der printed name des Objekts) haben.
+
+	The anorak is a wearable thing in the dressing room. The printed name of the anorak is "Anorak[-s][m]".
+	The description is "Eine richtig dicke Winterjacke." Understand "Jacke" and "Winterjacke" as the Anorak.
 
 Was passiert nun, wenn der Spieler den Anorak lieber "Jacke" nennt, und diese mit Pronomen ansprechen möchte?
 
@@ -10304,18 +10974,22 @@ Oder noch unangenehmer:
 	Du kannst die Birne nicht anziehen!
 
 
-Um das zu vermeiden und die Pronomen korrekt zu setzen, kann man einzelnen Synonymen einen von vier Attribut-Satzbausteinen folgen lassen, die das abweichende Geschlecht der Vokabel kennzeichnen. Diese Satzbausteine (understand tokens) heißen:
+Um das zu vermeiden und die Pronomen korrekt zu setzen, kann man einzelnen Synonymen einen von vier Attribut-Satzbausteinen folgen lassen, die das abweichende Geschlecht der Vokabel kennzeichnen. Diese Satzbausteine (understand tokens) gleichen formal den Genus-Textersetzungen im printed name, sind aber nicht damit zu verwechseln (siehe Section 4.4: Angabe des grammatischen Geschlechts (Genus)).
+
+Die Genus-Satzbausteine heißen:
 
 	"[m]" (Maskulinum, männlich)
 	"[f]" (Femininum, weiblich)
 	"[n]" (Neutrum, sächlich)
 	"[p]" (Plural, Mehrzahl)
 
-Das Token wird nach der Vokabel, die gekennzeichnet werden soll, angegeben. Zwischen Vokabel kann ein Leerzeichen stehen, muss es aber nicht:
+Das Token wird nach der Vokabel, die gekennzeichnet werden soll, angegeben. Zwischen Vokabel und Kennzeichnung kann ein Leerzeichen stehen, muss es aber nicht:
 
-	The Anorak is a male wearable thing in the dressing room. The description is "Eine richtig dicke Winterjacke. Ein Erbstück."
+	The anorak is a wearable thing in the dressing room. The printed name of the anorak is "Anorak[-s][m]". The description is "Eine richtig dicke Winterjacke. Ein Erbstück."
 
 	Understand "Parka", "Jacke[f]", "Winterjacke [f]" and "Erbstueck[n]" as the Anorak.
+	
+Der "Parka" kann, muss aber nicht, mit "[m]" gekennzeichnet werden, da er dasselbe Genus wie der "Anorak" hat.
 
 Nun sieht der Dialog so aus:
 
@@ -10333,84 +11007,6 @@ Nun sieht der Dialog so aus:
 
 	>ZIEH ES AUS
 	Du ziehst den Anorak aus.
-
-Section: Feststellen und Anzeigen des grammatischen Geschlechts (Genus)
-
-Das Geschlecht eines Objekts lässt sich direkt durch die Adjektive male, female, neuter und plural-named testen.
-
-	if the person asked is male ...
-	if the Kleidungsstück is plural-named ...
-
-Möchte man aber das Genus als Wert benutzen, bietet sich die Phrase "the gender of" an. Die Werte der Genera sind "Mehrzahl", "männlich", "weiblich", "sächlich".
-
-	if the gender of the noun is Mehrzahl, ...
-	if the gender of the noun is männlich, ...
-	if the gender of the noun is weiblich, ...
-	if the gender of the noun is sächlich, ...
-
-Die Phrase "the gender of" kann auch in Say-Texten verwendet werden:
-
-	say "Das Genus von [dem noun] ist [the gender of the noun]."
-
-Um den geänderten Genus (Changing Gender) einen Zug lang zu befragen, gibt es die Phrase "the changing gender of":
-
-	if the changing gender of the box is sächlich, ...
-
-Auch diese Phrase kann in Say-Texten verwendet werden:
-
-	say "Der geänderte Genus von [dem noun] ist [the changing gender of the noun]."
-	
-	
-Section: Alternative Angabe des Objekt-Genus im printed name
-
-Seit Dezember 2011 gibt es in GerX eine zusätzliche, von Martin Oehm vorgeschlagene, Methode zum Angeben des Objektgenus. Um bei Verwendung dieser Methode alle Objekte korrekt bei Spielbeginn zu initialisieren, muss die Option
-
-	*: Use alternative gender definitions.
-	
-aktiviert sein.
-
-Anstatt die herkömmlichen Attribute female, male, neuter und plural-named festzulegen, kann man nun das Genus direkt im printed name mit einer Textersetzung, die als Kennzeichnung dient, angeben. Das Genus im printed name zu setzen ist praktisch, weil sich das Objekt-Genus ohnehin immer nach dem printed name richtet; so können auch mögliche Diskrepanzen zwischen Objekt-Genus und -Namen schneller entdeckt werden.
-
-Für jedes Objekt, das auf diese Weise gekennzeichnet werden soll, muss also gesondert ein printed name angegeben werden. Für Autoren, die die "einsprachige" Privately-Named-Methode (siehe Section 4.3) benutzen, bedeutet das allerdings keinen besonderen Mehraufwand, da der printed name und das Vokabular ohnehin explizit definiert werden müssen.
-
-Die alternative Printed-name-Methode und das herkömmliche Verfahren mit Attributen können in einem Quelltext nebeneinander verwendet werden.
-
-Die Genus-Textersetzungen entsprechen den Genus-Satzbausteinen (understand tokens) beim Changing Gender:
-
-	"[m]" (Maskulinum, männlich)
-	"[f]" (Femininum, weiblich)
-	"[n]" (Neutrum, sächlich)
-	"[p]" (Plural, Mehrzahl)
-	
-Wichtig ist, dass die Textersetzung ohne ein zusätzliches Leerzeichen im printed name steht. 
-	
-Beispiele:
-
-	A thing is usually privately-named. A room is usually privately-named.
-	
-	The lab is a room. "Du bist hier im geheimen Labor des Doktor Saratow.". The printed name is "Labor[n]". Understand "Labor[n]" as the lab.
-	
-	The apple is a thing in the lab. The printed name is "Apfel[-s][m]". Understand "Apfel" as the apple.
-
-	The pear is a thing in the lab. The printed name is "Birne[f]". Understand "Birne" as the pear.
-	
-	The peculiar item is in the lab. The printed name is "eigenartig[^] Ding[n], das Du irgendwo schon einmal gesehen hast". Understand "eigenartig", "Ding" as the peculiar item.
-	
-Das Genus kann auch während des Spiels geändert werden, indem ein neuer printed name angegeben wird. Danach muss das neue Geschlecht des Objekts dem System mitgeteilt werden, und zwar mit dem Befehl
-
-	genderise <OBJECT>;
-	
-Beispiel:
-	
-	The girl is a woman in the lab. "[Ein girl] ist hier." The printed name is "Mädchen[n]". Understand "Anna[f]" and "Maedchen[n]" as the girl.
-	
-	After examining the girl when the girl is not proper-named:
-		say "Das Mädchen sagt: 'Ich heiße übrigens Anna.'";
-		now the printed name of the girl is "Anna[f]";
-		now the girl is proper-named;
-		genderise the girl.
-		
-Hinweis: Genus und Numerus werden bei dieser Methode unterschiedlich repräsentiert. Der Plural wird weiterhin als Attribut "plural-named" hinterlegt; für das grammatische Geschlecht ist die Objekteigenschaft (property) "grammatical gender" relevant. Die Werte des "grammatical gender" sind: masculine-gender, feminine-gender, neuter-gender und no-specified-gender (Default-Wert).
 
 
 Section: Sonderformen des unbestimmten Artikels: DEFINITE ARTICLE, YOURS, NO ARTICLE und PENDING
@@ -10443,7 +11039,7 @@ Achtung: Der special indefintie article YOURS wird *nicht* für die Ausgabe mit 
 
 Dinge können auch ohne Artikel angezeigt werden, so als hätte man sie als Eigennamen definiert. Der einzige Unterschied ist, dass das Objekt nicht das Attribut "proper-named" bekommt. Bei Dingen, die proper-named sind, werden nie Artikel verwendet, auch nicht bei der Ausgabe mit bestimmtem Artikel. Das kann man mit "no article" umgehen:
 
-	The special indefinite article of the Milch is NO ARTICLE. The printed name is "frisch[^] Milch."
+	The special indefinite article of the Milch is NO ARTICLE. The printed name is "frisch[^] Milch[f]."
 
 	"Du siehst hier frische Milch."
 
@@ -10453,27 +11049,27 @@ Dinge können auch ohne Artikel angezeigt werden, so als hätte man sie als Eige
 
 Jedes Objekt der Klasse "thing" und deren Unterklassen besitzt standardmäßig einen special indefinite article mit dem Wert PENDING. Dieser bleibt wirkungslos, bis dem special indefinite article einer der Werte DEFINITE ARTICLE, YOURS oder NO ARTICLE zugewiesen wird. Ein special indefinite article kann im weiteren Spielverlauf wieder unwirksam gemacht werden, indem man ihm den Wert PENDING zuweist.
 
-	The Buch is a neuter thing.
+	The book is a thing. The printed name of the book is "Buch[-es][n]".
 
-	After examining the Buch for the first time:
-		now the special indefinite article of the Buch is YOURS;
+	After examining the book for the first time:
+		now the special indefinite article of the book is YOURS;
 		say "Erst jetzt erkennst du, dass dies dein Tagebuch ist."
 
-	After giving the Buch to Peter:
-		now the special indefinite article of the Buch is PENDING;
+	After giving the book to Peter:
+		now the special indefinite article of the book is PENDING;
 		say "Du schenkst Peter dein Buch."
 
 Section: Assemblies: Automatisch erzeugte Teile von Personen
 
 Möchte man zum Beipiel Körperteile, sagen wir Nasen, für alle Personen erzeugen, geht das ganz einfach mit
 
-	A Nase is a kind of thing. A Nase is female. The plural of Nase is Nasen.
+	A Nase is a kind of thing. The plural of Nase is Nasen.
 	A Nase is part of every person.
 
 Der Inform-Compiler erzeugt nun automatisch eine Nase für jede Person im Spiel, wobei die Bezeichner, die angezeigten Objektnamen und das zum Objekt gehörige Vokabular ebenfalls angelegt werden -- nur leider auf Englisch. In GerX ist ein Workaround enthalten, der zumindest den angezeigten Objektnamen auf Deutsch ausgibt ("deine Nase", "Nase des Polizisten", "Bennos Nase" usw.). Um das englische Vokabular zu unterbinden, müssen die erzeugten Teile privately-named sein und der printed name muss nachgereicht werden:
 
 	A Nase is privately-named.
-	The printed name of a Nase is "Nase".
+	The printed name of a Nase is "Nase[f]".
 
 Nun fehlt noch das deutsche Vokabular, um die Nasen entsprechend ihrer Besitzer ansprechen zu können:
 
@@ -10548,7 +11144,7 @@ Der so ausgegebene Objektname steht jedoch immer im Nominativ; um den jeweils be
 
 Section: Pronomen, Hilfsverben und Verb-Endungen
 
-Die Ausdrücke passen sich an Numerus und Genus des zuletzt genannten Objekts oder eines angegebenen Objekts an. Mit "zuletzt genanntem Objekt" ist das Objekt gemeint, das als letztes mit einer Textersetzung explizit angegeben wurde. Das zuletzt genannte Objekt heißt in GerX "previously named noun" und kann vom Autor in eigenen Name-Printing-Rules als Variable des Typs "Thing" befragt oder neu gesetzt werden.
+Die Ausdrücke passen sich an Numerus und Genus des zuletzt genannten Objekts oder eines angegebenen Objekts an. Mit "zuletzt genanntem Objekt" ist das Objekt gemeint, das als letztes mit einer Textersetzung explizit angegeben wurde. Das zuletzt genannte Objekt heißt in GerX "previously named noun" (nicht zu verwechseln mit dem "prior named noun", welches in manchen englischen Erweiterungen verwendet wird) und kann vom Autor in eigenen Name-Printing-Rules als Variable des Typs "Object" befragt oder neu gesetzt werden.
 
 Pronomen:
 
@@ -10681,11 +11277,11 @@ Die universelle Adjektiv-Endung
 
 wird an den Stamm eines jeden flektierten Adjektivs, das Bestandteil des angezeigten Objektnamens ist, gehängt. Damit wird für jeden Fall die richtige Endung ausgegeben.
 
-	The Tomate is a female thing. The printed name is "grün[^] Tomate". Understand "gruen" as the Tomate.
+	The Tomate is an edible thing. The printed name is "grün[^] Tomate[f]". Understand "gruen" as the Tomate.
 
 Die Adjektiv-Endung kann auch im indefinite article genutzt werden:
 
-	The Murmeln are a plural-named thing in the playground. The printed name is "magisch[^] Murmeln". Understand "magisch" as the Murmeln.
+	The Murmeln are a thing in the playground. The printed name is "magisch[^] Murmeln[p]". Understand "magisch" as the Murmeln.
 
 	The indefinite article is "einig[^]".
 	"Du siehst hier einige magische Murmeln."
@@ -10724,13 +11320,13 @@ Section: Bestimmte Artikel
 
 Möchte der Autor Namen wie "Karl der Große" verwenden, muss er besondere Ausdrücke für die bestimmten Artikel, nämlich "[der]", "[die]", oder "[das]", verwenden, damit der Artikel in Ausgabetexten flektiert wird. Für Plural-Artikel gibt es den Ausdruck "[die plural]", aber Plural-Namen mit Artikel kommen wohl eher selten vor.
 
-	The printed name of Ivan is "Ivan[-s] [der] Schreckliche[-n]".
-	The printed name of Gertrud is "Gertrud[-es] [die] Große[-n] von Helfta".
-	The printed name of Hui Buh is "Hui Buh[-s] [das] Schlossgespenst[-s]".
+	The printed name of Ivan is "Ivan[-s][m] [der] Schreckliche[-n]".
+	The printed name of Gertrud is "Gertrud[-es][f] [die] Große[-n] von Helfta".
+	The printed name of Hui Buh is "Hui Buh[-s] [das] Schlossgespenst[-s][n]".
 
 Denkbar wäre auch der (eher unwahrscheinliche) Fall, dass man das Genus und den Numerus für den Artikel von einem bestimmten Objekt beziehen möchte. Dazu benutzt man dann folgende Form:
 
-	The printed name of Gerd is "Graf[-en] Gerd [-der- Gerd] Mutige[-n]."
+	The printed name of Gerd is "Graf[-en] Gerd [-der- Gerd][m] Mutige[-n]."
 
 Jetzt wird das Genus von Gerd (Maskulinum) und der Numerus (Singular) für den Artikel herangezogen. Das ist in diesem Fall gleichbedeutend mit "[der]" (und eigentlich sinnlos). "[-der- Objekt]", "[-die- Objekt]" und "[-das- Objekt]" sind synonym zu verwenden. (Das wird normalerweise keiner benutzen, aber wenn man doch mal auf ein Objekt verweisen will, kann man das damit tun.)
 
@@ -10793,9 +11389,9 @@ Section: Überprüfen der deklinierten angezeigten Objektnamen
 
 Ob man alle Endungen und Artikel für das Objekt korrekt angegeben hat, kann mit dem Debug-Befehl DEKLINIERE <DING> überprüft werden. Dieser Befehl steht nur während der Entwicklung zur Verfügung und wird beim Release entfernt.
 
-	Werther is an improper-named man in Wahlheim. The printed name is "jung[^] Werther[-s]". Understand "Werther" and "jung Werther" as Werther.
+	Werther is an improper-named man in Wahlheim. The printed name is "jung[^] Werther[-s][m]". Understand "Werther" and "jung Werther" as Werther.
 
-	The Pistole is a female thing carried by Werther. The printed name is "Pistole".
+	The pistol is a thing carried by Werther. The printed name is "Pistole[f]".
 
 	>DEKLINIERE WERTHER
 	Der junge Werther, des jungen Werthers, dem jungen Werther, den jungen Werther.
@@ -10809,7 +11405,7 @@ In der ersten Zeile wird der Objektname mit den bestimmten Artikeln dekliniert, 
 
 Und wir sehen, dass der junge Werther noch "ein junger Werther" sein kann. Doch Werther soll immer "der junge Werther" heißen. Also:
 
-	The article of Werther is definite.
+	The article of Werther is definite article.
 
 	>DEKLINIERE WERTHER
 	Der junge Werther, des jungen Werthers, dem jungen Werther, den jungen Werther.
@@ -11092,10 +11688,6 @@ Section: Die deform-Eigenschaft init benutzen
 
 Ermöglicht die Benutzung der deform-Eigenschaft init zum Initialisieren von Objekten mittels Einbindung von I6-Code.
 
-	*: Use alternative gender definitions.
-	
-Aktiviert die Benutzung von Genusdefinitionen im printed name (s. Chapter N.NN).
-
 
 Chapter: Neue Standard-Aktionen, -Aktivitäten und -Kommandos
 
@@ -11140,7 +11732,7 @@ Das Standardverhalten der Activity "translating a command into Informese" LTI ka
 
 Section: Den aktuellen Raum verlassen (location-leaving)
 
-Viele Spieler versuchen intuitiv, den aktuellen Standort (location) mit >VERLASSE RAUM oder ähnlichen Kommandos zu verlassen, was naheliegend ist. Trotzdem ist dies kein Standardverhalten des Inform-Weltmodells. In GerX ist das Verlassen eines Raums auf diese Weise möglich. Die neue Aktion, die dieses Verhalten bewirkt, heißt "location-leaving".
+Viele Spieler versuchen intuitiv, den aktuellen Standort (location) mit >VERLASSE RAUM oder ähnlichen Anweisungen zu verlassen, was naheliegend ist. Trotzdem ist dies kein Standardverhalten des Inform-Weltmodells. In GerX ist das Verlassen eines Raums auf diese Weise möglich. Die neue Aktion, die dieses Verhalten bewirkt, heißt "location-leaving".
 
 	>VERLASS
 	>VERLASS (DEN/DIE/DIESEN) <RAUM>
@@ -11178,7 +11770,7 @@ Das Untersuchen eines Raumes wird in der "convert examining a room into looking 
 
 Section: Die Sichtbarkeit des aktuellen Raums
 
-Der aktuelle Raum (location) ist standardmäßig nicht sichtbar, das heißt, er kann in Kommandos nicht als Objekt genannt werden. Für die Aktionen "location-leaving", "examining" und "smelling" wird der Raum jedoch in den sichtbaren Bereich (in scope) platziert. Die Regel, die dafür zuständig ist, heißt "location visibility rule" und greift "after deciding the scope of the player".
+Der aktuelle Raum (location) ist standardmäßig nicht sichtbar, das heißt, er kann in der Spielereingabe nicht als Objekt genannt werden. Für die Aktionen "location-leaving", "examining" und "smelling" wird der Raum jedoch in den sichtbaren Bereich (in scope) platziert. Die Regel, die dafür zuständig ist, heißt "location visibility rule" und greift "after deciding the scope of the player".
 
 Soll der aktuelle Raum niemals ansprechbar sein, kann die Regel komplett entfernt werden:
 
@@ -11190,7 +11782,7 @@ Wenn der Standort im Zusammenhang mit weiteren Aktionen ansprechbar sein soll, k
 	
 Mit "wide scope" ist gemeint, dass nicht nur der Inhalt des aktuellen Raumes sichtbar ist, sondern auch der Raum (als Objekt) selbst angesprochen werden kann.
 	
-Pronomen werden für einen im Kommando genannten Raum standardmäßig nicht gesetzt, da der aktuelle Standort für die meisten Aktionen nicht "in scope" ist. Sollen dennoch Räume beim Setzen der Pronomen berücksichtigt werden, muss die Option
+Pronomen werden für einen vom Spieler genannten Raum standardmäßig nicht gesetzt, da der aktuelle Standort für die meisten Aktionen nicht "in scope" ist. Sollen dennoch Räume beim Setzen der Pronomen berücksichtigt werden, muss die Option
 
 	*: Use room-related pronoun notice.
 	
@@ -11206,7 +11798,7 @@ Anstelle von I können in den folgenden Beispielen natürlich auch die synonymen
 	>I QUER/SATZ/BREIT
 	>I ALS SATZ
 
-Nach Eingabe eines dieser Kommandos wird das Inventar als Satz angezeigt und der Inventar-Stil (dargestellt durch die Variable inventory style) auf "wide inventory" gesetzt. Beim nächsten einfachen Aufruf des Inventars z.B. per >I wird der aktuelle Stil zur Ausgabe benutzt. 
+Nach Eingabe einer dieser Anweisungen wird das Inventar als Satz angezeigt und der Inventar-Stil (dargestellt durch die Variable inventory style) auf "wide inventory" gesetzt. Beim nächsten einfachen Aufruf des Inventars z.B. per >I wird der aktuelle Stil zur Ausgabe benutzt. 
 
 	>I
 	Du hast ein Glas (darin Wasser) und einen Apfel bei dir.
@@ -11216,7 +11808,7 @@ Mit aktivierter Use-Option "non-nested lists" sieht es so aus:
 	>I
 	Du hast ein Glas und einen Apfel bei dir. In dem Glas ist Wasser.
 
-Die Kommandos
+Die Anweisungen
 
 	>I HOCH/LISTE/LANG
 	>I ALS LISTE
@@ -11254,8 +11846,8 @@ Der Autor definiert folgende Tabelle
 und aktiviert ihre Berücksichtigung beim Parsen mit der Use-Option "Use compound heads.".
 Jetzt lassen sich Streichholz und Streichhölzer folgendermaßen definieren:
 
-	The Packung Streichhölzer is a female container. Understand "streich-" and "hoelzer" as the Packung Streichhölzer.
-	The Streichholz is a neuter thing. Understand "streich-" and "holz" as the Streichholz.
+	The pack of matches is a container. The printed name is "Packung[f] Streichhölzer" .Understand "streich-" and "hoelzer" as the pack.
+	The match is a thing. The printed name is "Streichholz[-es][n]". Understand "streich-" and "holz" as the match.
 
 Wichtig ist der Trennstrich am Ende der Wortkopf-Vokabel. Analog zum Abschneiden der Köpfe kann man die Wörter auch vom Ende her abschneiden lassen.
 
@@ -11545,7 +12137,7 @@ Eine Übersicht über ältere Versionen und Änderungsprotokolle gibt es im GerX
 	"http://ifiction.pageturner.de/inform7/archiv/index.html"
 
 
-Example: * Die Jadestatue - Martin Oehms Jade-Beispiel für Inform 7. Die ausführlich kommentierte Version gibt es unter "http://www.martin-oehm.de/jade/i7-code.html". Dieses Beispiel benutzt die "Denglisch-Methode" zum Definieren von Objekten, die in Kapitel 4.2 beschrieben ist.
+Example: * Die Jadestatue - Martin Oehms Jade-Beispiel für Inform 7. Die ausführlich kommentierte Version gibt es unter "http://www.martin-oehm.de/jade/i7-code.html". Dieses Beispiel benutzt die "Denglisch-Methode" zum Definieren von Objekten, die in Kapitel 4.2 beschrieben ist. Außerdem werden die traditionellen Attribute male, female und neuter zur Angabe des Genus benutzt.
 
 	*: "Die Jadestatue" by Martin Oehm
 
@@ -11555,7 +12147,7 @@ Example: * Die Jadestatue - Martin Oehms Jade-Beispiel für Inform 7. Die ausfü
 
 	Include German by Team GerX.
 
-	Lichtung im Dschungel is a room. "Du stehst auf einer Lichtung im dichten Dschungel. Im Norden steht ein alter, von Ranken überzogener Schrein. Im Süden führt ein schmaler Pfad zurück in die Zivilisation."
+	The Dschungel is a room. "Du stehst auf einer Lichtung im dichten Dschungel. Im Norden steht ein alter, von Ranken überzogener Schrein. Im Süden führt ein schmaler Pfad zurück in die Zivilisation." The printed name of the Dschungel is "Lichtung im Dschungel".
 
 	Instead of going south in the Dschungel when the player has the Jadestatue: say "Du schaffst es, mit der Statue wieder zurück in die Zivilisation zu gelangen."; end the story saying "Du hast gewonnen".
 
@@ -11564,23 +12156,23 @@ Example: * Die Jadestatue - Martin Oehms Jade-Beispiel für Inform 7. Die ausfü
 	Instead of going nowhere from the Dschungel, say "Dort ist der Dschungel zu dicht, es gibt keinen Pfad in diese Richtung."
 
 	A faustgross Stein is in the Dschungel. It is male. "In der Nähe des Schreins liegt ein glatter, runder Stein im Gras." Instead of examining the Stein, say "Der Stein ist so groß wie eine Faust und außergewöhnlich glatt und rund." Understand "gross", "glatt" and "rund" as Stein. The printed name of the Stein is "faustgroß[^] Stein". The Stein is portable.
-	
+
 	The alt Schrein is scenery in the Dschungel. It is male. Instead of examining the Schrein, say "Der alte Toltekenschrein ist fast komplett mit Efeu überwuchert." Instead of entering the Schrein, try going north. Understand "toltekisch", "Efeu" and "Ranken [p]" as Schrein. The printed name of the Schrein is "alt[^] Schrein".
-	
-	Im Schrein is a room. It is north of the Dschungel. "In dem kleinen Schrein ist es dunkel, nur wenig Licht fällt durch das halb verfallene Dach. Ein großer Lichtstrahl fällt auf eine Steinsäule in der Mitte des Schreins.[paragraph break]Die Lichtung liegt im Süden." Outside from Im Schrein is the Dschungel.
-	
-	The Steinsaeule is a supporter in Im Schrein. It is female. The printed name is "Steinsäule". Instead of examining the Steinsaeule, say "Die Säule ist aus glattem Stein gehauen, etwas mehr als einen Meter hoch und oben flach, wie ein Podest." Understand "Saeule", "Podest [n]" and "Steinpodest [n]" as Steinsaeule.
-	
+
+	The Toltekenschrein is a room. It is north of the Dschungel. "In dem kleinen Schrein ist es dunkel, nur wenig Licht fällt durch das halb verfallene Dach. Ein großer Lichtstrahl fällt auf eine Steinsäule in der Mitte des Schreins.[paragraph break]Die Lichtung liegt im Süden." Outside from the Toltekenschrein is the Dschungel. The printed name of the Toltekenschrein is "Im Schrein".
+
+	The Steinsaeule is a supporter in the Toltekenschrein. It is female. The printed name is "Steinsäule". Instead of examining the Steinsaeule, say "Die Säule ist aus glattem Stein gehauen, etwas mehr als einen Meter hoch und oben flach, wie ein Podest." Understand "Saeule", "Podest [n]" and "Steinpodest [n]" as Steinsaeule.
+
 	The Jadestatue is on the Steinsaeule. It is female and portable. Instead of examining the Jadestatue, say "Es ist die Statue einer toltekischen Gottheit, komplett aus grüner Jade geschnitzt. Sie glänzt und sieht sehr wertvoll aus." Understand "gruen", "klein", "Statue", "Figur", "Jadestatue" and "Jadefigur" as Jadestatue.
-	
+
 	Instead of taking the Jadestatue when the Jadestatue is on the Steinsaeule and the Stein is not on the Steinsaeule: say "Als du das Gewicht der Statue von der Säule nimmst, hörst Du ein klickendes Geräusch. Kurz darauf wirst du von Giftpfeilen durchbohrt."; end the story saying "Du bist gestorben".
-	
+
 	When play begins: say "Endlich! Nach tagelangem Suchen im Dschungel stößt du auf eine Lichtung. Und auf etwas mehr. Vielleicht ist dies der Ort, an dem sich die Jadestatue befindet?[paragraph break]".
-	
+
 	Test me with "s / u mich / i / nimm den Stein / untersuche ihn / i / n / lege Stein auf Säule / untersuche die Statue / nimm sie / i / s / s".
 
 
-Example: * Der Mantel der Finsternis - Eine Übersetzung des Demo-Spiels "Cloak of Darkness" von Roger Firth, basierend auf der Inform-7-Version von Graham Nelson und Emily Short. Dieses Beispiel benutzt die "einsprachige Methode" zum Definieren von Objekten, die in Kapitel 4.3 beschrieben ist.
+Example: * Der Mantel der Finsternis - Eine Übersetzung des Demo-Spiels "Cloak of Darkness" von Roger Firth, basierend auf der Inform-7-Version von Graham Nelson und Emily Short. Dieses Beispiel benutzt die "einsprachige Methode" zum Definieren von Objekten, die in Kapitel 4.3 beschrieben ist. Das grammatische Geschlecht des Objekts wird im printed name angegeben.
 
 	*: "Der Mantel der Finsternis"
 
@@ -11592,21 +12184,21 @@ Example: * Der Mantel der Finsternis - Eine Übersetzung des Demo-Spiels "Cloak 
 
 	A thing is usually privately-named. A room is usually privately-named.
 
-	The Foyer of the Opera House is a room. The printed name is "Foyer der Oper". "Du stehst in einer großen, prächtig in Rot und Gold dekorierten Eingangshalle. Funkelnde Kronleuchter hängen von der Decke herab. Der Ausgang zur Straße liegt im Norden, weitere Türen befinden sich im Süden und Westen."
+	The Foyer of the Opera House is a room. The printed name is "Foyer der Oper[n]". "Du stehst in einer großen, prächtig in Rot und Gold dekorierten Eingangshalle. Funkelnde Kronleuchter hängen von der Decke herab. Der Ausgang zur Straße liegt im Norden, weitere Türen befinden sich im Süden und Westen."
 
 	Instead of going north in the Foyer, say "Du bist doch gerade erst angekommen, und draußen scheint das Wetter ohnehin nur noch schlechter zu werden."
 	
-	The Cloakroom is west of the Foyer. The printed name is "Garderobe". "An den Wänden dieses kleinen Raumes befanden sich offenbar einmal Reihen von Kleiderhaken aus Messing, von denen jetzt nur noch einer geblieben ist. Der Ausgang ist eine Tür im Osten."
+	The Cloakroom is west of the Foyer. The printed name is "Garderobe[f]". "An den Wänden dieses kleinen Raumes befanden sich offenbar einmal Reihen von Kleiderhaken aus Messing, von denen jetzt nur noch einer geblieben ist. Der Ausgang ist eine Tür im Osten."
 	
-	In the Cloakroom is a supporter called the small brass hook. It is a male scenery. The printed name is "klein[^] Messinghaken[-s]".
+	The small brass hook is a scenery supporter in the Cloakroom. The printed name is "klein[^] Messinghaken[-s][m]".
 	
-	Understand "klein", "haken", "messinghaken", "kleiderhaken" and "haekchen [n]" as the hook.
+	Understand "klein", "haken", "messinghaken", "kleiderhaken" and "haekchen[n]" as the hook.
 	
 	The description of the hook is "Es ist nur ein einfacher Kleiderhaken aus Messing, [if something is on the hook]mit [a list of things on the hook with dative] daran[otherwise]der an die Wand geschraubt ist[end if]."
 	
-	The Bar is south of the Foyer. The printed name of the Bar is "Foyer-Bar". The Bar is dark. "Die Bar ist nicht halb so prächtig, wie du annahmst, nachdem du das Foyer im Norden gesehen hast. Sie ist völlig leer, bis auf das Sägemehl am Boden, in dem du eine hingekritzelte Nachricht erkennen kannst."
+	The Bar is south of the Foyer. The printed name of the Bar is "Foyer-Bar[f]". The Bar is dark. "Die Bar ist nicht halb so prächtig, wie du annahmst, nachdem du das Foyer im Norden gesehen hast. Sie ist völlig leer, bis auf das Sägemehl am Boden, in dem du eine hingekritzelte Nachricht erkennen kannst."
 	
-	The scrawled message is female scenery in the Bar. The printed name is "krakelig[^] Nachricht". Understand "krakelig", "gekrakelt", "gekitzelt", "Nachricht", "Botschaft", "Schrift", "Boden [m]", "Saegemehl [n]" as the message.
+	The scrawled message is scenery in the Bar. The printed name is "krakelig[^] Nachricht[f]". Understand "krakelig", "gekrakelt", "gekitzelt", "Nachricht", "Botschaft", "Schrift", "Boden[m]", "Saegemehl[n]" as the message.
 	
 	Neatness is a kind of value. The neatnesses are neat, scuffed, and trampled.
 	
@@ -11630,7 +12222,7 @@ Example: * Der Mantel der Finsternis - Eine Übersetzung des Demo-Spiels "Cloak 
 		now the message is trampled;
 		say "Es ist keine gute Idee, im Dunkeln hier herumzutappen."
 	
-	The velvet cloak is a male thing worn by the player. The printed name of the cloak is "Samtmantel[-s]". The cloak can be hung or unhung. Understand "dunkel", "schwarz", "benetzt", "Samtmantel", "Satinmantel", "Samt [n]", "Satin [n]", "Mantel", "Umhang", "Gewand [n]" as the cloak. The description of the cloak is "Ein schöner Samtmantel, mit Satin durchzogen und von Regentropfen leicht benetzt. Er ist so tief schwarz, dass es fast scheint, als entzöge er dem Raum jegliches Licht."
+	The velvet cloak is a thing worn by the player. The printed name of the cloak is "Samtmantel[-s][m]". The cloak can be hung or unhung. Understand "dunkel", "schwarz", "benetzt", "Samtmantel", "Satinmantel", "Samt[n]", "Satin[n]", "Mantel", "Umhang", "Gewand[n]" as the cloak. The description of the cloak is "Ein schöner Samtmantel, mit Satin durchzogen und von Regentropfen leicht benetzt. Er ist so tief schwarz, dass es fast scheint, als entzöge er dem Raum jegliches Licht."
 	
 	Carry out taking the cloak:
 		now the bar is dark.
@@ -11670,9 +12262,9 @@ Example: * John Malkovichs Toilette - Eine Übersetzung des Beispiels "John Malk
 
 	A thing is usually privately-named. A room is usually privately-named.
 
-	The Bathroom is a room. The printed name is "Badezimmer".
+	The Bathroom is a room. The printed name is "Badezimmer[n]".
 
-	The bathroom door is a female door. It is north of the Bathroom and south of the Bedroom. It is lockable and locked. The printed name of the bathroom door is "Badezimmertür". Understand "Tuer", "Badezimmertuer" and "Tuer des/zum Badezimmer" as the bathroom door. The printed name of the bedroom is "Schlafzimmer".
+	The bathroom door is a door. It is north of the Bathroom and south of the Bedroom. It is lockable and locked. The printed name of the bathroom door is "Badezimmertür[f]". Understand "Tuer", "Badezimmertuer", "Tuer des Badezimmer" and "Tuer zu dem Badezimmer" as the bathroom door. The printed name of the bedroom is "Schlafzimmer[n]".
 
 	Before unlocking keylessly the bathroom door:
 		if the bathroom door is unlocked, say "[Der bathroom door] ist schon unverriegelt." instead;
@@ -11683,12 +12275,12 @@ Example: * John Malkovichs Toilette - Eine Übersetzung des Beispiels "John Malk
 		try turning the latch instead.
 
 	Before locking the bathroom door with something:
-		say "Die Badezimemrtür lässt sich nur verrieglen und nicht mit einem Schlüssel abschließen." instead.
+		say "Die Badezimmertür lässt sich nur verriegeln und nicht mit einem Schlüssel abschließen." instead.
 
 	Before unlocking the bathroom door with something:
 		say "Die Badezimmertür ist verriegelt und lässt sich nicht mit einem Schlüssel öffnen." instead.
 
-	The latch is part of the bathroom door. "Ein drehbarer Knopf, der die Tür verriegelt." Understand "Knopf", "Riegel" and "drehbar" as the latch. The description of the bathroom door is "Uninteressant bis auf den Knopf zum Verriegeln der Tür." The printed name of the latch is "drehbar[^] Riegel".
+	The latch is part of the bathroom door. "Ein drehbarer Knopf, der die Tür verriegelt." Understand "Knopf", "Riegel" and "drehbar" as the latch. The description of the bathroom door is "Uninteressant bis auf den Knopf zum Verriegeln der Tür." The printed name of the latch is "drehbar[^] Riegel[-s][m]".
 
 	Instead of turning the latch:
 		if the bathroom door is locked begin;
@@ -11699,9 +12291,9 @@ Example: * John Malkovichs Toilette - Eine Übersetzung des Beispiels "John Malk
 			now the bathroom door is locked;
 		end if.
 
-	The little black oval door is a female door. It is west of the Bathroom and east of Oblivion. It is lockable and locked. The printed name is "klein[^] schwarz[^] oval[^] Tür". Understand "klein", "schwarz", "oval" and "Tuer" as the oval door. The description of the oval door is "Sie befindet sich in der Wand des Duschbereichs und lässt sich wer weiß wo öffnen. Du bist dir sicher, dass sie gestern noch nicht da war." The printed name of Oblivion is "Vergessenheit".
+	The little black oval door is a door. It is west of the Bathroom and east of Oblivion. It is lockable and locked. The printed name is "klein[^] schwarz[^] oval[^] Tür[f]". Understand "klein", "schwarz", "oval" and "Tuer" as the oval door. The description of the oval door is "Sie befindet sich in der Wand des Duschbereichs und lässt sich wer weiß wo öffnen. Du bist dir sicher, dass sie gestern noch nicht da war." The printed name of Oblivion is "Vergessenheit[f]".
 
-	The onyx key unlocks the oval door. It is in the Bedroom. The onyx key is male. "Auf dem Boden liegt kantig und schwarz von der Sonne beleuchtet [ein onyx key]." The printed name of the onyx key is "Onyxschlüssel". Understand "Schluessel", "Schluessel aus Onyx" and "Onyxschluessel" as the onyx key.
+	The onyx key unlocks the oval door. It is in the Bedroom. "Auf dem Boden liegt kantig und schwarz von der Sonne beleuchtet [ein onyx key]." The printed name of the onyx key is "Onyxschlüssel[m]". Understand "Schluessel", "Schluessel aus Onyx" and "Onyxschluessel" as the onyx key.
 
 	Test me with " u badezimmertür / schließ ovale tür auf / schließ badezimmertür auf / g / gehe durch badezimmertür / nimm schlüssel / schließ badezimmertür ab / schließ badezimmertür / s / schließ badezimmertür mit dem onyxschlüssel ab / w"
 	

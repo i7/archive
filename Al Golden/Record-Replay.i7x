@@ -1,4 +1,6 @@
-Version 1 of Record-Replay by Al Golden begins here.
+Version 2 of Record-Replay by Al Golden begins here.
+
+"This is now a stand-alone extension where it was originally part of the Debugging extension."
 
 Include (- 
 Verb meta 'recording' *          -> CommandsOn 
@@ -82,8 +84,8 @@ Record-Replay ends here.
 Since the recording/replay functions of Inform 6 are not currently handled by Inform 7, 
 this short extension allows those 2 functions.
 
-this code is essentially stripped out of the  "Debugging" extension
-which offers a few extra features when debugging their programs.
+This code was originally included in the "Debugging" extension
+which is now a stand-alone extension.
 
 Typing "RECORDING" or "RECORDING ON" starts a transcript.
 

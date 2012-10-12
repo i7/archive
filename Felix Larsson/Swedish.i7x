@@ -1,4 +1,4 @@
-Version 1/110725 of Swedish by Felix Larsson begins here.
+Version 1/121008 of Swedish by Felix Larsson begins here.
 
 "Låter dig skriva spel/berättelser att spelas/läsas på svenska."
 
@@ -59,7 +59,7 @@ Section - Things
 [A/sr1§22 - SR1/3]
 A thing can be non-count or not non-count. A thing is usually not non-count. 
 
-[I you write source text like "A själ is a kind of thing. A själ is part of every person.", Inform automatically names these parts after their holders: "your själ", "Voldemort's själ", etc. The following code gives them a corresponding "indexed name" in Swedish ("din själ", "Voldemorts själ") that we can print and match input against instead.]
+[I you write source text like "A själ is a kind of thing. A själ is part of every person.", Inform automatically names these parts after their holders in English: "your själ", "Voldemort's själ", etc. The following code gives them a corresponding "indexed name" in Swedish ("din själ", "Voldemorts själ") that we can print and match input against instead.]
 
 A thing has an indexed text called indexed name.
 The indexed name of a thing is usually "".
@@ -706,7 +706,7 @@ Understand "kläm [something]" or "kläm på/ur/ut [something]" as squeezing.
 Understand "ja" as saying yes.
 Understand the commands "jo", "j" and "y" as "ja".
 
-Understand "nej " as saying no.
+Understand "nej" as saying no.
 Understand the command "nä" as "nej".
 
 Understand "bränn [something]" or "bränn upp/på [something]" as burning.
@@ -869,7 +869,7 @@ To say (quantum - number) in words counting neuter/neuters:
 	say quantum in words;
 	now neutrum is false.
 
-To say (quantum - number) in words counting öre/ören/år/ålder:
+To say (quantum - number) in words counting öre/ören/år/ålder/years/age:
 	say quantum in words counting nothing.
 
 To say (quantum - number) in words counting nothing:
@@ -1027,9 +1027,17 @@ To say s: [mus/mös|s]
 	if the number-just-said is not 1, say "s".	
 
 [Irregular plurals]	
+To say bror-bröder: [bror/bröder]
+	if the number-just-said is not 1, say "bröder";
+	otherwise say "bror".
+
 To say far-fäder: [far/fäder]
 	if the number-just-said is not 1, say "fäder";
 	otherwise say "far".
+
+To say mor-mödrar: [mor/mödrar]
+	if the number-just-said is not 1, say "mödrar";
+	otherwise say "mor".
 
 To say liten-små: [liten/små]
 	if the number-just-said is not 1, say "små";
@@ -1168,6 +1176,10 @@ To say er-ret: [mörk|er/mörk|ret]
 To say er-ren: [papp|er/papp|ren]
 	if the indefinite mode is false, say "ren";
 	otherwise say "er".
+
+To say r-dern: [bro|r/bro|dern]
+	if the indefinite mode is false, say "dern";
+	otherwise say "r".
 
 To say el-let: [tviv|el/tviv|let]
 	if the indefinite mode is false, say "let";
@@ -4701,14 +4713,12 @@ Volume - Localization of Built-In Extensions
 
 Book - Swedish Basic Help Menu (for use with Basic Help Menu by Emily Short)
 
-Chapter - Basic Help Menu (in place of Basic Help Menu by Emily Short)
-
-Table of Basic Help Options
+Table of Basic Help Options in Swedish
 title	subtable	description	toggle
 "Om [story title]"	a table-name	"Ett [story genre]-spel."	a rule
-"Hur man spelar"	Table of Instruction Options	--	--
+"Hur man spelar"	Table of Instruction Options in Swedish	--	--
 
-Table of Instruction Options
+Table of Instruction Options in Swedish
 title	subtable	description	toggle
 "Om interaktiv fiktion"	a table-name	"Detta spel är ett exempel på interaktiv fiktion. I interaktiv fiktion (även kallat IF) spelar du huvudpersonen i en berättelse. Det du skriver på datorn bestämmer vad huvudpersonen gör och vad som händer i berättelsen. I somliga IF-spel ingår [lite] grafik, men [de] är undantag: illustrationerna till spelet står vanligen din egen fantasi för. Å andra sidan kan du försöka [dig] på att göra nästan vad som helst: i många andra dataspel kan du bara skjuta, röra [dig] åt olika håll och undersöka saker genom att klicka på dem med musen, men i IF är oftast betydligt fler handlingar möjliga."	a rule
 "Vad är '[command prompt]' till för?"	a table-name	"[command prompt]-tecknet betyder: 'Okej, vad vill du göra den här gången?'  Här skriver du dina instruktioner till huvudpersonen -- oftast ett verb i imperativ, eventuellt med prepositioner och  objekt.: till exempel TITTA, TA FISKEN, TITTA PÅ FISKEN eller TA PÅ FISKEN."	a rule
@@ -4716,29 +4726,29 @@ title	subtable	description	toggle
 "Rum och riktningar"	--	"Du befinner [dig] alltid på en viss plats eller i ett visst rum. När du kommer till en ny plats beskriver spelet vad du ser där. På så sätt får du reda på två viktiga saker: dels vilka saker som finns där och som du kan försöka göra [något] med eller plocka upp och ta med [dig], dels vilka vägar kan du kan ta när du vill fortsätta därifrån. Vill du läsa beskrivningen av platsen igen, är det bara att skriva TITTA. [paragraph break]Vill du gå [någon] annanstans, berättar du det för spelet genom att tala om vilken riktning du vill gå i: t.ex. GÅ NORRUT eller GÅ ÅT SYDVÄST. För enkelhets skull behöver du inte skriva GÅ och du kan också förkorta väderstrecken. Alltså räcker det att skriva NORR, SÖDER, ÖSTER, VÄSTER, NORDOST, SYDOST, NORDVÄST, SYDVÄST (eller förkortat N, S, Ö, V, NO, SO, NV, och SV.[paragraph break]På sina håll går det också att gå UPP, NED, IN och UT."	--
 "Föremål"	--	"I spelet kommer det att finnas diverse föremål du kan göra saker med. Framför allt kan du TA saker och SLÄPPA [dem] igen (när du tröttnat på dem). TILLHÖRIGHETER eller UTRUSTNING (förkortat TILLH och UTR) räknar upp alla de saker du för tillfället bär runt på.[paragraph break]Oftast finns det [något] du kan göra med dessa saker: att ÖPPNA, STÄNGA, TA PÅ [if the dej spelling option is active or the informal spelling option is active]MEJ[otherwise]MIG[end if], ÄTA, LÅSA och LÅSA UPP saker hör till det vanligaste.[paragraph break]Även om författaren skrivit att ett visst föremål finns i rummet, händer det ibland hända att spelet inte verkar fatta det när du försöker göra [något] med det föremålet. I så fall nämnde författaren föremålet bara för att ge en stämningsfull beskrivning av rummet, och du kan utgå från att du inte behöver det föremålet till [någon]ting."	--
 "Spara och avsluta etc."	--	"Det finns några saker som inte huvudpersonen i berättelsen kan göra utan som du själv gör med spelet, som att spara en spelomgång eller avsluta programmet. Det gör du med direktiven:[paragraph break]SPARA, som sparar en kopia av spelvärlden som den ser ut precis för ögonblicket.[line break]LADDA, som hämtar en sparad spelomgång och låter [dig] fortsätta på den. Du kan spara hur många spelomgångar som helst.[line break]BÖRJA OM,  som låter [dig] börja om speloet från början.[line break]AVSLUTA, som avslutar spelet."	--
-"Hur spelvärlden är uppbyggd"	Table of IF Elements	--	--
-"Har du kört fast?"	Table of Stuckness Advice	--	--
+"Hur spelvärlden är uppbyggd"	Table of IF Elements in Swedish	--	--
+"Har du kört fast?"	Table of Stuckness Advice in Swedish	--	--
 
-Table of Stuckness Advice
+Table of Stuckness Advice in Swedish
 title	subtable	description	toggle
 "Utforska"	--	"Undersök allt du hittar och alla sakerna du bär med [dig]. Öppna alla dörrar och gå in genom [dem]. Kika i alla stängda behållare. Testa allt som går att göra på varje ställe.[paragraph break]Använd alla sinnen: känn, lukta, lyssna och smaka på saker som skulle kunna kännas, lukta, låta eller smaka på särskilda sätt.[paragraph break]Var grundlig. Kommer du inte på vad du ska göra, så försök att öppna fönster, titta under sängar o.s.v. I en del spel är viktiga saker väl gömda."
 "Läs noggrant"	--	"Läs om stycken. Titta en gång till på saker du redan tittat på. Ibland får man nya idéer av det.[paragraph break]Leta efter ledtrådar i texten. Sakers om beskrivs ingående är antagaligen viktigare än saker som nämn i förbigående. Greja med de sakerna. Om en maskin har delar, titta på delarna och försök göra [något] med dem.  Lägg också märke till vilka verb som nämns i texten. Försök använda samma verb själv. Ofta behövs det speciella verb för speciella handlingar i ett speciellt spel -- som trollformler eller andra ovanliga kommandon. De skadar aldrig att pröva [något], om det omnämns i texten.[paragraph break]Kolla hela bildskärmen. Finns det några extra fönster förutom huvudfönstret? Vad händer i de fönstren? Håll ett öga på statusraden, om det finns en [sådan] -- där kan det stå var du är, hur många poäng du har, vad klockan är i spelvärlden, vilken kondition din figur är i eller annan viktig information. Om statusraden till exempel talar om vilken kondition figuren du spelar är i, kan du vara säker på att det kan vara viktigt att veta förr eller senare."
 "Var påhittig"	--	"Formulera om [dig]. Om spelet inte verkar fatta vad du vill göra, försök säga samma sak med andra ord.[paragraph break]Pröva på olika sätt. Ibland när [något] inte funkar, kan man få ovanliga responser från spelet. Det är ofta ett tecken på att man är på rätt spår, fast man inte lyckats lista ut precis hur man gör än. När du trycker bara på den röda knappen, gnisslar det inifrån väggen, så kanske öppnar man lönndörren genom att trycka först p den blå knappen och [sedan] på den röda.[paragraph break]Tänk på vad det är för slags historia som berättas. Vad man [ska] göra och varför kan bero på ifall man spelar ett mysterium, en kärleksberättelse eller en thriller. Vad försöker du göra, och hur brukar huvudpersonerna i sådana berättelser lösa den sortens saker? Vad kan man vänta [sig] att en deckare, hjältinnan i en kärlekshistoria eller en hemlig agent skulle göra i en [sådan] situation?"
 "Samarbeta"	--	"Spela ihop med [någon]. Två huvuden är klokare än ett. Om det ändå inte går, kan du försöka mejla författaren eller ännu hellre be om ledtrådar på rec.games.int-fiction eller intfiction.org.  Skriv vad det är för spel du behöver hjälp med, och inled med flera tomma rader (så du inte råkar avslöja vad som händer i spelet för folk som inte redan spelat det). Förklara sedan ditt problem så klart och tydligt som möjligt. Det finns säkert [någon] som vet hur man kommer vidare."	--
 
-Table of IF Elements
+Table of IF Elements in Swedish
 title	subtable	description	toggle
 "Vad du når"	--	"Vanligen har du tillgång till allting du kan se på den plats där du befinner [dig]. Det går att flytta [sig] från en plats till en annan; men du behöver oftast inte flytta på [dig] i rummet där du är. Kommandon som >GÅ TILL BORDET behövs sällan eller aldrig. Men berättar författaren att att [någon]ting ligga högt upp eller utom räckhåll, kan det ibland vara nöädvändigt att ställa [sig] på en stol eller dylikt för att nå. Den sortens handlingar brukar dock bara vara viktiga om texten i spelet antyder det."	--
 "Saker i eller på [någon]ting"	--	"Vlika saker som ligger i eller på vilka andra saker brukar IF-spel ofta ha noga koll på. Många gåtor i spelen har att göra med var saker är -- om spelaren bär omkring på [dem], om [de] ligger på marken eller på ett bord eller i ett skrin o.s.v."	--
 "Vad du kan göra"	--	"De flesta handlingar du kan utföra i en IF-värld är enkla och konkreta. >GÅ VÄSTERUT och >ÖPPNA DÖRR fungerar nästan säkert. >ÅK BORT eller >BYGG ETT BORD fungerar antagligen inte. Kommandon som >ÅK TILL HOTELLET ligger på gränsen: de funkar i en del spel, men inte i de flesta. I allmänhet är det så att abstrakta handlingar eller handlingar i flera led behöver delas upp i en serie enklare och konkretare handlingar för att spelet [ska] förstå dina kommandon. "	--
 "Andra figurer"	--	"De fiktiva personer du möter i ett spel är ibland rätt begränsade. Å andra sidan finns det också spel som framför allt går ut på att interagera med andra figurer i IF-världen. Man får snart en känsla för figurerna i spelet: ger [de] vettiga svar på många olika frågor, kommer [de] ihåg saker man berättat för [dem], rör [de] [sig] på egen hand i spelvärlden o.dyl., så kan de vara viktiga. Ger [de] mest standardsvar och verkar [de] inte vara det som författaren lagt [ned] mesta jobbet på, så är de antagligen bara där för att ge [lite] stämning åt spelet eller för att [de] behövs för att lösa [något] bestämt problem. Figurer i spel med många problem måste ofta mutas, hotas eller smickras till att hjälpa spelaren med [något] -- avslöja [något], ge spelaren [något], släppa in spelaren [någon]stans och så vidare."	--
 
-Table of Setting Options
+Table of Setting Options in Swedish
 title	subtable	description	toggle
 "[if the current verbosity mode is verbose]Beskriver alla rum[end if][if the current verbosity mode is brief]Beskriver nya rum[end if][if the current verbosity mode is superbrief]Beskriver inga rum[end if]"	--	--	switch description types rule
 "[if notify mode is on]Varskor om poängändringar[otherwise]Varskor inte om poängändringar[end if]"	--	--	switch notification status rule
 
-To decide whether notify mode is on:
+[To decide whether notify mode is on:
 	(- notify_mode -);
 
 This is the switch notification status rule:
@@ -4771,17 +4781,17 @@ To decide what verbosity is the current verbosity mode:
 	if n is 3, decide on superbrief.
 	
 To decide what number is the current lookmode number:
-	(- lookmode -);
+	(- lookmode -);]
 
-Understand "hjälp" or "tips" or "om" or "information" or "info" as asking for help.
-Asking for help is an action out of world.
-Carry out asking for help (this is the help request rule):
-   now the current menu is the Table of Basic Help Options;
+Understand "hjälp" or "tips" or "om" or "information" or "info" as asking for help in Swedish.
+Asking for help in Swedish is an action out of world.
+Carry out asking for help in Swedish (this is the Swedish help request rule):
+   now the current menu is the Table of Basic Help Options in Swedish;
    carry out the displaying activity;
    clear the screen;
    try looking.
 
-The story genre is "text"
+The story genre is "text".
 
 
 Book - Swedish Basic Screen Effects (for use with Basic Screen Effects by Emily Short)
@@ -4796,8 +4806,7 @@ To pause the/-- game:
 Book - Swedish Complex Listing (for use with Complex Listing by Emily Short)
 
 To say tabled verb:
-	[if the number of filled rows in the Table of Scored listing is greater than 1, say "är ";
-	otherwise ]say "är ";
+	say "finns ";
 
 To say prepared list:
 	if the number of filled rows in the Table of Scored Listing is 0
@@ -4808,14 +4817,15 @@ To say prepared list:
 	dump list;
 	now current articulation style is bare.
 
-First delimiter is ", ". 
-Second delimiter is ", och ". 
-Alternate second delimiter is " och ".
+When play begins:
+	now the first delimiter is ", "; 
+	now the second delimiter is ", och "; 
+	now the alternate second delimiter is " och ".
 
 Table of List Style Assignments (amended)
 list style	first delimiter	second delimiter	alternate second delimiter	indefinite name phrase	definite name phrase
-sequential	", "	"[if the serial comma option is active],[end if] och "	" och "	"[a current listed object]"	"[the current listed object]"
-disjunctive	", "	"[if the serial comma option is active],[end if] eller "	" eller "	"[a current listed object]"	"[the current listed object]"
+sequential	", "	" och "	" och "	"[a current listed object]"	"[the current listed object]"
+disjunctive	", "	" eller "	" eller "	"[a current listed object]"	"[the current listed object]"
 semi-colon	"; "	"; "	" och "	"[a current listed object]"	"[the current listed object]"
 comma	", "	", "	" och "	"[a current listed object]"	"[the current listed object]"
 null	" "	" "	" och "	"[current listed object]"	"[current listed object]"
@@ -4911,11 +4921,11 @@ Check unlocking keylessly (this is the Swedish check keylessly unlocking rule):
 	abide by the Swedish need a matching key rule.
 
 The Swedish standard keylessly unlocking rule is listed instead of the standard keylessly unlocking rule in the carry out unlocking keylessly rulebook.
-Carry out unlocking keylessly (this is the standard keylessly unlocking rule):
+Carry out unlocking keylessly (this is the Swedish standard keylessly unlocking rule):
 	if sequential action option is active, do nothing; otherwise say "(med [the matching key of the noun])[command clarification break]";
 	try unlocking the noun with the matching key of the noun.
 
-The Swedish check someone else keylessly unlocking rule is listed in the check someone else keylessly unlocking rule in the check someone trying unlocking keylessly rulebook.
+The Swedish check someone else keylessly unlocking rule is listed instead of the check someone else keylessly unlocking rule in the check unlocking keylessly rulebook.
 Check someone trying unlocking keylessly (this is the Swedish check someone else keylessly unlocking rule):	 
 	abide by the can't unlock without a lock rule;
 	abide by the can't unlock what's already unlocked rule;
@@ -4943,7 +4953,7 @@ Carry out locking keylessly (this is the Swedish standard keylessly locking rule
 	if sequential action option is active, do nothing; otherwise say "(med [the matching key of the noun])[command clarification break]";
 	try locking the noun with the matching key of the noun.
 
-The Swedish check someone keylessly locking rule is listed instead of the check someone keylessly locking rule in the check someone trying locking keylessly rulebook.
+The Swedish check someone keylessly locking rule is listed instead of the check someone keylessly locking rule in the check locking keylessly rulebook.
 Check someone trying locking keylessly (this is the Swedish check someone keylessly locking rule):
 	abide by the can't lock without a lock rule;
 	abide by the can't lock what's already locked rule;
@@ -4951,12 +4961,12 @@ Check someone trying locking keylessly (this is the Swedish check someone keyles
 	abide by the Swedish need a matching key rule.
 	
 
-The Swedish identify passkeys in inventory rule is listed instead of the identify passkeys in inventory rule in the after rulebook.
+The Swedish identify passkeys in inventory rule is listed instead of the identify passkeys in inventory rule in the after printing the name rulebook.
 After printing the name of an identified passkey (called the item) while taking inventory (this is the Swedish identify passkeys in inventory rule):
 	say " (som går till [the list of things unbolted by the item])";
 	
 The Swedish passkey description rule is listed instead of the passkey description rule in the after rulebook.
-After examining an identified passkey (this is the passkey description rule):
+After examining an identified passkey (this is the Swedish passkey description rule):
 	say "[The noun] går till [the list of things unbolted by the noun]."
 
 
@@ -5047,10 +5057,12 @@ This is the Swedish must have accessible the second noun rule:
 
 Book - Swedish Menus (for use with Menus by Emily Short)
 
-[
-Table of Menu Commands
+When play begins: now the current menu title is "Menykommandon".
+
+
+Table of Menu Commands (continued)
 number	effect
-78[= N]	move down rule
+[78[= N]	move down rule
 110[= n]	move down rule
 80[= P]	move up rule
 112[= p]	move up rule
@@ -5060,12 +5072,12 @@ number	effect
 32[= SPACE]	select rule
 130[= BREAK PERMITTED (DOWN ARROW)]	move down rule
 129[= HICH OCTET PRESET (UP ARROW)]	move up rule
-27[= ESCAPE]	quit rule
-]
-
-When play begins:
-	now the number in row three of the Table of Menu Commands is 84[= T]; 
-	now the number in row four of the Table of Menu Commands is 116[= t]. 
+27[= ESCAPE]	quit rule]
+70[= F]	move up rule
+102[= f]	move up rule
+84[= T]	quit rule
+116[= t]	quit rule
+ 
 
 [
 Table of Deep Menu Status
@@ -5077,10 +5089,10 @@ left	central	right
 ]
 
 When play begins:
-	now the left entry in row three of the Table of Deep Menu Status is "N = nästa ämne  "; 
-	now the right entry in row three of the Table of Deep Menu Status is "Q = [if menu depth > 1]tidigare meny[otherwise]fortsätt spel[end if]"; 
-	now the left entry in row four of the Table of Deep Menu Status is "T = tidigare"; 
-	now the right entry in row four of the Table of Deep Menu Status is "    RETUR = välj ämne"; 
+	now the left in row 3 of the Table of Deep Menu Status is " N = nästa      "; 
+	now the right in row 3 of the Table of Deep Menu Status is "  T = tillbaka"; 
+	now the left in row 4 of the Table of Deep Menu Status is " F = föregående "; 
+	now the right in row 4 of the Table of Deep Menu Status is "  RETUR = välj"; 
 
 [
 Table of Sample Hints
@@ -5129,73 +5141,50 @@ To say hints from (hint booklet - table-name):
 
 Book - Swedish Plurality (for use with Plurality by Emily Short)
 
-Section - Enumeration (in place of Section 4 - Enumeration in Plurality by Emily Short)
-    
-A thing can be ambiguously plural or ordinarily enumerated. A thing is usually ordinarily enumerated.
+A thing is usually common-gendered.
 
-This is the update ambiguous pronouns for actions rule: 
-	if the noun is a thing and the noun is ambiguously plural:
-		notice the plurality of the noun; 
-	if the second noun is a thing and the second noun is ambiguously plural:
-		notice the plurality of the second noun.
-
-The update ambiguous pronouns for actions rule is listed after the set pronouns from items from multiple object lists rule in the action-processing rules.
-
-After printing the name of an ambiguously plural thing (called the suspect) (this is the notice plurality of printed ambiguous object rule):
-	if the manual pronouns option is active:
-		do nothing;
-	otherwise:
-		notice the plurality of the suspect.
-	
-To notice the plurality of (suspect - an object):
-	(- PlugPlural({suspect}); -)
+Include (- Replace PlugPlural; -) after "Definitions.i6t".
 
 Include (-
 [ PlugPlural obj;
-    #ifdef DOM_SPELLING;
-	    SetPronoun('dom', obj);
-    #ifnot;
-	    SetPronoun('dem', obj);
-    #endif;
-	if obj has neuter {
-        SetPronoun('det', obj)};
-	if obj has common {
-	SetPronoun('den', obj)};
+  SetPronoun('dem', obj);
+  SetPronoun('dom', obj);
+  if (obj has neuter) SetPronoun('det', obj);
+  if (obj has common) SetPronoun('den', obj);
 ];
 -). 
-
-Use Manual Pronouns translates as (- Constant MANUAL_PRONOUNS; -).
-
-To have the parser notice (o - an object): 
-	if o is ambiguously plural, notice the plurality of o;
-	otherwise set pronouns from o.
 
 
 Book - Swedish Rideable Vehicles (for use with Rideable Vehicles by Graham Nelson)
 
-Check an actor mounting (this is the can't mount when mounted on an animal rule): 
+The Swedish can't mount when mounted on an animal rule is listed instead of the can't mount when mounted on an animal rule in the check mounting rulebook.
+Check an actor mounting (this is the Swedish can't mount when mounted on an animal rule): 
 	if the actor is carried by a rideable animal (called the steed):
 		if the actor is the player, say "Du rider redan på [the steed].";
 		stop the action.
 
-Check an actor mounting (this is the can't mount when mounted on a vehicle rule):
+The Swedish can't mount when mounted on a vehicle rule is listed instead of the can't mount when mounted on a vehicle rule in the check mounting rulebook.
+Check an actor mounting (this is the Swedish can't mount when mounted on a vehicle rule):
 	if the actor is on a rideable vehicle (called the conveyance):
 		if the actor is the player, say "Du sitter redan på [the conveyance].";
 		stop the action.
 
-Check an actor mounting (this is the can't mount something unrideable rule):
+The Swedish can't mount something unrideable rule is listed instead of the can't mount something unrideable rule in the check mounting rulebook.
+Check an actor mounting (this is the Swedish can't mount something unrideable rule):
 	if the noun is not a rideable animal and the noun is not a rideable vehicle:
 		if the actor is the player, say "Det går inte att [if the noun is an animal]rida[otherwise]åka[end if] på [the noun]." instead;
 		stop the action.
 
-Report an actor mounting (this is the standard report mounting rule):
+The Swedish standard report mounting rule is listed instead of the standard report mounting rule in the report mounting rulebook.
+Report an actor mounting (this is the Swedish standard report mounting rule):
 	if the actor is the player:
 		say "Du sitter upp på [the noun].";
 		describe locale for the noun;
 	otherwise:
 		say "[The actor] sitter upp på [the noun]." instead. 
 
-Unsuccessful attempt by someone trying mounting (this is the mounting excuses rule):
+The Swedish mounting excuses rule is listed instead of the mounting excuses rule in the unsuccessful attempt by rulebook.
+Unsuccessful attempt by someone trying mounting (this is the Swedish mounting excuses rule):
 	if the reason the action failed is the can't mount when mounted on an animal rule,
 		say "[The person asked] rider redan på [the random rideable animal which carries the person asked].";
 	if the reason the action failed is the can't mount when mounted on a vehicle rule,
@@ -5207,19 +5196,22 @@ Understand "rid --/på [something]" as mounting.
 Understand "åk --/på [something]" as mounting.
 Understand "sitt upp på [something]" as mounting.
 
-Check an actor dismounting (this is the can't dismount when not mounted rule):
+The Swedish can't dismount when not mounted rule is listed instead of the can't dismount when not mounted rule in the check dismounting rulebook.
+Check an actor dismounting (this is the Swedish can't dismount when not mounted rule):
 	if the actor is not carried by a rideable animal and the actor is not on a rideable vehicle:
 		if the actor is the player, say "Du varken rider eller åker på [något] för tillfället.";
 		stop the action.
 
-Report an actor dismounting (this is the standard report dismounting rule):
+The Swedish standard report dismounting rule is listed instead of the standard report dismounting rule in the report dismounting rulebook.
+Report an actor dismounting (this is the Swedish standard report dismounting rule):
 	if the actor is the player:
 		say "Du sitter av från [the noun].[line break][run paragraph on]";
 		produce a room description with going spacing conventions;
 	otherwise:
 		say "[The actor] sitter av från [the noun]."
 	
-Unsuccessful attempt by someone trying dismounting (this is the dismounting excuses rule):
+The Swedish dismounting excuses rule is listed instead of the dismounting excuses rule in the unsuccessful attempt by rulebook.
+Unsuccessful attempt by someone trying dismounting (this is the Swedish dismounting excuses rule):
 	if the reason the action failed is the can't dismount when not mounted rule,
 		say "[The person asked] varken åker eller rider på [något] för tillfället.";
 	otherwise make no decision.
@@ -5270,13 +5262,13 @@ Chapter: Om
 
 Den följande dokumentationen för Swedish förutsätter grundläggande bekantskap med Inform 7.För hur man programmerar i Inform 7 i allmänhet hänvisas till den inbyggda dokumentationen (d.v.s. "Writing with Inform" och "The Recipe Book") samt till "The Rules Chart", Jim Aikins "Inform 7 Handbook", Ron Newcombs "Inform 7 for Programmers" och Jeff Nymans "Descriptions and Locales", som alla finns att ladda ner från Informs hemsida -- i likhet med de oumbärliga Appendix A (Standard Rules) och B (I6 Templates), d.v.s. de program på Inform 7 respektive Inform 6 som utgör stommen och kärnan i Inform 7 och som denna extension är en översättning av de relevanta delarna av.
 
-För övrigt är Mark-Oliver Reisers "Inform 7 Cheat Sheet" bra att ha till hands medan man skriver (sök på nätet -- i juli 2011 fanns den här: <http://user.cs.tu-berlin.de/~moreiser/inform/>). Dessutom har Aaron A. Reed gett ut en bok i ämnet: "Writing Interactive Fiction with Inform 7" (köp av Amazon eller beställ till närmsta folkbibliotek). Och så har vi forumet på intfiction.org att fråga ut.
+För övrigt är Mark-Oliver Reisers "Inform 7 Cheat Sheet" bra att ha till hands medan man skriver (sök på nätet -- i juli 2011 fanns den här: <http://user.cs.tu-berlin.de/~moreiser/inform/>). Dessutom har Aaron A. Reed gett ut en bok i ämnet: "Writing Interactive Fiction with Inform 7" (köp på nätet eller beställ till närmsta folkbibliotek). Och så finns förstås det hjälpsamma forumet på intfiction.org att fråga ut.
 
 Föredrar du ett mer traditionellt programmeringsspråk rekommenderas varmt "Swedish Inform", som är Fredrik Ramsbergs översättning av Inform 6-biblioteket till svenska (här: <http://microheaven.com/svenska/skriva.shtml>; eller här: <http://www.ifarchive.org/indexes/if-archiveXinfocomXcompilersXinform6XlibraryXtranslations.html>).
 
 Version 1 av Swedish fungerar med Inform 7 builds 6E59, 6E72, 6F95 och 6G60. 
 
-Räkna med att du inte kommer att kunna kompilera dina spel till z5.
+"Swedish" är en omfattande extension: räkna med att du inte kommer att kunna kompilera dina spel till z5.
 
 Tack till Björn Paulsen (som också skrev hjälpfunktionen som presenteras nedan), Fredrik Ramsberg, "Beelsebu" och Martin Norbäck för betatestning, goda råd och annat stöd.
 
@@ -5302,7 +5294,7 @@ Chapter: Swedish ihop med andra extensioner
 
 Swedish översätter alla de så kallade "Built-In Extensions" (inbyggda extensioner) som kommer med programmet Inform. 
 
-För att använda dig av "Rideable Vehicles", "Locksmith", "Basic Help Menu" eller någon av de andra inbyggda extensionerna, behöver du därför inte ladda ner särskilda svenska versioner av dessa. Det räcker att skriva "Include Locksmith by Emily Short" etc., precis som du skulle ha gjort om du skrivit i engelska Inform.
+För att använda dig av funktionaliteten i "Rideable Vehicles", "Locksmith", "Basic Help Menu" eller någon av de andra inbyggda extensionerna, behöver du därför inte ladda ner särskilda svenska versioner av dessa. Det räcker att skriva "Include Locksmith by Emily Short" etc., precis som du skulle ha gjort om du skrivit i engelska Inform.
 
 OBS!
 
@@ -5410,7 +5402,7 @@ Fler exempel på samma sak:
 
 (Och mer exakt igen: "[det ]tom[t-ma] akvari[um-et]" definieras som "[if definite]det [end if]tom[if definite]ma[otherwise]t[end if] akvari[if definite]et[otherwise]um[end if]".)
 
-Swedish definierar "say-phrases" för praktiskt taget alla böjningar av svenska ord i bestämd form (till och med "li[ten-lla]" och "li[tet-lla]"!).
+Swedish definierar "say-phrases" för praktiskt taget alla böjningar av svenska ord i bestämd form (till och med "bro[r-dern]", "li[ten-lla]" och "li[tet-lla]"!).
 
 
 Section: Hjälpreda för att bestämma textsubstitutionen
@@ -5439,7 +5431,7 @@ Section: Say-fraserna "without definite article" och "weakly inflected"
 
 Det finns dock ett par tillfällen då de former du angett i "printed name" båda vore direkt felaktiga.
 
-a)Det ena av dessa tillfällen är när namnet innehåller ett adjektiv och ska fogas in i en fras som redan börjar med ett adjektiv i bestämd form, som här:
+a) Det ena av dessa tillfällen är när namnet innehåller ett adjektiv och ska fogas in i en fras som redan börjar med ett adjektiv i bestämd form, som här:
 	Instead of exiting when the location is a locked closed container, say "Du får inte upp de[n-t-] låst[--a] [noun? a noun? the noun?]".
 
 Antag att du befinner dig i en behållare ("container") som heter "[den] egyptisk[a] sarkofag[en]". Ska vi använda "[noun]", "[a noun]" eller "[the noun]" här?
@@ -5459,7 +5451,7 @@ leder till:
 leder till:
 	Du får inte upp den låsta den egyptiska sarkofagen.
 
-Lösningen i Swedish är att använda say-frasen "[<objektet> without definite article]".
+Lösningen i Swedish är att använda say-frasen "[the <objektet> without definite article]".
 
 	"Du får inte upp de[n-t-] låst[--a] [the noun without definite article]" 
 
@@ -5677,12 +5669,12 @@ I vissa fall vill man kunna referera med ett personligt pronomen till ett variab
  
 Chapter: Egennamn och förkortningar med liten begynnelsebokstav
 
-Några få ord, i första hand egennamn och vetenskapliga förkortningar som "af Chapman", "von Linné", "bin Ladin", ”el-Alamein”, "pH", "kg" stavas med liten bokstav i början även om de skulle inleda en mening. I Swedish anger man detta genom att tala om att ett objekt är "uncapitalisable":
+Några få ord, i första hand egennamn och vetenskapliga förkortningar som "af Chapman", "von Linné", "bin Ladin", "el-Alamein", "pH", "kg" stavas med liten bokstav i början även om de skulle inleda en mening. I Swedish anger man detta genom att tala om att ett objekt är "uncapitalisable":
 	von Anka is a man in Pengabingen. von Anka is uncapitalisable.
 
 OBS!
 
-Swedish använder formen "uncapitalisable" med S (inte med z) –som ett slags hyllning till Informs skapare, Graham Nelson, som genomgående skriver "-ise" i stället för "-ize".
+Swedish använder formen "uncapitalisable" med S (inte med Z) – detta som ett slags hyllning till Informs skapare, Graham Nelson, som genomgående (i likhet med många britter) skriver "-ise" i stället för "-ize".
 
 
 Chapter: Namn på rum
@@ -5704,21 +5696,22 @@ Section: Att ange om du räknar något och i så fall vad
 
 Inform 7 låter dig skriva ut tal med ord i stället för med siffror med hjälp av say-frasen "[<antal> in words]". 
 
-I svenska kompliceras detta av att svenskan har två uppsättningar räkneord: dels de som används för att räkna saker, dels de som används som namn på saker. Om man räknar rum, heter det "slottet har hundratjugoEN rum"; om man använder samma räkneord som namn på rum, heter det "jag bor i rum hundratjugoETT". 
+I svenska kompliceras detta av att svenskan har två uppsättningar räkneord: dels dem som används för att räkna saker, dels dem som används som namn på saker. Om man räknar rum, heter det "slottet har hundratjugoEN rum"; om man använder samma räkneord som namn på rum, heter det "jag bor i rum hundratjugoETT". 
 
 Ordet "en" används alltså när man räknar saker, medan ordet "ett" används när man inte gör det. ("21 + 31" heter "tjugoETT plus trettioETT" för här används orden som namn på matematiska tal.)
 
 Det finns dock ett viktigt undantag från regeln: även när man räknar antalet saker, så heter det förstås "ETT rum", "ETT monster" och "ETT textspel". I själva verket heter det, när man har en enda sak att räkna, ibland "ett" och ibland "en" ("det finns EN sak i rummet" men "det finns ETT föremål i rummet"), trots att det alltid heter "en" när man har flera saker att räkna ("det finns tjugoen saker i rummet" och "det finns tjugoen föremål i rummet"). I singularis spelar det alltså roll om det man räknar är neutrum (ett-ord) eller reale (en-ord), i pluralis gör det det inte.
 
-För att Inform ska hålla ordning på det här måste du tala om för spelet dels om du använder räkneorden för att räkna något, dels vad det i så fall är du räknar. Det gör du med say-fraserna "[<antal> in words counting neuters]". "[<antal> in words counting common gender]", "[<antal> in words counting nothing]". 
+För att Inform ska hålla ordning på det här måste du tala om för spelet dels om du använder räkneorden för att räkna något, dels vad det i så fall är du räknar. Det gör du med say-fraserna "[<antal> in words counting neuters]". "[<antal> in words counting common gender]", "[<antal> in words counting nothing]", "[<antal> in words not counting]" (de två sistnämnda betyder samma sak) - för fullständighetens skull definierar vi även . 
 	"Den senaste månaden har vi avverkat [a random number between 0 and 32000 in words counting neuters] träd."
-	"Jaha, du ska tydligen bo i rum [a random number between 17 and 170 in words counting nothing]."
+	"Jaha, du ska tydligen bo i rum [a random number between 17 and 171 in words counting nothing]."
+	"Jaha, du ska tydligen bo i rum [a random number between 21 and 121 in words not counting]."
 
 Om du inte anger annat kommer Swedish att förutsätta att du räknar något och att det du räknar är reale ("counting common gender").
 
 OBS!
 
-Ett mindre viktigt undantag från regeln ovan är ören och år: det heter alltid "-ett" när man räknar ören  och år: "Hon var tjugoett år gammal", "Då för tiden kostade smöret femtioett öre kilot." Japp, det går utmärkt att skriva "[<antal> in words counting öre]", "[<antal> in words counting ören]" "[<antal> in words counting år]" eller "[<antal> in words counting ålder]", så blir det rätt. (Mer exakt: "counting öre/ören/år/ålder" är likvärdigt med "counting nothing".)
+Ett mindre viktigt undantag från regeln ovan är ören och år: det heter alltid "-ett" när man räknar ören  och år: "Hon var tjugoett år gammal", "Då för tiden kostade smöret femtioett öre kilot." Japp, det går utmärkt att skriva "[<antal> in words counting öre]", "[<antal> in words counting ören]", "[<antal> in words counting år]", "[<antal> in words counting ålder]", "[<antal> in words counting years]", "[<antal> in words counting age]", så blir det rätt. (Mer exakt: "counting öre/ören/år/ålder/years/age" är likvärdigt med "counting nothing".)
 
 
 Section: Pluralböjningar
@@ -5743,8 +5736,10 @@ Swedish definierar de flesta pluraländelser som förekommer i svenska. Även de
 
 OBS!
 
-De enda oregelbundna pluralformer som Swedish definierar är "[far-fäder]", "[liten-små]" och "[litet-små]". I andra fall blir du tvungen att skriva saker i stil med:
+De enda oregelbundna pluralformer som Swedish definierar är "[bror-bröder]", "[far-fäder]", "[mor-mödrar]", "[liten-små]" och "[litet-små]". I andra fall blir du tvungen att skriva saker i stil med:
 	"en tunnelbana med [a random number between 1 and 12 in words] [if the number-just-said is 1]butler[otherwise]statligt subventionerade kammartjänare[end if]"
+
+(Fotnot till eftervärlden: ett större svenskt riksdagsparti föreslog i valrörelsen 2010 offentliga butlers i tunnelbanan i stället för individuella skatteavdrag för hushållsnära tjänster.)
 
 
 Chapter - Klockslag, tidsrymder och antal
@@ -5864,6 +5859,7 @@ OBS!
 
 Swedish definierar dessutom (redundant) fraserna "[den-det-de]", "[Den-Det-De]", "[den-det-dem]" och "[Den-Det-Dem]". Dessa är inget annat än varianter av  "[den-t-]" o.s.v. 
 
+
 Chapter: Lista över say-fraser
 
 Här följer en komplett lista över alla say-fraser och textsubstitutioner som Swedish definierar. (Saknar du någon böjningsform så rapportera det gärna till <felix.larsson.IF@gmail.com>.)
@@ -5878,6 +5874,7 @@ Section: Fraser för att räkna saker
 	"[<antal> in words counting neuter/neuters]"
 	"[<antal> in words counting öre/ören]"
 	"[<antal> in words counting år/ålder]"
+	"[<antal> in words counting years/age]"
 	"[<antal> in words counting nothing]"
 	"[<antal> in words not counting]"
 	"[<antal> in words counting <objekt>]"
@@ -5928,7 +5925,9 @@ Eufoniska och ortografiska varianter av pluralböjningar:
 	"[s]" (mus/mös|s)
 
 Oregelbundna pluralböjningar:
+	"[bror-bröder]" (far/fäder)
 	"[far-fäder]" (far/fäder)
+	"[mor-mödrar]" (far/fäder)
 	"[iten-små]" (liten/små)
 	"[litet-små]" (litet/små)
 
@@ -5972,6 +5971,7 @@ Eufoniska och ortografiska varianter av bestämda böjningsformer (huvudsakligen
 	"[en-nen]" (vap|en/vap|nen)
 	"[er-ret]" (mörk|er/mörk|ret)
 	"[er-ren]" (papp|er/papp|ren)
+	"[r-dern]" (bro|r-bro|dern)
 	"[el-let]" (tviv|el/tviv|let)
 	"[el-len]" (äck|el/äck|len)
 	"[mel-len]" (him|mel/him|len)

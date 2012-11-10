@@ -1,4 +1,4 @@
-Version 7 of Conversation Rules by Eric Eve begins here.
+Version 8 of Conversation Rules by Eric Eve begins here.
 
 "A way of controlling conversations using rules and tables. Also implements topic suggestions and Conversation nodes. Requires Plurality by Emily Short and Conversation Framework, Epistemology and List Control by Eric Eve."
 
@@ -19,7 +19,7 @@ The quizzing table of a person is normally the Table of Null Response.
 The informing table of a person is normally the Table of Null Response.
 
 Table of Null Response
-subject		response rule			response table	suggest
+subject (object)		response rule		response table	suggest
 yourself		default no response rule		table-name	0
 
 A person has a rule called the unknown quizzing rule.
@@ -307,7 +307,7 @@ See the List Control documentation for an explanation of how the above two table
 
 Chapter:  DEFAULT RESPONSES
 
-We next need a means of having our NPC respond to things we haven't explicitly provided for. Two rules are provided for this, the NPC's unknown quizzing rule and the NPC's unknown informing rule, which by default are set to the no response rule (which in turn simply says that there's no response). To customize this, we need to change these rules to something different; e.g.
+We next need a means of having our NPC respond to things we haven't explicitly provided for. Two rules are provided for this, the NPC's unknown quizzing rule and the NPC's unknown informing rule, which by default are set to the no response rule (which in turn simply says that there's no response). To customise this, we need to change these rules to something different; e.g.
 
 	The unknown quizzing rule of Bob is the Bob no quiz rule. The unknown informing rule of Bob is the Bob no inform rule.
 
@@ -347,7 +347,7 @@ A further sophistication is that Conversation Rules makes use of the Epistemolog
 
 Now if we type ASK BOB ABOUT FRED before asking Bob about himself for the first time, we'll only get Bob's default response. The special tag "[reveal Fred]" changes Fred from unfamiliar to familiar (it's a to say rule that doesn't actually say anything), so that we can ask Bob (or anyone else) about Fred thereafter. Note that the 'To reveal X' rule is built into the Conversation Rules extension; it's not something we need to supply in our game code.
 
-This mechanism is fine for stopping the player character talking about things that aren't yet known to him or her, but there may be other reasons why we want to make a response temoparily unreachable, e.g because the NPC doesn't know about it yet, or it doesn't make sense to talk about it with this particular NPC until something else has been said. One way to deal with this situation would be to test for the appropriate condition(s) in the relevant response rule, but this may not always be convenient, particularly if we are using a response table to provide the response. Another method we can use is to set the value in the suggest to -1, which makes the topic unavailable (and, of course, not suggested) until the suggest value is changed to something else. Just as we can use "[reveal Fred]" to change Fred to familiar, so we can use "[quiz x to n]" or "[inform x to n]" to change the suggest column corresponding to x to n in the quizzing table or informing table of the current interlocutor (the NPC we're current talking to). So, for example, if it's possible that the player character already knows of the existence of Fred, but we don't want him asking Bob about Fred until Bob has mentioned Fred, we could change the above example to:
+This mechanism is fine for stopping the player character talking about things that aren't yet known to him or her, but there may be other reasons why we want to make a response temporarily unreachable, e.g because the NPC doesn't know about it yet, or it doesn't make sense to talk about it with this particular NPC until something else has been said. One way to deal with this situation would be to test for the appropriate condition(s) in the relevant response rule, but this may not always be convenient, particularly if we are using a response table to provide the response. Another method we can use is to set the value in the suggest to -1, which makes the topic unavailable (and, of course, not suggested) until the suggest value is changed to something else. Just as we can use "[reveal Fred]" to change Fred to familiar, so we can use "[quiz x to n]" or "[inform x to n]" to change the suggest column corresponding to x to n in the quizzing table or informing table of the current interlocutor (the NPC we're current talking to). So, for example, if it's possible that the player character already knows of the existence of Fred, but we don't want him asking Bob about Fred until Bob has mentioned Fred, we could change the above example to:
 
 	Table of Bob's Quizzes
 	subject		response rule			response table		suggest
@@ -379,7 +379,7 @@ Sometimes, however, we may want ASK and TELL to be equivalent only for certain t
 	Instead of informing Bob about Fred, try asking Bob about Fred.
 	Instead of informing Bob about the lighthouse, try asking Bob about the lighthouse.
 
-But this could become a bit tedious and long-winded if we have quite a few topics to redirect like this. An alternative is to use the supplied quiz-inform and inform-quiz rules within the apprropriate table to redirect quizzing to informing or informing to quizzing, e.g.:
+But this could become a bit tedious and long-winded if we have quite a few topics to redirect like this. An alternative is to use the supplied quiz-inform and inform-quiz rules within the appropriate table to redirect quizzing to informing or informing to quizzing, e.g.:
 
 	Table of Bob's Informs
 	subject		response rule			response table		suggest
@@ -412,13 +412,13 @@ Then we need to define the appropriate rules for handling the player's possible 
  	   say "'Yes, I ran into him the other day,' you say.
 
 	   'In that case you know he's not very well.' Bob replies[convnode null-node].";
-               rule suceeds.
+               rule succeeds.
 
 	A bob-fred-node-rule when saying no:
 	  say "'No, I didn't even know you had a cousin called Fred,' you reply.
 
 	  'Unless he recovers soon, I probably won't for much longer,' he replies darkly[convnode null-node].";
-	 rule suceeds.
+	 rule succeeds.
 
 These rules will handle YES or NO or BOB, YES or BOB, NO or SAY YES TO BOB or SAY NO TO BOB (since Conversation Framework, included by Conversation Rules) takes care of converting the other forms to YES and NO respectively). Note that we need to end each rule with "rule succeeds" to prevent fall through to the normal conversation processing (unless, of course, we want to allow this). Not also the "[convnode null-node]", which is used to reset the current conversation node to nothing once we are done with it (this will be explained further below).
 
@@ -439,7 +439,7 @@ This still leaves the question of how we respond to I DON'T KNOW. This is a bit 
 
 	Understand "you don't/dont know" or "i don't/dont know" or "don't know" or "dont know" as "[dont know]".
 
-Next we have to make these responses understood as a special action, but only when this conversation node is active. A special wierdly-named Xspcing action (most unlikely to clash with anything else) is provided for the purpose. In this case we'd use it thus:
+Next we have to make these responses understood as a special action, but only when this conversation node is active. A special weirdly-named Xspcing action (most unlikely to clash with anything else) is provided for the purpose. In this case we'd use it thus:
 
 	Understand "[dont know]" as Xspcing when the current convnode is the bob-fred node.
 
@@ -480,7 +480,7 @@ Not only does "[convnode whatevernode]" change the current convnode from within 
 
 Chapter: SAYING YES AND NO
 
-As mentioned above, Conversation Framework (included by Conversation Rules) takes care of directing the commands WHOEVER, YES and SAY YES TO WHOEVER to a simple YES command (and likewise with NO). In addition commands like FRED, YES or SAY YES TO FRED will trigger an implicit greeting of Fred (for which see the Conversation Framework documentation) if Fred is not already the current interlocutor (actually, most of the work for this is now carried oun by Conversation Framework).
+As mentioned above, Conversation Framework (included by Conversation Rules) takes care of directing the commands WHOEVER, YES and SAY YES TO WHOEVER to a simple YES command (and likewise with NO). In addition commands like FRED, YES or SAY YES TO FRED will trigger an implicit greeting of Fred (for which see the Conversation Framework documentation) if Fred is not already the current interlocutor (actually, most of the work for this is now carried on by Conversation Framework).
 
 
 Chapter: SUGGESTED TOPICS
@@ -495,7 +495,7 @@ By default, a list of suggested topics is displayed:
 
 2) When a Conversation Node is entered via a "[convnode whatevernode]" tag in a text string, and the Conversation Node in question has a suggestions property that is not "blank".
 
-It may be that we would also like to see a list of suggested topics displayed in response to an explict greeting (such as TALK TO BOB, or BOB, HELLO). To do this we need to dd something like (assuming we have elsewhere defined a Table of Bob's Greetings):
+It may be that we would also like to see a list of suggested topics displayed in response to an explicit greeting (such as TALK TO BOB, or BOB, HELLO). To do this we need to do something like (assuming we have elsewhere defined a Table of Bob's Greetings):
 
 	After saying hello to Bob:
 	  show the next response from the Table of Bob's Greetings;
@@ -518,7 +518,7 @@ Conversation Rules takes care of this to some extent by preferring subjects that
 
 The problem is, the masked ball is then the primary meaning of 'ball' for all interlocutors in the game. If little Billy is more likely to be more interested in his red rubber ball, we should have to supply special grammar lines for this particular exception:
 
-	Understand "ask [billy] about [red subber ball]" as quizzing it about.
+	Understand "ask [billy] about [red rubber ball]" as quizzing it about.
 	Understand "a [red rubber ball]" as quizzing it about when the default interlocutor is Billy.
 
 But it could become quite cumbersome to do this for a lot of subject/interlocutor combinations.
@@ -532,6 +532,7 @@ Conversation Rules is also compatible with the abbreviated conversation commands
 
 
 Example: ** The Tribune's Report - A Sample Conversation
+
 Conversation Rules doesn't handle asking it about and telling it about, so we include rules in Part 1 to provide graceful handling for ASK ABOUT FOO and TELL ABOUT BAR where foo and bar don't correspond to any objects in the game. Other games may want to handle these commands differently, though this is quite a good default.
 
 
@@ -638,7 +639,7 @@ Conversation Rules doesn't handle asking it about and telling it about, so we in
 	"Pilate looks annoyed by your question, for some reason, and declines to answer."
 
 	Table of Pilate's Default Inform Responses
-	responses
+	response
 	"Pilate listens to what you have to say with feigned interest."
 	"'Indeed,' the governor remarks."
 	"Pilate frowns in evident impatience at your irrelevant remarks."
@@ -658,7 +659,7 @@ Conversation Rules doesn't handle asking it about and telling it about, so we in
 
 	Jesus is a familiar man. Understand "of nazareth" or "galilean" or "joshua" or "yeshua" as Jesus.
 
-	Jerusalem is a thing.
+	Jerusalem is a subject.
 
 	The Emperor is a familiar man. Understand "caesar" or "tiberius" or "princeps" as the Emperor.
 	

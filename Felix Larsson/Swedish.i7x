@@ -1,4 +1,4 @@
-Version 1/121008 of Swedish by Felix Larsson begins here.
+Version 1/130128 of Swedish by Felix Larsson begins here.
 
 "Låter dig skriva spel/berättelser att spelas/läsas på svenska."
 
@@ -59,26 +59,26 @@ Section - Things
 [A/sr1§22 - SR1/3]
 A thing can be non-count or not non-count. A thing is usually not non-count. 
 
-[I you write source text like "A själ is a kind of thing. A själ is part of every person.", Inform automatically names these parts after their holders in English: "your själ", "Voldemort's själ", etc. The following code gives them a corresponding "indexed name" in Swedish ("din själ", "Voldemorts själ") that we can print and match input against instead.]
+[I you write source text like "A själ is a kind of thing. A själ is part of every person.", Inform automatically names these parts after their holders in English: "your själ", "Voldemort's själ", etc. The following code gives them a corresponding "assembly name" in Swedish ("din själ", "Voldemorts själ") that we can print and match input against instead.]
 
-A thing has an indexed text called indexed name.
-The indexed name of a thing is usually "".
+An object has an indexed text called assembly name.
+The assembly name of a thing is usually "".
 
-When play begins (this is the give parts indexed names in Swedish rule):
+When play begins (this is the give parts assembly names in Swedish rule):
 	repeat with pars running through things:
 		if pars is part of something (called totum):
 			if word number 1 in the printed name of pars exactly matches the text "your":
-				now	the indexed name of pars is the printed name of pars;
-				replace word number 1 in the indexed name of pars with "di[n-tt-na for pars]";
+				now the assembly name of pars is the printed name of pars;
+				replace word number 1 in the assembly name of pars with "di[n-tt-na for pars]";
 			if the printed name of pars matches the text "[totum][']s":
-				now the indexed name of pars is the printed name of pars;
+				now the assembly name of pars is the printed name of pars;
 				if "[totum]" matches the regular expression "s$|x$|z$":
-					replace the text "[totum][']s" in the indexed name of pars with "[totum]";
+					replace the text "[totum][']s" in the assembly name of pars with "[totum]";
 				otherwise:
-					replace the text "[totum][']s" in the indexed name of pars with "[totum]s".
+					replace the text "[totum][']s" in the assembly name of pars with "[totum]s".
 
-For printing the name of a thing (called pars) that is part of something (this is the replace printed name with indexed name rule):
-	if the indexed name of pars is not "", say the indexed name of pars;
+For printing the name of a thing (called pars) that is part of something (this is the replace printed name with assembly name rule):
+	if the assembly name of pars is not "", say the assembly name of pars;
 	otherwise continue the action.
 
 
@@ -204,9 +204,9 @@ Section - Unindexed Standard Rules variables - Unindexed
 The story headline is usually "Interaktiv fiktion".
 
 [A/sr2§10 - SR2/6c]
-[These variables are used only in the phrases to decide if the printed name is understood and to decide if the indexed name is understood, called by the custom I6 routine LanguageRefers in the process of determining the reference of input nouns. The The LR-formal-supposition holds the object whose printed name we are matching against the input noun. The LR-material-supposition holds the input noun we are trying to match against. (In scholastic logic, the formal supposition of a word is what the word normally refers to in "use"; the material supposition is the word itself in "mention".)]
+[These variables are used only in the phrases to decide if the printed name is understood and to decide if the assembly name is understood, called by the custom I6 routine LanguageRefers in the process of determining the reference of input nouns. The The LR-formal-supposition holds the object whose printed name we are matching against the input noun. The LR-material-supposition holds the input noun we are trying to match against. (In scholastic logic, the formal supposition of a word is what the word normally refers to in "use"; the material supposition is the word itself in "mention".)]
 The LR-formal-supposition is an object that varies. The LR-formal-supposition variable translates into I6 as "LR_object".
-The LR-material-supposition is indexed text that varies. The LR-material-supposition variable translates into I6 as "parameter_object".
+The LR-material-supposition is indexed text that varies. The LR-material-supposition variable translates into I6 as "LR_name".
 
 
 Section - The Standard Rules
@@ -840,8 +840,8 @@ Understand "normal beskrivning" or "normala beskrivningar" as preferring sometim
 Understand "varsko" or "varsko poängändringar" or "varsko om poängändringar" as switching score notification on.
 Understand "varsko inte" or "varsko inte poängändringar" or "varsko inte om poängändringar" as switching score notification off.
 
-Understand "meddelande", "meddelanden", "meddelande på" or "meddelanden på" as switching score notification on. []
-Understand "meddelande av" or "meddelanden av" as switching score notification off. []
+Understand "poäng på" as switching score notification on. []
+Understand "poäng av" as switching score notification off. []
 
 Understand "pronomen" or "visa pronomen" as requesting the pronoun meanings.
 Understand the commands "pronomina" and "substantiv" as "pronomen".
@@ -889,8 +889,9 @@ To say (quantum - number) in words counting (items - object):
 Section - Plural inflections
 
 [A/sr5§5 - SR5/1/1]
-To say or: [ros/ros|or]
+To say -or: [ros/ros|or]
 	if the number-just-said is not 1, say "or".
+[We use "[-or]" with a hyphen here, to avoid a clash with the segmented substitution "[one of][or]" defined by the Standard Rules.]
 
 To say a-or: [flick|a/flick|or]
 	if the number-just-said is not 1, say "or";
@@ -1160,6 +1161,10 @@ To say nen: [man/man|nen]
 
 To say net: [can't think of an example or the weak inflection is true, but there might be one]
 	if the indefinite mode is false, say "net".
+
+To say e-na: [mördar|e/mördar|na]
+	if the indefinite mode is false, say "na";
+	otherwise say "e". 
 
 To say en-net: [vatt|en/vatt|net]
 	if the indefinite mode is false, say "net";
@@ -2100,7 +2105,7 @@ To say varandra:
 
 Section - Understanding the printed name of an object
 
-[These phrases are called by the I6 LanguageRefers() routine. They match the printed name or indexed name of a given object in scope (the LR-formal-supposition -- LR_object in I6) against a would-be noun in the player's command (the LR-material-supposition, which is yet another I7 name for the I6 parameter_object variable).]
+[These phrases are called by the I6 LanguageRefers() routine. They match the printed name or assembly name of a given object in scope (the LR-formal-supposition -- LR_object in I6) against a would-be noun in the player's command (the LR-material-supposition -- LR_name in I6).]
 
 To decide if the printed name is understood:
 	let numbawords be the number of words in the printed name of LR-formal-supposition;
@@ -2108,12 +2113,12 @@ To decide if the printed name is understood:
 		if word number wordnumba in the printed name of the LR-formal-supposition exactly matches the text LR-material-supposition, case insensitively:
 			decide yes.
 
-To decide if the indexed name is understood:
-	let numbawords be the number of words in the indexed name of LR-formal-supposition;
+To decide if the assembly name is understood:
+	let numbawords be the number of words in the assembly name of LR-formal-supposition;
 	repeat with wordnumba running from 1 to numbawords:
-		if word number wordnumba in the indexed name of the LR-formal-supposition exactly matches the text "di[n-tt-na for LR-formal-supposition]" and LR-material-supposition exactly matches the text "mi[n-tt-na for LR-formal-supposition]", case insensitively:
+		if word number wordnumba in the assembly name of the LR-formal-supposition exactly matches the text "di[n-tt-na for LR-formal-supposition]" and LR-material-supposition exactly matches the text "mi[n-tt-na for LR-formal-supposition]", case insensitively:
 			decide yes;
-		if word number wordnumba in the indexed name of the LR-formal-supposition exactly matches the text LR-material-supposition, case insensitively:
+		if word number wordnumba in the assembly name of the LR-formal-supposition exactly matches the text LR-material-supposition, case insensitively:
 			decide yes.
 
 
@@ -2334,12 +2339,13 @@ Include (-
 Section - Refers
 [B/parst§53]
 
-[We define a LanguageRefers routine to make sure that the Swedish translation understands the short_name (printed name) of objects, as the author normally will give the definite forms of object names there. This mirrors the standard I6 Refers routine but adds an else block that tries to match the input word (the value of parameter_object) against each word in the printed name of a given object in scope (the value of LR_object), using both the definite and the indefinite forms of the printed name (that's why we we change the indef_mode global). We also match the input word against the words in the "indexed name" given by the present extension to certain objects that Inform automatically gives an English name. The routine relies on I7 phrases that match indexed texts against each other.]
+[We define a LanguageRefers routine to make sure that the Swedish translation understands the short_name (printed name) of objects, as the author normally will give the definite forms of object names there. This mirrors the standard I6 Refers routine but adds an else block that tries to match the input word (the value of LR_name) against each word in the printed name of a given object in scope (the value of LR_object), using both the definite and the indefinite forms of the printed name (that's why we we change the indef_mode global). We also match the input word against the words in the "assembly name" given by the present extension to certain objects that Inform automatically gives an English name. The routine relies on I7 phrases that match indexed texts against each other.]
 
 Include (-
 Global LR_object = nothing;
+Global LR_name = nothing;
 
-[ LanguageRefers obj wnum   wd k po spec_mode;
+[ LanguageRefers obj wnum   wd k spec_mode;
   if (obj == 0) rfalse;
 !# if parser_inflection is set to a routine, run it 
   k = wn; wn = wnum; wd = NextWordStopped(); wn = k;
@@ -2350,26 +2356,20 @@ Global LR_object = nothing;
 !# if parser_inflection is set to a property (by default it's set to the name property), look in it for our word
   k = WordInProperty(wd, obj, parser_inflection);
   if (k>0) rtrue;
-!# and if we don't find the word we look for in that property, check the object's indexed name property or short_name (i.e. the I7 printed name)
+!# and if we don't find the word we look for in that property, check the object's assembly name property or short_name (i.e. the I7 printed name)
   else if (obj has short_name_understood) {    
-      LR_object = obj; po = parameter_object; spec_mode = indef_mode;
-      parameter_object = INDEXED_TEXT_TY_Create(); 
-      INDEXED_TEXT_TY_Cast(wnum*100+1, SNIPPET_TY, parameter_object);
+      LR_object = obj; spec_mode = indef_mode;
+!      LR_name = INDEXED_TEXT_TY_Create(); 
+      INDEXED_TEXT_TY_Cast(wnum*100+1, SNIPPET_TY, LR_name);
 
-      k = (+ whether or not the indexed name is understood +); 
-      if (k>0) { 
-          parameter_object = po; 
-          rtrue; 
-      }
+      k = (+ whether or not the assembly name is understood +); 
+      if (k>0) { rtrue; }
       k = (+ whether or not the printed name is understood +); 
-      if (k>0) { 
-          parameter_object = po; 
-          rtrue; 
-      }
+      if (k>0) { rtrue; }
       if (indef_mode == false) indef_mode = true; 
       else indef_mode = false; 
       k = (+ whether or not the printed name is understood +); 
-      indef_mode = spec_mode; parameter_object = po;
+      indef_mode = spec_mode; 
       if (k>0) rtrue; 
       else rfalse; 
   }
@@ -5266,9 +5266,9 @@ För övrigt är Mark-Oliver Reisers "Inform 7 Cheat Sheet" bra att ha till hand
 
 Föredrar du ett mer traditionellt programmeringsspråk rekommenderas varmt "Swedish Inform", som är Fredrik Ramsbergs översättning av Inform 6-biblioteket till svenska (här: <http://microheaven.com/svenska/skriva.shtml>; eller här: <http://www.ifarchive.org/indexes/if-archiveXinfocomXcompilersXinform6XlibraryXtranslations.html>).
 
-Version 1 av Swedish fungerar med Inform 7 builds 6E59, 6E72, 6F95 och 6G60. 
+Version 1 av Swedish fungerar med Inform 7 builds 6E59, 6E72, 6F95 och 6G60. (Version 1/130128 medför en eller två ändringar som skulle kunna komma i konflikt med tidigare skrivna spel: pluraländelsen -or bildas med textsubstitutionen "[-or]" i stället för "[or]", och den egenskap som tidigare kallades "indexed name" byter namn till "assembly name".) 
 
-"Swedish" är en omfattande extension: räkna med att du inte kommer att kunna kompilera dina spel till z5.
+"Swedish" är en omfattande extension: den gör det praktiskt taget omöjligt att kompilera spel till z5.
 
 Tack till Björn Paulsen (som också skrev hjälpfunktionen som presenteras nedan), Fredrik Ramsberg, "Beelsebu" och Martin Norbäck för betatestning, goda råd och annat stöd.
 
@@ -5725,7 +5725,13 @@ För att underlätta för författaren definierar Swedish say-fraser även för 
 	"I rummet lokaliserar du genast [the number of secret police in the location minus one in words counting common gender] kolleg[a-er]."
 
 Vi får problem med pluralformen av ord som "äpple" och "kalhygge". Det går inte skriva "äpple[n]" och "kalhygge[n]", eftersom textsubstitutionen "[n]" redan är upptagen. Den står ju för ändelse i bestämd form (som i "stubbe[n]" och "gubbe[n]"). I stället använder vi för pluraländelsen -n textsubstitutionen "[-n]". Skriv alltså
-	"Den senaste året har vi producerat [a random number between 0 and 32000 in words counting neuters] kalhygge[-n]."
+	"Det senaste året har vi producerat [a random number between 0 and 32000 in words counting neuters] kalhygge[-n]."
+
+Vi får även problem med några få ord (exempelvis "ros") som slutar på -or i pluralis utan att sluta på -a i singularis, eftersom textsubstitutionen "[or]" redan är upptagen. Den är ju ett led i den segmenterade substitutionen "[one of][or]". I stället använder vi för pluraländelsen -or i dessa fall textsubstitutionen "[-or]". Skriv alltså 
+	"Du får en bukett med [a random number between 0 and 24 in words] ros[-or]."
+
+För de många fler ord som slutar på -a i singularis och -or i pluralis är textsubstitutionen däremot den förväntade: 
+	"Nu har du gett buketter till [the number of girls woed in words] flick[a-or]."
 
 
 Swedish definierar de flesta pluraländelser som förekommer i svenska. Även de omljud som förekommer är definierade. Det går till exempel att skriva:
@@ -5883,7 +5889,7 @@ Section: Fraser för att räkna saker
 Section: Fraser för pluralböjningar
 
 Grundmönster för pluralböjningar:
-	"[or]" (ros/ros|or)
+	"[-or]" (ros/ros|or) (föregås av bindestreck för att skiljas från "[or]" i "[one of][or]")
 	"[a-or]" (flick|a/flick|or)
 	"[ar]" (gran/gran|ar)
 	"[e-ar]" (pojk|e/pojk|ar)
@@ -5967,6 +5973,7 @@ Eufoniska och ortografiska varianter av bestämda böjningsformer (huvudsakligen
 	"[met]" (rum/rum|met)
 	"[nen]" (man/man|nen)
 	"[net]" (?) (Formen är med för säkerhets skull; jag känner inte till något ord som faktiskt böjs så)
+	"[e-na]" (mördar|e/mördar|na)
 	"[en-net]" (vatt|en/vatt|net)
 	"[en-nen]" (vap|en/vap|nen)
 	"[er-ret]" (mörk|er/mörk|ret)

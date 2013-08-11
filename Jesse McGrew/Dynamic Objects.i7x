@@ -1,4 +1,4 @@
-Version 6/101226 of Dynamic Objects (for Glulx only) by Jesse McGrew begins here.
+Version 7/130712 of Dynamic Objects (for Glulx only) by Jesse McGrew begins here.
 
 "Provides the ability to create new objects during game play."
 
@@ -15,7 +15,7 @@ The cloning a new object from activity has a truth state called preserving relat
 
 Section 1 - 'a new object cloned from'
 
-To decide which object is a new object cloned from (prev - an object), preserving relations: (- DO_CloneObject({prev}, {phrase options}); -).
+To decide which object is a new object cloned from (prev - an object), preserving relations: (- DO_CloneObject({prev}, {phrase options}) -).
 
 First before cloning a new object from (this is the dynamic objects setting activity variables rule): initialize cloning activity variables.
 
@@ -236,9 +236,8 @@ Include (-
 				}
 				BlkFree(list);
 			}
-		} else {
+		} else if ((storage = rel-->RR_STORAGE) ~= 0) {
 			! static relation: we may need to resize the storage array (for V-to-V) or clear properties (for others, when not preserving)
-			storage = rel-->RR_STORAGE;
 			switch (valency) {
 				RRVAL_O_TO_V, RRVAL_V_TO_O: if (~~preserve) DO_ClearOtoX(obj, storage);
 				RRVAL_O_TO_O, RRVAL_SYM_O_TO_O: DO_ClearOtoX(obj, storage);
@@ -497,6 +496,8 @@ Version 4 fixes a bug with relations.
 Version 5 works with Inform 7 version 6E59. It also adds the "cloning a new object from" activity and the "fix the cloned _ property" phrase to allow block-type properties to be cloned correctly. It also changes the behavior (and specification) of "preserving relations" with regard to one-to-one relations: now they are never preserved, since that would result in removing the original object from the relation.
 
 Version 6 works with Inform 7 version 6G60.
+
+Version 7 fixes another bug with relations and a bug that prevented the "new object cloned from" phrase from being used in certain contexts.
 
 Example: * The Cubbins Effect - Creating a new hat every time the player removes the one he's wearing.
 

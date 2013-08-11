@@ -1,8 +1,9 @@
-Version 30 of Supplemental Actions by Al Golden begins here.
+Version 33 of Supplemental Actions by Al Golden begins here.
 
 "This extension adds 12 separated actions, 10 expanded actions, and 22 new actions.
-It also allows an NPC to be given something, and the player to ask for items
-carried or worn by the NPC."
+It also allows an NPC to be given something, and the player to ask for items carried or worn by the NPC."
+
+use authorial modesty.
 
 use MAX_ACTIONS of 900.
 
@@ -35,14 +36,14 @@ a thing is usually non-poisonous.
 a thing is either swimmable or unswimmable.
 a thing is usually unswimmable.
 
-
 a thing is either empty or unempty.
 a thing is usually empty.
 
-definition: a container is unempty if the number of things in it is not 0.
 definition: a supporter is empty if the number of things on it is 0.
 definition: a supporter is unempty if the number of things on it is not 0.
 
+definition: a container is empty if the number of things in it is 0.
+definition: a container is unempty if the number of things in it is not 0.
 
 Part 01 - Attacking (expanded)
 
@@ -56,6 +57,8 @@ understand "belt [something]" as attacking.
 understand "belt [someone]" as attacking.
 understand "hit [something]" as attacking. 
 understand "hit [someone]" as attacking.
+understand "hurt [something]" as attacking. 
+understand "hurt [someone]" as attacking.
 understand "injure [something]" as attacking.
 understand "injure [someone]" as attacking.
 understand "pummel [something]" as attacking.
@@ -64,46 +67,66 @@ understand "pound [something]" as attacking.
 understand "pound [someone]" as attacking.
 understand "punch [something]" as attacking. 
 understand "punch [someone]" as attacking. 
+understand "slap [something]" as attacking.
+understand "slap [someone]" as attacking.
+understand "slug [something]" as attacking.
+understand "slug [someone]" as attacking.
+understand "sock [something]" as attacking.
+understand "sock [someone]" as attacking.
 understand "smack [something]" as attacking.
 understand "smack [someone]" as attacking.
-understand "whack [something]" as attacking.
-understand "whack [someone]" as attacking.
+understand "thwack [something]" as attacking.
+understand "thwack [someone]" as attacking.
+understand "wack [something]" as attacking.
+understand "wack [someone]" as attacking.
 understand "wallop [something]" as attacking.
 understand "wallop [someone]" as attacking.
 understand "wound [something]" as attacking.
 understand "wound [someone]" as attacking.
 
 attacking it with is an action applying to two things.
-understand "attack [someone] with [something]" as attacking it with.
+
 understand "attack [something] with [something]" as attacking it with.
-understand "bash [someone] with [something]" as attacking it with.
+understand "attack [someone] with [something]" as attacking it with. 
 understand "bash [something] with [something]" as attacking it with.
-understand "belt [someone] with [something]" as attacking it with.
+understand "bash [someone] with [something]" as attacking it with. 
 understand "belt [something] with [something]" as attacking it with.
+understand "belt [someone] with [something]" as attacking it with.
 understand "hit [something] with [something]" as attacking it with. 
 understand "hit [someone] with [something]" as attacking it with.
-understand "injure [something] with something" as attacking it with.
-understand "injure [someone] with something" as attacking it with.
+understand "hurt [something] with [something]" as attacking it with. 
+understand "hurt [someone] with [something]" as attacking it with.
+understand "injure [something] with [something]" as attacking it with.
+understand "injure [someone] with [something]" as attacking it with.
 understand "pummel [something] with [something]" as attacking it with.
-understand "pummel [someone] with [something]" as attacking it with.
+understand "pummel[someone] with [something]" as attacking it with.
 understand "pound [something] with [something]" as attacking it with.
 understand "pound [someone] with [something]" as attacking it with.
-understand "punch [something] with [something]" as attacking it with.
-understand "punch [someone] with [something]" as attacking it with.
-understand "smack [something] with [something]" as attacking it with. 
+understand "punch [something] with [something]" as attacking it with. 
+understand "punch [someone] with [something]" as attacking it with. 
+understand "slap [something] with [something]" as attacking it with.
+understand "slap [someone] with [something]" as attacking it with.
+understand "slug [something] with [something]" as attacking it with.
+understand "slug [someone] with [something]" as attacking it with.
+understand "sock [something] with [something]" as attacking it with.
+understand "sock [someone] with [something]" as attacking it with.
+understand "smack [something] with [something]" as attacking it with.
 understand "smack [someone] with [something]" as attacking it with.
-understand "whack [something] with [something]" as attacking it with. 
-understand "whack [someone] with [something]" as attacking it with.
-understand "wallop [something] with [something]"as attacking it with. 
+understand "thwack [something] with [something]" as attacking it with.
+understand "thwack [someone] with [something]" as attacking it with.
+understand "wack [something] with [something]" as attacking it with.
+understand "wack [someone] with [something]" as attacking it with.
+understand "wallop [something] with [something]" as attacking it with.
 understand "wallop [someone] with [something]" as attacking it with.
 understand "wound [something] with [something]" as attacking it with.
 understand "wound [someone] with [something]" as attacking it with.
 
-report attacking something: 
+report attacking something (this is the first attacking rule): 
 let verbword be word number 1 in the player's command; 
-say "You can't [verbword] [the noun].";
+say "You can't [verbword] [the noun].".
 
-report attacking something with a second noun:
+report attacking something with a second noun 
+(this is the second attacking rule):
 let verbword be word number 1 in the player's command; 
 say "You can't [verbword] [the noun] with [the second noun].".
 
@@ -117,13 +140,16 @@ blowing up is an action applying to one thing.
 
 understand "blow [something]" as blowing.
 understand "blow on [something]" as blowing on.
+
 understand "blow out [something]" as blowing out. 
 understand "blow [something] out" as blowing out.
 
-report blowing something:
+report blowing something
+(this is the blowing rule):
 say "You can't blow [the noun]." 
 
-report blowing on something:
+report blowing on something
+(this is the blowing on something rule):
 say "You can't blow on [the noun]."
 
 Part 03 - Breaking (separated)
@@ -173,10 +199,12 @@ understand "trash [something] with [something]" as breaking it with.
 understand "vandalize [something] with [something]" as breaking it with. 
 understand "wreck [something] with [something]" as breaking it with.
 
-report breaking something:
+report breaking something
+(this is the breaking rule):
 say "You can't [verbword] [the noun].".
 
-report breaking something with a second noun:
+report breaking something with a second noun
+(this is the second breaking rule):
 say "You can't [verbword] [the noun] with [the second noun].".
 
 Part 04 - Burning
@@ -184,7 +212,8 @@ Part 04 - Burning
 burning it with is an action applying to two things.
 understand "burn [something] with [something]" as burning it with.
 
-report burning something with a second noun:
+report burning something with a second noun
+(this is the burning something with something rule):
 say "You can't burn [the noun] with [the second noun].".
 
 Part 05 - Buying and Selling (new)
@@ -199,16 +228,19 @@ understand "sell [something]" as selling.
 selling it to is an action applying to two things.
 understand "sell [something] to [something]" as selling it to.
 
-report buying something:
+report buying something
+(this is the buying rule):
 say "You can't buy [the noun].".
 
 report buying something from a second noun:
 say "Don't be ridiculous! You can't buy [the noun] from [the second noun]!".
 
-report selling something:
+report selling something
+(this is the first selling rule):
 say "Who do you want to sell [the noun] to?".
 
-report selling something to something:
+report selling something to something
+(this is the second  selling rule):
 say "You can't sell [the noun] to [the second noun].".
 
 Part 06 - Cleaning (separated)
@@ -257,54 +289,69 @@ understand "shine [something] with [something]" as shining it with.
 understand "sweep [something] with [something]" as sweeping it with.
 understand "wipe [something] with [something]" as wiping it with.
 
-report cleaning something:
+report cleaning something
+(this is the cleaning rule):
 say "You can't clean [the noun].".
 
-report dusting something:
+report dusting something
+(this is the dusting rule):
 say "You can't dust [the noun]."
 
-report polishing something:
+report polishing something
+(this is the polishing rule):
 say "You can't polish [the noun]."
 
-report rubbing something:
+report rubbing something
+(this is the rubbing rule):
 say "You can't rub [the noun]."
 
-report scrubbing something:
+report scrubbing something
+(this is the scrubbing rule):
 say "You can't scrub [the noun]."
 
-report shining something:
+report shining something
+(this is the shining rule):
 say "You can't shine [the noun]."
 
-report sweeping something:
+report sweeping something
+(this is the sweeping rule):
 say "You can't sweep [the noun]."
 
-report wiping something:
+report wiping something
+(this is the wiping rule):
 say "You can't wipe [the noun]."
 
-report cleaning something with something:
+report cleaning something with something
+(this is the cleaning something with something rule):
 say "You can't clean [the noun] with [the second noun]."
 
-report dusting something with something:
+report dusting something with something
+(this is the dusting something with something rule):
 say "You can't dust [the noun] with [the second noun]."
 
-report polishing something with something:
+report polishing something with something
+(this is the polishing something with something rule):
 say "You can't polish [the noun] with [the second noun]."
 
-report rubbing something with something:
+report rubbing something with something
+(this is the rubbing something with something rule):
 say "You can't rub [the noun] with [the second noun]."
 
-report scrubbing something with something:
+report scrubbing something with something
+(this is the scrubbing something with something rule):
 say "You can't scrub [the noun] with [the second noun]."
 
-report shining something with something:
+report shining something with something
+(this is the shining something with something rule):
 say "You can't shine [the noun] with [the second noun]."
 
-report sweeping something with something:
+report sweeping something with something
+(this is the sweeping something with something rule):
 say "You can't sweep [the noun] with [the second noun]."
 
-report wiping something with something:
+report wiping something with something
+(this is the wiping something with something rule):
 say "You can't wipe [the noun] with [the second noun].".
-
 
 Part 07 - Clearing (separated)
 
@@ -316,10 +363,13 @@ clearing it from is an action applying to two things.
 understand "clear [something] from [something]" as clearing it from.
 understand "clear [something] out of [something]" as clearing it from.
 
-report clearing something:
+
+report clearing something
+(this is the clearing rule):
 say "You can't clear [the noun].".
 
-report clearing something from a second noun:
+report clearing something from a second noun
+(this is the second clearing rule):
 say "You can't clear [the noun] from [the second noun].".
 
 Part 08 - Climbing (expanded)
@@ -343,42 +393,67 @@ understand "climb thru [something]" as climbing through.
 understand "climb out [something]" as climbing out.
 understand "climb out of [something]" as climbing out.
 understand "get out of [something]" as climbing out.
+
 understand "climb up [something]" as climbing up.
 understand "climb down [something]" as climbing down.
 understand "climb over [something]" as climbing over.
 understand "climb under [something]" as climbing under.
 
-report climbing a climbable thing:
-say "You climb [the noun]." instead.
+report climbing (this is the climbable rule):
+say "You climb [the noun]."
 
-report climbing over a climbable thing:
+report climbing over a climbable thing
+(this is the climb over a climbable thing rule):
 say "You  climb over [the noun].";
 
-report climbing under something:
+report climbing under something
+(this is the climb under something rule):
 say "You climb under [the noun].";
 
-report climbing in an enterable container:
-say "You climb into [the noun].";
-now the player is in the noun.
+report climbing in an enterable container
+(this is the climbing in an enterable container rule):
+	if the noun is open:
+		say "You climb into [the noun].";
+		now yourself is in the noun;
+	otherwise:
+		say "You need to open [the noun] before you can do that.".
 
-report climbing on an enterable supporter:
+report climbing on an enterable supporter
+(this is the climbing on an enterable supporter rule):
 say "You climb onto [the noun].";
-now the player is on the noun.
-report climbing an unclimbable thing:
-say "You can't climb [the noun]." instead.
+now yourself is on the noun.
 
-report climbing up an unclimbable thing:
-say "You can't climb up [the noun].";
+report climbing in something
+(this is the climbing in something rule):
+	if the noun is not enterable:
+		say "You can't climb into [the noun].".
 
-report climbing down an unclimbable thing:
-say "You can't climb down [the noun].";
+report climbing on something
+(this is the climbing on something rule):
+	if the noun is not enterable:
+		say "You can't climb onto [the noun].".
 
-report climbing through something:
+report climbing an unclimbable thing
+(this is the unclimbable thing rule):
+say "You can't climb [the noun]." .
+
+report climbing up an unclimbable thing
+(this is the climbing up an unclimbable thing rule):
+say "You can't climb up [the noun].".
+
+report climbing down an unclimbable thing
+(this is the climbing down an unclimbable thing rule):
+say "You can't climb down [the noun].".
+
+report climbing through an unclimbable thing
+(this is the climbing through an unclimbable thing rule):
 say "You can't climb through [the noun].".
 
-report climbing out something:
-say "You can't climb out of [the noun].";
-now the player is in the location;
+report climbing out something
+(this is the climbing out rule):
+say "You  climb out of [the noun].";
+now yourself is in the holder of the noun.
+
 
 Part 09 - Cutting (expanded) 
 
@@ -451,14 +526,15 @@ say "You can't [verbword] [the noun].".
 
 report cutting something with a second noun:
 let verbword be word number 1 in the player's command; 
-say "You can't [verbword] [the noun] with [the second noun]." .
+say "You can't [verbword] [the noun] with [the second noun].".
 
 report deflating an inflated thing:
 now the noun is deflated;
 say "You deflate [the noun]." instead.
 
 report deflating an uninflatable thing:
-say "Since [the noun] is uninflatable to begin with, that's not possible." instead.
+say "Since [the noun] is uninflatable to begin with, 
+that's not possible." instead.
 
 Part 10 - Digging (new)
 
@@ -475,22 +551,28 @@ understand "dig [something] in [something]" as digging it in.
 digging in is an action applying to one thing.
 understand "dig in [something]" as digging in.
 
-report digging an undiggable thing:
+report digging an undiggable thing
+(this is the digging an undiggable thing rule):
 say "You can't dig [the noun]." instead.
 
-report digging in an undiggable thing:
+report digging in an undiggable thing
+(this is the digging in an undiggable thing rule):
  say "You can't dig in [the noun]." instead.
 
-report digging an undiggable thing with something:
+report digging an undiggable thing with something
+(this is the digging an undiggable thing with something rule):
 say "You can't dig [the noun] with [the second noun]." instead.
 
-report digging something which is diggable: 
+report digging something which is diggable 
+(this is the digging a diggable thing rule):
 say "You can't dig [the noun].".
  
-report digging something which is diggable with something: 
+report digging a diggable thing with something
+(this is the digging a diggable thing with something rule):
 say "You can't dig [the noun] with the [second noun]."
 
-report digging something in a second noun:
+report digging something in a second noun
+(this is the digging something in a second noun rule):
 say "You can't dig [a noun] in [the second noun].".
 
 Part 11 - Diving (new)
@@ -500,6 +582,7 @@ understand "dive" as diving.
 
 diving in is an action applying to one thing.
 diving off is an action applying to one thing.
+
 diving from is an action applying to one thing.
 
 understand "dive in/into [something]" as diving in.
@@ -527,14 +610,13 @@ understand "drink from [something]" as drinking from.
 drinking it from is an action applying to two things.
 understand "drink [something] from [something]" as drinking it from.
 
-report drinking from something (this is the drinking from rule):
+report drinking from something
+(this is the drinking from something rule):
 say "You can't drink from [the second noun].".
 
-report drinking something from a second noun: 
+report drinking something from a second noun 
+(this is the drinking from a second noun rule):
 say "You can't drink [the noun] from [the second noun].". 
-
-report extinguishing something:
-say "You can't extinguish [the noun].".
 
 instead of drinking something
 (this is the can't drink rule):
@@ -543,22 +625,11 @@ say "You can't drink that.".
 Part 13 - Dropping (expanded)
 
 understand the command "drop" as something new.
-
-multidropping is an action applying to nothing.
-understand "drop all" as multidropping. 
-
 understand "drop [things preferably held]" as dropping.
 
 instead of dropping something:
 now the noun is in the location;
 say "Dropped."
-
-instead of multidropping:
-	if the player is carrying nothing:
-		say "You aren't carrying anything.";
-	otherwise:
-		say "You drop [the list of things carried by yourself] at your feet.";
-		now everything carried by yourself is in the location.
 
 dropping it into is an action applying to two things. 
 understand "drop [things preferably held] in/into [something]" as dropping it into.
@@ -569,32 +640,40 @@ understand "drop [things preferably held] on/onto [something]" as dropping it on
 dropping it down is an action applying to two things. 
 understand "drop [things preferably held] down [something]" as dropping it down.
 
-report dropping something into a second noun:
+dropping it under is an action applying to two things.
+understand "drop [things preferably held] under [something]" as dropping it under.
+
+report dropping something into a second noun
+(this is the dropping something into a second noun rule):
 say "You can't drop [the noun] into [the second noun].".
 
-report dropping something onto a second noun:
+report dropping something onto a second noun
+(this is the droppng something onto a second noun rule):
 say "You can't drop [the noun] into [the second noun].".
 
-report dropping something down a second noun:
+report dropping something down a second noun
+(this is the dropping something down a second noun rule):
 say "You can't drop [the noun] down [the second noun].".
+
+report dropping something under a second noun
+(this is the dropping something under second noun rule):
+say "You can't drop [the noun] under [the second noun].".
 				
 Part 14 - Eating (no longer requires holding)
 		
 understand the command "eat" as something new.
 understand "eat [things]" as eating.
 
-report eating something:
-say "You can't eat that!" instead.
+report eating something (this is the eating rule):
+say "You can't eat that!"
 
 Part 15 - Emptying (new)
 
 emptying is an action applying to one thing.
 understand "empty [something]" as emptying.
 understand "empty [container]" as emptying.
-
 understand "empty [something] out" as emptying. 
 understand "empty [container] out" as emptying. 
-
 understand "empty out [something]" as emptying.
 understand "empty out [container]" as emptying.
 
@@ -605,8 +684,8 @@ understand "empty [something] in/into [something]" as emptying it into.
 emptying it onto is an action applying to two things. 
 understand "empty [container] on/onto [something]" as emptying it onto. 
 understand "empty [something] on/onto [something]" as emptying it onto.
-
 emptying it from is an action applying to two things. 
+
 understand "empty [things] from [something]" as emptying it from.
 understand "empty [things] from [container]" as emptying it from.
 
@@ -617,9 +696,9 @@ understand "empty [things] out of [container]" as emptying it out of.
 understand the command "dump" as "empty".
 
 before emptying a closed container
-(this is the can't empty a closed container rule)::
+(this is the can't empty a closed container rule):
 say "You need to open [the noun] before you can empty it." instead.
-	
+
 before emptying something which is not a container
 (this is the can't empty a non-container rule):
 say "Since [the noun] isn't a container, you can't empty it." instead.
@@ -669,37 +748,29 @@ if the second noun is  a supporter,
 say "You empty the [list of things in the noun] onto [the second noun]";
 now everything in the noun is on the second noun instead.
 		
-before emptying something from an unempty container: 
+before emptying something from an unempty container 
+(this is the first emptying an unempty container rule):
 	if the number of things in the second noun is 1:
 		say "You [verbword] the last item out of the [noun]. It's now empty.";
-		now the second noun is empty instead;
+		now the second noun is empty instead;	
 		now the noun is in the location;
 	otherwise:
 		now the noun is in the location;
-		say "You [verbword] the [the noun] from [the second noun]. There are still
-		other things left in [the second noun]." instead.	
-		
-before emptying something out of an unempty container: 
-	if the number of things in the second noun is 1:
-		say "You empty the last item out of the [noun]. It's now empty.";
-		now the noun is in the location;
-		now the second noun is empty instead;
-	otherwise:
-		now the noun is in the location;
-		say "You [verbword] the [the noun] out of [the second noun]. There are still
-		other things left in [the second noun]." instead.	
-			
+		say "You [verbword] the [the noun] from [the second noun]. 
+		There are still other things left in [the second noun]." instead.	
+					
 after inserting something into an open container:
-now the second noun is unempty.
+now the second noun is unempty;
+say "You [verbword] [the noun] into [the second noun].";
 
 check inserting something into a closed container:
 say "[The second noun] isn't open!" instead.
 	
-before emptying an open unempty container:
+before emptying an open unempty container
+(this is the second emptying an unempty container rule):
 say "You [verbword] [the list of things in the noun] out onto the ground.";
 now the noun is empty;
 now all the things in the noun are in the location instead.
-
 
 Part 16 - Extinguishing (new)
 
@@ -710,7 +781,8 @@ understand "put out [something]" as extinguishing.
 understand "douse [something]" as extinguishing. 
 understand "ext [something]" as extinguishing.
 
-report extinguishing something:
+report extinguishing something
+(this is the extinguishing noun rule):
 say "You can't extinguish [the noun].".
 
 Part 17 - Feed (separated)
@@ -730,14 +802,17 @@ understand "feed [something] with [something]" as feeding it with.
 understand "feed [something] with [someone]" as feeding it with.
 understand "feed [someone] with [something]" as feeding it with.
 
-report feeding:
+report feeding
+(this is the feeding rule):
 say "You can't feed [the noun].".
 
-report feeding something to a second noun:
-say "You can't feed [the noun] to [the second noun]."
+report feeding something to a second noun
+(this is the feeding something to something rule):
+say "You can't feed [the noun] to [the second noun]. " instead
 
-report feeding something with a second noun:
-say "You can't feed [the noun] with [the second noun].". 
+report feeding something with a second noun
+(this is the feeding something with something rule):
+say "You can't feed [the noun] with [the second noun]." instead. 
 
 Part 18 - Filling (new)
 
@@ -836,11 +911,12 @@ check unfolding an unfolded thing
 (this is the already unfolded rule):
 say "[The noun] is already unfolded." instead.
 
-report folding something:
+report folding something
+(this is the folding rule):
 say "You can't fold [the noun].".
 
-report unfolding something:
-
+report unfolding something
+(this is the unfolding rule):
 say "You can't unfold [the noun].".
 
 Part 21 - Give and Asking For (allows NPC to give and take)
@@ -852,6 +928,8 @@ understand "give [things] to [something]" as giving it to.
 understand "give [things] to [someone]" as giving it to.
 understand "hand [things] to [something]" as giving it to.
 understand "hand [things] to [someone]" as giving it to.
+understand "give [someone] [things]" as giving it to (with nouns reversed).
+understand "hand [someone] [things]" as giving it to  (with nouns reversed).
 
 report giving something to a second noun
 (this is the giving something to a person rule):
@@ -867,8 +945,7 @@ say "You can't hand [the noun] over to [the second noun].";
 instead of asking a person (called the requestee) for something (called the target)
 (this is the asking someone for something rule):
 if the target is enclosed by the requestee begin;
-now the target is carried by the player;
-say "[The requestee] gives you [the target]." instead;
+say "[The requestee] refuses to give you [the target]." instead;
 otherwise;
 say "[The requestee] hasn't got the [target]." instead;
 end if.
@@ -881,6 +958,7 @@ inflating is an action applying to one thing.
 understand "inflate [something]" as inflating. 
 understand "pump up [something]" as inflating.
 understand "pump [something] up" as inflating.
+
 understand "blow in [something]" as inflating.
 understand "blow up [something]" as inflating. 
 understand "blow [something] up" as inflating.
@@ -892,28 +970,35 @@ understand "pump [something] up with [something]" as inflating it with.
 understand "blow up [something] with [something]" as inflating it with. 
 understand "blow [something] up with [something]" as inflating it with. 
 
-report inflating an uninflatable thing: 
+report inflating an uninflatable thing 
+(this is the can't inflate uninflatables rule):
 say "You can't inflate [the noun]." instead.
 
-report inflating a deflated inflatable thing:
+report inflating a deflated inflatable thing
+(this is the inflating a deflated thing rule):
 now the noun is inflated;
 say "You inflate [the noun]." instead.
 
-report inflating a deflated inflatable thing with something:
+
+report inflating a deflated inflatable thing with something
+(this is the inflating an inflatable thing with a second noun rule):
 now the noun is inflated;
 say "You inflate [the noun] with [the second noun]." instead.
 
-report inflating an inflated thing:
+report inflating an inflated thing
+(this is the first already inflated rule):
 say "[The noun] is already inflated." instead.
 
 
-report inflating something with something:
+report inflating something with something
+(this is the second already inflated rule):
 if the noun is inflated,
 say "[The noun] is already inflated." instead.
 
-report inflating an uninflatable thing with something: 
-say "You can't inflate [the noun] with [the second noun]." instead.
-
+report inflating an uninflatable thing with something
+(this is the can't inflate thing with a second noun rule):
+	if the noun is uninflatable: 
+		say "You can't inflate [the noun] with [the second noun]." instead.
 
 Section 2 - Deflating
 
@@ -924,12 +1009,13 @@ understand "let air out of [something]" as deflating.
 deflating it with is an action applying to two things.
 understand "deflate [something] with [something]" as deflating it with.
 
-report deflating a deflated thing:
+report deflating a deflated thing
+(this is the first deflating rule):
 say "[The noun] is already deflated." instead.
 
-report deflating a deflated thing with a second noun:
+report deflating a deflated thing with a second noun
+(this is the second deflating rule):
 say "[The noun] is already deflated." instead.
-
 
 Part 23 - Jumping (expanded)
 
@@ -949,6 +1035,9 @@ jumping off is an action applying to one thing.
 understand "jump off [something]" as jumping off.
 understand "jump off of [something]" as jumping off.
 
+jumping out of is an action applying to one thing.
+understand "jump out of [thing]" as jumping out of.
+
 jumping over is an action applying to one thing. 
 understand "jump over [something]" as jumping over.
 
@@ -959,25 +1048,36 @@ understand "jump thru [something]" as jumping through.
 jumping under is an action applying to one thing. 
 understand "jump under [something]" as jumping under.
 
-report jumping in something:
+report jumping in something
+(this is the jumping in rule):
 say "You can't jump into [the noun].".
 
-report jumping on something:
+report jumping on something
+(this is the jumping on rule):
 say "You can't jump onto [the noun].".
 
-report jumping down something:
+report jumping out of something
+(this is the jumping out rule):
+say "You can't jump out of [the noun].".
+
+report jumping down something
+(this is the jumping down rule):
 say "You can't jump down [the noun].".
 
-report jumping over something:
+report jumping over something
+(this is the jumping over rule):
 say "You can't jump over [the noun].";
 
-report jumping off something:
+report jumping off something
+(this is the jumping off rule):
 say "You can't jump off of [the noun].".
 
-report jumping through something:
+report jumping through something
+(this is the jumping through rule):
 say "You can't jump through [the noun].";
 
-instead of jumping under something:
+instead of jumping under something
+(this is the jumping under rule):
 say "You can't jump under [the noun].";
 
 Part 24 - Killing (expanded and synonyms)
@@ -985,15 +1085,6 @@ Part 24 - Killing (expanded and synonyms)
 understand the command "kill" as something new.
 killing is an action applying to one thing. 
 killing it with is an action applying to two things.
-
-understand "kill [someone] with [something]" as killing it with.
-understand "kill [something] with [something]" as killing it with. 
-understand "murder [someone] with [something]" as killing it with. 
-understand "murder [something] with [something]" as killing it with.
-understand "stab [someone] with [something]" as killing it with. 
-understand "stab [something] with [something]" as killing it with.
-understand "torture [someone] with [something]" as killing it with. 
-understand "torture [something] with [something]"as killing it with. 
 
 understand "murder [someone]" as killing. 
 understand "murder [something]" as killing. 
@@ -1004,10 +1095,21 @@ understand "stab [something]" as killing.
 understand "torture[someone]" as killing.
 understand "torture[something]" as killing.
 
-report killing:
+understand "kill [someone] with [something]" as killing it with.
+understand "kill [something] with [something]" as killing it with. 
+understand "murder [someone] with [something]" as killing it with. 
+understand "murder [something] with [something]" as killing it with.
+understand "stab [someone] with [something]" as killing it with. 
+understand "stab [something] with [something]" as killing it with.
+understand "torture [someone] with [something]" as killing it with. 
+understand "torture [something] with [something]"as killing it with. 
+
+report killing
+(this is the first killing rule):
 say "You can't [verbword] [the noun]."
 
-report killing something with a second noun:
+report killing something with a second noun
+(this is the second killing rule):
 say "You can't [verbword] [the noun] with [the second noun].".
 
 Part 25 - Loading and Unloading (new)
@@ -1029,18 +1131,13 @@ understand "load [something] with [something]" as loading it with.
 loading it from is an action applying to two things.
 understand "load [something] from [something]" as loading it from.
 
+report loading something
+(this is the loading rule):
+say "You can't load [the noun]."
 
-report loading something:
-say "You can't load [the noun].";
-
-report unloading something:
-say "You can't unload [the noun].";
-
-report loading something with a second noun:
-say "You can't load [the noun] with [the second noun].";
-
-report unloading something with a second noun:
-say "You can't unload [the noun] with [the second noun].";
+report loading something with a second noun
+(this is the loading something with a second noun rule):
+say "You can't load [the noun] with [the second noun]."
 
 Section 2 - Unloading 
 
@@ -1058,6 +1155,14 @@ understand "unload [something] with [something]" as unloading it with.
 
 unloading it from is an action applying to two things.
 understand "unload [something] from [something]" as unloading it from.
+
+report unloading something
+(this is the unloading rule):
+say "You can't unload [the noun]."
+
+report unloading something with a second noun
+(this is the unloading something with a second noun rule):
+say "You can't unload [the noun] with [the second noun]."
 
 check unloading something with something
 (this is the can't unload something with nothing rule):
@@ -1128,40 +1233,46 @@ understand "look down" or "l d" or "ld" as looking down.
 understand "look behind [something]" as looking behind.
 understand "l b [something]" or "lb [something]" as looking behind.
 
-report looking behind something:
-say "You can't look behind [the noun].".
+report looking north
+(this is the looking north rule):
+say "You can't look to the north."
 
-report looking north:
-say "You can't look to the north.".
+report looking south
+(this is the looking south rule):
+say "You can't look to the south."
 
-report looking south:
-say "You can't look to the south.".
+report looking east
+(this is the looking east rule):
+say "You can't look to the east."
 
-report looking east:
-say "You can't look to the east.".
+report looking west
+(this is the looking west rule):
+say "You can't look to the west."
 
-report looking west:
-say "You can't look to the west.".
+report looking northeast
+(this is the looking northeast rule):
+say "You can't look to the northeast."
 
-report looking northeast:
-say "You can't look to the northeast.".
-
-report looking northwest:
-say "You can't look to the northwest.".
+report looking northwest
+(this is the looking northwest rule):
+say "You can't look to the northwest."
 
 report looking southeast:
-say "You can't look to the southeast.".
+say "You can't look to the southeast."
 
 report looking southwest:
-say "You can't look to the southwest.".
+say "You can't look to the southwest."
 
-report looking up:
+report looking up
+(this is the looking up rule):
 say "You can't look up.".
 
-report looking down:
+report looking down
+(this is the looking down rule):
 say "You can't look down.".
 
-report looking behind something :
+report looking behind something 
+(this is the looking behind rule):
 say "You can't look behind [the noun].".
 
 Part 27 - Mixing (new)
@@ -1172,25 +1283,25 @@ understand "mix [something]" as mixing.
 mixing it with is an action applying to two things. 
 understand "mix [something] with [something]" as mixing it with.
 
-report mixing:
+report mixing
+(this is the first mixing rule):
 say "What do you want to mix [the noun] with?"
 
-report mixing something with a second noun:
+report mixing something with a second noun
+(this is the second mixing rule):
 say "You can't mix [the noun] with [the second noun].".
-
 
 Part 28 - Moving (separated)
 
 understand the command "shove" as "push".
-
 understand the command "move" as something new.
+
 moving is an action applying to one thing.
 understand "move [something]" as moving.
 
-report moving something:
+report moving something
+(this is the moving rule):
 say "You can't move [the noun].".
-
-
 
 Part 29 - Offering (separated)
 
@@ -1201,7 +1312,8 @@ offering it to is an action applying to two things.
 understand "offer [something] to [someone]" as offering it to.
 understand "offer [something] to [something]" as offering it to.
 
-report offering something to a second noun:
+report offering something to a second noun
+(this is the offering rule):
 say "You can't offer [the noun] to [the second noun].";
 
 Part 30 - Bribing (new)
@@ -1212,10 +1324,12 @@ understand "bribe [someone]" as bribing.
 bribing it with is an action applying to two things.
 understand "bribe [someone] with [something]" as bribing it with.
 
-report bribing:
+report bribing
+(this is the first bribing rule):
 say "You can't bribe [the noun].";
 
-report bribing someone with a second noun:
+report bribing someone with a second noun
+(this is the second bribing rule):
 say "You can't bribe [the noun] with [the second noun].".
 
 Part 31 - Paying (separated)
@@ -1232,13 +1346,16 @@ understand "pay [something] to [someone]" as paying it to.
 paying it for is an action applying to two things.
 understand "pay [someone] for [something]" as paying it for.
 
-report paying:
+report paying
+(this is the first paying rule):
 say "You can't pay [the noun].";
 
-report paying something to a second noun: 
+report paying something to a second noun
+(this is the second paying rule): 
 say "You can't pay [the noun] to [the second noun].";
 
-report paying someone for something:
+report paying someone for something
+(this is the third paying rule):
 say "You can't pay [the noun] for [the second noun].".
 
 Part 32 - Positions (Sitting,Standing,Lieing)
@@ -1254,14 +1371,16 @@ understand "lie on [something]" as lieing on.
 lieing under is an action applying to one thing.
 understand "lie under [something]" as lieing under.
 
-
-report lieing under something:
+report lieing under something
+(this is the lieing under rule):
 say "You can't lie under [the noun].".
 
-report lieing on something:
+report lieing on something
+(this is the lieing on rule):
 say "You can't lie on [the noun].".
 
-report lieing in something:
+report lieing in something
+(this is the lieing in rule):
 say "You can lie in [the noun].".
 
 understand the command "sit" as something new.
@@ -1279,14 +1398,23 @@ understand "sit under [something]" as sitting under.
 sitting behind is an action applying to one thing.
 understand "sit behind [something]" as sitting behind.
 
-report sitting under something:
+report sitting behind something
+(this is the sitting behind something rule):
+say "You can sit behind [the noun].".
+
+report sitting under something
+(this is the sitting under something rule):
 say "You can't sit under [the noun]." instead.
 
-report sitting behind something:
-say "You can't sit behind [the noun]." instead.
+report sitting on something
+(this is the sitting on rule):
+say "You can't sit on [the noun]." instead.
+
+report sitting in something
+(this is the sitting in rule):
+say "You can't sit in [the noun]." instead.
 
 understand the command "stand" as something new.
-
 standing is an action applying to nothing.
 understand "stand" as standing.
 understand "stand up" as exiting.
@@ -1306,28 +1434,34 @@ understand "stand under [something]" as standing under.
 standing behind is an action applying to one thing.
 understand "stand behind[something]" as standing behind.
 
-report standing on something:
+report standing on something
+(this is the standing on something rule):
 say "You can't stand on [the noun]."
 
-report standing in something:
+report standing in something
+(this is the standing in rule):
 say "You can't stand in [the noun]."
 
-report standing under something:
+report standing under something
+(this is the standing under rule):
 say "You can't stand under [the noun]."
 
-report standing behind something:
+report standing behind something
+(this is the standing behind rule):
 say "You can't stand behind [the noun]."
 
 Part 33 - Pouring (new)
 
-
 pouring is an action applying to one thing.
 understand "pour [something]" as pouring.
 understand "pour [something] out" as pouring.
+
 understand "pour out [something]" as pouring.
 understand "pour [container]" as pouring.
 understand "pour [container] out" as pouring.
 understand "pour out [container]" as pouring.
+
+understand the command "spill" as "pour".
 
 pouring it into is an action applying to two things. 
 understand "pour [something] in/into [something]" as pouring it into.
@@ -1335,7 +1469,7 @@ understand "pour [container] in/into [something]" as pouring it into.
 
 pouring it onto is an action applying to two things. 
 understand "pour [something] on/onto [something]" as pouring it onto.
-understand "pour [container] in/into [something]" as pouring it into.
+understand "pour [container] on/onto [something]" as pouring it onto.
 
 pouring it out of is an action applying to two things.
 understand "pour [something] out of [something]" as pouring it out of.
@@ -1343,33 +1477,39 @@ understand "pour [container] in/into [something]" as pouring it into.
 
 pouring it from is an action applying to two things. 
 understand "pour [something] from [something]" as pouring it from.
-understand "pour [container] in/into [something]" as pouring it into.
 
-understand the command "spill" as "pour".
-
-report pouring something which is not a container:
+report pouring something which is not a container
+(this is the pouring a non-container rule):
 say "You can't pour [the noun]." instead.
 
-report pouring a container:
+report pouring a container
+(this is the pouring a container rule):
 say "You can't pour [the noun]." instead.
 
-report pouring something which is not a container into something:
-say "You can't pour [the noun] into [the second noun]." instead.
+report pouring something which is not a container into something
+(this is the pouring a non-container into something rule):
+say "You can't pour [the noun] into [the second noun]." .
 
-report pouring a container into something:
-say "You can't pour [the noun] into [the second noun]." instead.
+report pouring a container into something
+(this is the pouring a container into something rule):
+say "You can't pour [the noun] into [the second noun]." .
 
-report pouring something which is not a container onto something:
-say "You can't pour [the noun] onto [the second noun]." instead.
+report pouring something which is not a container onto something
+(this is the pouring a non-container onto a second noun rule):
+say "You can't pour [the noun] onto [the second noun]." .
 
-report pouring a container onto something:
-say "You can't pour [the noun] onto [the second noun]." instead.
+report pouring a container onto something
+(this is the pouring a container onto a second noun rule):
+say "You can't pour [the noun] onto [the second noun].". 
 
-report pouring something out of a container:
-say "You can't pour [the noun] out of [the second noun]." instead.
+report pouring something out of a second noun
+(this is the pouring something out of something rule):
+say "You can't pour [the noun] out of [the second noun]." 
 
-report pouring something from a container:
-say "You can't pour [the noun] from [the second noun]." instead.
+report pouring something from a second noun
+(this is the pouring something from a container rule):
+say "You can't pour [the noun] from [the second noun]." 
+
 
 
 Part 34 - Praying (expanded)
@@ -1383,22 +1523,27 @@ understand "pray to [something]" as praying to.
 praying for is an action applying to one thing. 
 understand "pray for [something]" as praying for.
 
-report praying:
+report praying
+(this is the first praying rule):
 say "Your prayers go unanswered." 
 
-report praying to something:
+report praying to something
+(this is the second praying rule):
 say "You can't pray to the [noun]." 
 
-report praying for something:
+report praying for something
+(this is the third praying rule):
 say "You can't pray for [the noun]." 
 
 Part 35 - Reading (separated)
 
 understand the command "read" as something new.
 reading is an action applying to one thing.
+
 understand "read [something]" as reading.
 
-report reading:
+report reading
+(this is the reading rule):
 say "You can't read [the noun]."
 
 
@@ -1413,26 +1558,45 @@ understand "screw [something]" as screwing.
 screwing it with is an action applying to two things.
 understand "screw [something] with [something]" as screwing it with.
 
-report screwing something:
+screwing it into is an action applying to two things.
+understand "screw [something] in/into [something]" as screwing it into.
+
+report screwing something
+(this is the first screwing rule):
 say "You can't screw [the noun].".
 
-report screwing something with something:
-say "You can't screw [the noun] with [the second noun]."
+report screwing something with something
+(this is the second screwing rule):
+say "You can't screw [the noun] with [the second noun].".
+
+report screwing something into a second noun
+(this is the third screwing rule):
+say "You can't screw [the noun] into [the second noun].".
 
 Section 2 - Unscrewing (new)
 
 understand the command "unscrew" as something new.
+
 unscrewing is an action applying to one thing.
 understand "unscrew [something]" as unscrewing.
 
 unscrewing it with is an action applying to two things.
 understand "unscrew [something] with [something]" as unscrewing it with.
 
-report unscrewing something:
+unscrewing it from is an action applying to two things.
+understand "unscrew [something] from [something]" as unscrewing it from.
+
+report unscrewing something
+(this is the first unscrewing rule):
 say "You can't unscrew [the noun].".
 
-report unscrewing something with something:
-say "You can't unscrew [the noun] with [the second noun]."
+report unscrewing something with something
+(this is the second unscrewing rule):
+say "You can't unscrew [the noun] with [the second noun].".
+
+report unscrewing something from a second noun
+(this is the third unscrewing rule):
+say "You can't unscrew [the noun] from [the second noun].".
 
 Part 37 - Shifting (separated)
 
@@ -1441,8 +1605,9 @@ shifting is an action applying to one thing.
 
 understand "shift [something]" as shifting.
 
-report shifting something:
-say "You can't shift [the noun].".
+report shifting something
+(this is the shifting rule):
+say "You can't shift [the noun]."
 
 Part 38 - Shooting (new)
 
@@ -1461,19 +1626,22 @@ understand "shoot [something] with [something]" as shooting it with.
 understand "shoot [someone] with [something]" as shooting it with.
 
 shooting it at is an action applying to two things.
-understand "shoot [something] at [something]" as shooting it at. 
+understand "shoot [something] at [things]" as shooting it at. 
 understand "shoot [something] at [someone]" as shooting it at. 
-understand "fire [something] at [something]" as shooting it at. 
+understand "fire [something] at [things]" as shooting it at. 
 understand "fire [something] at [someone]" as shooting it at. 
 
-report shooting something:
-say "You can't shoot [the noun].";
+report shooting something
+(this is the shooting rule):
+say "You can't [verbword] [the noun].";
 
-report shooting something with something:
+report shooting something with something
+(this is the shooting something with something rule):
 say "You can't shoot [the noun] with [the second noun].";
 
-report shooting something at something:
-say "You can't shoot [the noun] at [the second noun].";
+report shooting something at something
+(this is the shooting at rule):
+say "You can't [verbword] [the noun] at [the second noun].";
 
 Part 39 - Stealing (new)
 
@@ -1513,14 +1681,13 @@ check stealing something from a second noun
 if the second noun encloses nothing,
 say "[The second noun] hasn't got [the noun]." instead.
 
-carry out stealing
+report stealing
 (this is the result of stealing rule):
-say "You steal [the noun].";
-now the noun is carried by the player.
+say "You can't steal [the noun].";
 
-carry out stealing something from a second noun
-(this is the steal something from some one-thing rule):	
-say "You steal [the noun] from [the second noun].";
+report stealing something from a second noun
+(this is the steal something from some-on-thing rule):	
+say "You can't steal [the noun] from [the second noun].";
 now the noun is carried by the player;
 
 Part 40 - Striking (new)
@@ -1530,9 +1697,9 @@ striking is an action applying to one thing.
 understand "strike [something]" as striking. 
 understand "ignite [something]" as striking.
 
-report striking:
+report striking
+(this is the striking rule):
 say "You can't [verbword] [the noun]."
-
 
 Part 41 - Swimming (new)
 
@@ -1553,46 +1720,57 @@ understand "swim around [something]" as swimming around.
 understand "swim through [something]" as swimming through.
 understand "swim thru [something]" as swimming through.
 
-report swimming:
+report swimming
+(this is the swimming rule):
 say "You can't swim."
 
-report swimming in an unswimmable thing: 
+report swimming in an unswimmable thing 
+(this is the swimming in an unswimmable thing rule):
 say "You can't swim in [the noun].".
 
-report swimming over an unswimmable thing:
-say "You can't swim over [the noun].".
+report swimming over an unswimmable thing
+(this is the swimming over an unswimmable thing rule):
+say "You can't swim over [the noun]."
 
-report swimming under an unswimmable thing: 
-say "You can't swim under [the noun].".	
+report swimming under an unswimmable thing
+(this is the swimming under an unswimmable thing rule):
+ say "You can't swim under [the noun].".
 
-report swimming around an unswimmable thing: 
-say "You can't swim around [the noun].".
+report swimming around an unswimmable thing
+(this is the swimming around an unswimmable thing rule):
+say "You can't swim around [the noun]."
 
-report swimming across an unswimmable thing: 
-say "You can't swim across [the noun].".
+report swimming across an unswimmable thing
+(this is the swimming across unswimmable thing rule):
+say "You can't swim across [the noun]."
 
-report swimming through an unswimmable thing: 
-say "You can't swim through [the noun].".
+report swimming through an unswimmable thing
+(this is the swimming through an unswimmable thing rule):
+say "You can't swim through [the noun]."
 
-report swimming in a swimmable thing:
+report swimming in a swimmable thing
+(this is the swimming in a swimmable thing rule):
 say "You swim in [the noun].".
 
-report swimming over a swimmable thing:
+report swimming over a swimmable thing
+(this is the swimming over a swimmable thing rule):
 say "You swim over [the noun].".
 
-report swimming under a swimmable thing: 
+report swimming under a swimmable thing
+(this is the swimming under a swimmable thing rule): 
 say "You swim under [the noun].".	
 
-report swimming around a swimmable thing: 
-say "You wim around [the noun].".
+report swimming around a swimmable thing
+(this is the swimming around a swimmable thing rule): 
+say "You swim around [the noun].".
 
-report swimming across a swimmable thing: 
+report swimming across a swimmable thing
+(this is the swimming across a swimmable thing rule):: 
 say "You swim across [the noun].".
 
-report swimming through a swimmable thing: 
+report swimming through a swimmable thing
+(this is the swimming through a swimmable thing rule): 
 say "You swim through [the noun].".
-
-
 
 Part 42 - Talking and Shouting (new)
 
@@ -1607,10 +1785,12 @@ understand "speak to [something]" as talking to.
 understand "talk to [someone]" as talking to.
 understand "speak to [someone]" as talking to.
 
-report talking:
+report talking 
+(this is the first talking rule):
 say "Who do you want to talk to?".
 
-report talking to something:
+report talking to something
+(this is the second talking rule):
 say "You can't [verbword] to [the noun].".
 
 understand the command "shout" as something new.
@@ -1621,6 +1801,12 @@ understand "scream" as shouting.
 understand "holler" as shouting.
 understand "bellow" as shouting.
 understand "screech" as shouting.
+understand "howl"   as shouting.
+understand "yowl"    as shouting.. 
+understand "wail"      as shouting. 
+understand "shriek"  as shouting. 
+understand "yelp"     as shouting.
+understand "squeal" as shouting. 
 
 shouting at is an action applying to one thing.
 understand "shout at [something]" as shouting at.
@@ -1629,6 +1815,12 @@ understand "scream at [something]" as shouting at.
 understand "holler at [something]" as shouting at.
 understand "bellow at [something]" as shouting at.
 understand "screech at [something]" as shouting at.
+understand "howl at [something]" as shouting at.
+understand "yowl at [something]" as shouting at.
+understand "wail at [something]" as shouting at.
+understand "shriek at [something]" as shouting at. 
+understand "yelp at [something]" as shouting at.
+understand "squeal at [something]" as shouting at. 
 
 shouting to is an action applying to one thing.
 
@@ -1638,36 +1830,61 @@ understand "scream to [something]" as shouting to.
 understand "holler to [something]" as shouting to.
 understand "bellow to [something]" as shouting to.
 understand "screech to [something]" as shouting to.
+understand "howl to [something]" as shouting to.
+understand "yowl to [something]" as shouting to.
+understand "wail to [something]" as shouting to.
+understand "shriek to [something]" as shouting to.
+understand "yelp to [something]" as shouting to.
+understand "squeal to [something]" as shouting to. 
 
 shouting it at is an action applying to two things.
+
 understand "shout [something] at [something]" as shouting it at.
 understand "yell [something] at [something]" as shouting it at.
 understand "scream [something] at [something]" as shouting it at.
 understand "holler [something] at [something]" as shouting it at.
 understand "bellow [something] at [something]" as shouting it at.
 understand "screech [something] at [something]" as shouting it at.
+understand "howl to [something] at [something]" as shouting it at.
+understand "yowl to [something]  at [something]" as shouting it at.
+understand "wail to [something] at [something]" as shouting it at.
+understand "shriek to [something] at [something]" as shouting it at.
+understand "yelp to [something] at [something]" as shouting it at.
+understand "squeal to [something] at [something]" as shouting it at.
 
 shouting it to is an action applying to two things.
+
 understand "shout [something] to [something]" as shouting it to.
 understand "yell [something] to [something]" as shouting it to.
 understand "scream [something] to [something]" as shouting it to.
 understand "holler [something] to [something]" as shouting it to.
 understand "bellow [something] to [something]" as shouting it to.
 understand "screech [something] to [something]" as shouting it to.
+understand "howl to [something]  to [something]" as shouting it to.
+understand "yowl to [something]  to [something]" as shouting it to.
+understand "wail to [something]  to [something]" as shouting it to.
+understand "shriek to [something]  to [something]" as shouting it to.
+understand "yelp to [something] to [something]" as shouting it to.
+understand "squeal to [something]  to [something]" as shouting it to.
 
-report shouting: 
+report shouting
+(this is the shouting rule): 
 say "You can't [verbword].";
 
-report shouting at something: 
+report shouting at something
+(this is the shouting at rule):
 say "You can't [verbword] at [the noun].".
 
-report shouting to something: 
+report shouting to something
+(this is the shouting to rule): 
 say "You can't [verbword] to [the noun].".	
 
-report shouting something at something: 
+report shouting something at something
+(this is the shouting something at something rule): 
 say "You can't [verbword] [the noun] at [the second noun].".
 
-report shouting something to something: 
+report shouting something to something
+(this is the shouting something to something rule): : 
 say "You can't [verbword] [the noun] to [the second noun].".	
 
 Part 43 - Throwing (expanded)
@@ -1683,6 +1900,12 @@ understand "hurl [things]" as throwing.
 understand "pitch [things]" as throwing.
 
 understand "throw [something] at [something]" as throwing it at.
+understand "chuck [things] at[something]"  as throwing it at.
+understand "heave [things] at [something]" as throwing it at.
+understand "throw [things] at [something]"  as throwing it at. 
+understand "toss [things]  at [something]"  as throwing it at.
+understand "hurl [things] at[something]"    as throwing it at.
+understand "pitch [things] at [something]"  as throwing it at.
 
 throwing it into is an action applying to two things.
 understand "chuck [things] in/into [something]" as throwing it into. 
@@ -1691,11 +1914,6 @@ understand "throw [things] in/into [something]" as throwing it into.
 understand "toss [things] in/into [something]" as throwing it into. 
 understand "hurl [things] in/into [something]" as throwing it into. 
 understand "pitch [things] in/into [something]" as throwing it into.
-
-check throwing something at a second noun
-(this is the can't throw what you don't have rule):
-if the noun is not carried by the player,
-say "You don't have [the noun]." instead.
 
 throwing it onto is an action applying to two things. 
 understand "chuck [things] on/onto [something]" as throwing it onto.
@@ -1706,7 +1924,6 @@ understand "hurl [things] on/onto [something]" as throwing it onto.
 understand "pitch [things] on/onto [something]" as throwing it onto.
 
 throwing it down is an action applying to two things.
-
 understand "chuck [things] down [something]" as throwing it down. 
 understand "throw [things] down [something]" as throwing it down. 
 understand "heave [things] down [something]" as throwing it down. 
@@ -1715,7 +1932,6 @@ understand "hurl [things] down [something]" as throwing it down.
 understand "pitch [things] down [something]" as throwing it down.
 
 throwing it off is an action applying to two things.
-
 understand "chuck [things] off [something]" as throwing it off. 
 understand "heave [things] off [something]" as throwing it off. 
 understand "throw [things] off [something]" as throwing it off. 
@@ -1723,8 +1939,15 @@ understand "toss [things] off [something]" as throwing it off.
 understand "hurl [things] off [something]" as throwing it off.
 understand "pitch [things] off [something]" as throwing it off.
 
-throwing it over is an action applying to two things.
+throwing it out of is an action applying to two things.
+understand "chuck [things] out/out of [something]" as throwing it out of. 
+understand "heave [things] out/out of [something]" as throwing it out of. 
+understand "throw [things] out/out of [something]" as throwing it out of. 
+understand "toss [things] out/out of [something]" as throwing it out of. 
+understand "hurl [things] out/out of [something]" as throwing it out of.
+understand "pitch [things] out/ouf of [something]" as throwing it out of.
 
+throwing it over is an action applying to two things.
 understand "chuck [things] over [something]" as throwing it over. 
 understand "throw [things] over [something]" as throwing it over. 
 understand "heave [things] over [something]" as throwing it over. 
@@ -1733,7 +1956,6 @@ understand "hurl [things] over [something]" as throwing it over.
 understand "pitch [things] over [something]" as throwing it over. 
 
 throwing it under is an action applying to two things.
-
 understand "chuck [things] under [something]" as throwing it under. 
 understand "throw [things] under [something]" as throwing it under. 
 understand "heave [things] under [something]" as throwing it under. 
@@ -1749,41 +1971,61 @@ understand "toss [things] through [something]" as throwing it through.
 understand "hurl [things] through [something]" as throwing it through.
 understand "pitch [things] through [something]" as throwing it through.
 
-report throwing something into something:
+check throwing something at a second noun
+(this is the can't throw what you don't have rule):
+if the noun is not carried by the player,
+say "You don't have [the noun]." instead.
+
+report throwing something
+(this is the throwing rule):
+say "You can't throw [the noun].".
+
+report throwing something into something
+(this is the throwing something into something rule) :
 say "You can't [verbword] [the noun] into [the second noun].".
 
-report throwing something off a second noun:
+report throwing something off a second noun
+(this is the throwing something off something rule) ::
 say "You can't [verbword] [the noun] off [the second noun].". 
 
-
-report throwing something over something:
+report throwing something over something
+(this is the throwing something over something rule) ::
 say "You can't [verbword] [the noun] over [the second noun].". 
 
-
-report throwing something under a second noun:
+report throwing something under a second noun
+(this is the throwing something under something rule) ::
 say "You can't [verbword] [the noun] under [the second noun].". 
 
-report throwing something down a second noun:
+report throwing something down a second noun
+(this is the throwing something down something rule) ::
 say "You can't [verbword] [the noun] down [the second noun].". 
 
-report throwing something through a second noun:
+report throwing something through a second noun
+(this is the throwing something through something rule) ::
 say "You can't [verbword] [the noun]through [the second noun].". 
+
+report throwing something out of a second noun
+(this is the throwing something out of something rule) ::
+say "You can't [verbword] [the noun] out of [the second noun]."
+
+
 
 
 Part 44 - Checking Separated from Look
 
 understand the command "check" as something new.
-
 checking is an action applying to one thing.
 understand "check [something]" as checking.
 
 checking it with is an action applying to two things.
 understand "check [something] with [something]" as checking it with.
 
-report checking: 
+report checking
+(this is the first checking rule): 
 say "You can't check [the noun].".
 
-report checking something with a second noun:
+report checking something with a second noun
+(this is the second checking rule):
 say "You can't check [the noun] with [the second noun].".
 
 
@@ -1810,28 +2052,36 @@ understand "crawl over [something]" as crawling over.
 understand "crawl under [something]" as crawling under.
 understand "crawl through [something]" as crawling through.
 
-report crawling:
+report crawling
+(this is the crawling rule):
 say "You can't crawl.".
 
-report crawling around something:
+report crawling around something
+(this is the crawl around something rule):
 say "You can't crawl around [the noun].".
 
-report crawling behind something:
+report crawling behind something
+(this is the crawl behind something rule):
 say "You can't crawl behind [the noun].".
 
-report crawling in front of something:
+report crawling in front of something
+(this is the crawl in front of something rule):
 say "You can't crawl in front of [the noun].".
 
-report crawling on something:
+report crawling on something
+(this is the crawl on something rule):
 say "You can't crawl on [the noun].".
 
-report crawling over something:
+report crawling over something
+(this is the crawl over something rule):
 say "You can't crawl over [the noun].".
 
-report crawling under something:
+report crawling under something
+(this is the crawl under something rule):
 say "You can't crawl under [the noun].".
 
-report crawling through something:
+report crawling through something
+(this is the crawl through something rule):
 say "You can't crawl through [the noun].".
 
 Part 46 - Run and Walk (separated out from 'Go')
@@ -1859,28 +2109,36 @@ understand "run over [something]" as running over.
 understand "run under [something]" as running under.
 understand "run through [something]" as running through.
 
-report running:
+report running
+(this is the runing rule):
 say "You can't run.".
 
-report running around something:
+report running around something
+(this is the run around something rule):
 say "You can't run around [the noun].".
 
-report running behind something:
+report running behind something
+(this is the run behind something rule):
 say "You can't run behind [the noun].".
 
-report running in front of something:
+report running in front of something
+(this is the run in front of something rule):
 say "You can't run in front of [the noun].".
 
-report running on something:
+report running on something
+(this is the run on something rule):
 say "You can't run on [the noun].".
 
-report running over something:
+report running over something
+(this is the run over something rule):
 say "You can't run over [the noun].".
 
-report running under something:
+report running under something
+(this is the run under something rule):
 say "You can't run under [the noun].".
 
-report running through something:
+report running through something
+(this is the run through something rule):
 say "You can't run through [the noun].".
 
 Section 2 - Walking
@@ -1918,28 +2176,35 @@ understand "go under [something]" as walking under.
 
 understand "walk through [something]" as walking through.
 
-report walking:
+report walking (this is the walking rule):
 say "You can't walk.".
 
-report walking around something:
+report walking around something
+(this is the walking around rule):
 say "You can't walk around [the noun].".
 
-report walking behind something:
+report walking behind something
+(this is the walking behind rule):
 say "You can't walk behind [the noun].".
 
-report walking in front of something:
+report walking in front of something
+(this is the walking in front of rule):
 say "You can't walk in front of [the noun].".
 
-report walking on something:
+report walking on something
+(this is the walking on rule):
 say "You can't walk on [the noun].".
 
-report walking over something:
+report walking over something
+(this is the walking over rule):
 say "You can't walk over [the noun].".
 
-report walking under something:
+report walking under something
+(this is the walking under rule):
 say "You can't walk under [the noun].".
 
-report walking through something:
+report walking through something
+(this is the walking through rule):
 say "You can't walk through [the noun].".
 
 Supplemental Actions ends here.
@@ -1984,8 +2249,15 @@ much sense really and can be custom programmed by the author.
 
 Section 5 : New Commands (Actions)
 
-Version 29 adds a new action: CRAWL. You can crawl, crawl around, behind, 
-in front of,on,over,under, and through something.
+Version 33 adds a few new synoyms to the SHOUT command.
+
+Version 32 corrected a few errors in the 'Silliness" example
+
+Version 31 now has a few more synonyms for ATTACK and a small bug regarding the EMPTY verb was fixed.
+
+Version 30 makes some minor corrections to several verbs that were overlooked originally.
+
+Version 29 adds a new action: CRAWL. You can crawl, crawl around, behind, in front of,on,over,under, and through something.
 
 Some example Code:
 
@@ -2444,6 +2716,22 @@ Example: * "Silliness" - a short game showing the extension features.
 	now the window is broken;
 	now the baseball is in Idyllic;
 	say "You throw the ball through the closed window, breaking it. The ball lands back outside.";
+
+	instead of throwing the baseball out of an open whole window when the player is in Kitchen:
+	now the baseball is in Idyllic;
+	say "You throw the ball out of the open window. The ball lands back outside.";
+
+	instead of throwing the baseball out of a closed whole window when the player is in Kitchen:
+	now the window is open;
+	now the window is broken;
+	now the baseball is in Idyllic;
+	say "You throw the ball out of the closed window, breaking it. The ball lands back outside.";
+
+	instead of throwing the baseball out of an open whole window when the player is in Idyllic:
+	say "You're not in the Kitchen.";
+
+	instead of throwing the baseball out of a closed whole window when the player is in Idyllic:
+	say "You're not in the Kitchen.";
 		
 	a machinegun is in Idyllic.
 	the printed name is "machine gun".
@@ -2451,7 +2739,7 @@ Example: * "Silliness" - a short game showing the extension features.
 	the machinegun is either loaded or unloaded.
 	the machinegun is unloaded.
 	the description of the machinegun is
-	"A 1920's style Eliot Ness model in .45 calibre. It is currently[if loaded] loaded.[otherwise] unloaded.[end if]".
+	"A 1920's style Eliot Ness model in .45 caliber. It is currently[if loaded] loaded.[otherwise] unloaded.[end if]".
 
 	after loading an unloaded machinegun:
 	now the machinegun is loaded;
@@ -3269,7 +3557,7 @@ Example: * "Silliness" - a short game showing the extension features.
 	TreeTop is a room. "From here you can see vast 
 	distances far beyond.[paragraph break]Below you, you see [a list of not scenery things in Idyllic].".
 
-	after deciding the scope of yourself while in TreeTop:
+	after deciding the scope of yourself when yourself is in TreeTop:
 	place Idyllic in Scope.
 
 	before multidropping when yourself is in TreeTop:
@@ -3604,6 +3892,8 @@ hurl match in pool/throw gun in pool/toss shovel in pool/
 	test throwover with "take ball/ throw ball over pool/take ball/ throw ball over trashcan/
 take ball/throw ball over idol/take ball/throw ball over trashcan".
 
+	test throwout with "open window/enter enter window/throw ball out of window"
+
 	test throwthru with "take ball/x ball/throw ball through window/open window/	
 throw ball through window/east/take ball/throw ball through window/west/x ball/take ball".
 
@@ -3617,4 +3907,5 @@ load drum/unload gun".
 
 	test walk with "walk/walk around pool/walk behind chair/walk in front of chair/
 walk on chair/walk over fence/walk under idol/walk through pool"
+
 

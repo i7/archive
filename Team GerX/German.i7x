@@ -1,11 +1,11 @@
-Version 3/120621 of German by Team GerX begins here.
+Version 3/130624 of German by Team GerX begins here.
 
 "GerX: An extension to make German the language of play, written by Banbury,
 Christian Blümke and Michael Baltes. Designed for I7 releases 6G60 and 6F95."
 
 "based on deform release 6/11 by Martin Oehm"
 
-[v3.34]
+[v3.37]
 
 Part - I7 additions and replacements
 
@@ -16,6 +16,25 @@ Mac OS X auf 10000 festgelegt, während unter Linux und Windows ein
 Wert von 16000 der Standard ist.]
 
 Use MAX_LINESPACE of 16000.
+
+
+Section - Additional VM initialisation (for Glulx only)
+
+[26.06.2012: Bei der Verwendung eines Again-Wortes im ersten Zug kam es zu
+einer irreführenden Meldung, da die Länge der Eingabepuffer nach
+VM_Initialise in Glulx auf INPUT_BUFFER_LEN (260) gesetzt war.]
+
+After starting the virtual machine (this is the initially clear Glulx buffers rule): clear the Glulx buffers.
+
+To clear the/-- Glulx buffers: (- Glulx_ClearBuffers(); -).
+
+Include (-
+[ Glulx_ClearBuffers;
+	buffer-->0 = 0;
+	buffer2-->0 = 0;
+	buffer3-->0 = 0;
+];
+-).
 
 
 Section - Activities
@@ -62,6 +81,11 @@ Use skip libcheck translates as (- Constant SKIP_LIBCHECK; -).
 
 Use in-scope pronoun notice translates as (- Constant IN_SCOPE_PRONOUN_NOTICE; -).
 Use room-related pronoun notice translates as (- Constant ROOMS_PRONOUN_NOTICE; -).
+
+Use leniency towards Yoda-like input translates as (- #ifndef ALLOW_YODA; Constant ALLOW_YODA; #endif; -).
+Use silent leniency towards Yoda-like input translates as (- #ifndef ALLOW_YODA; Constant ALLOW_YODA; #endif; Constant YODA_MODE_SILENT; -).
+
+Use silent inference translates as (- Constant SILENT_INFERENCE; -).
 
 
 Section - Values - The four German cases
@@ -190,43 +214,16 @@ To say p:
 	now the previously named noun is plural-named;
 	now the grammatical gender of the previously named noun is neuter-gender.
 	
+Use maximum printed name length of at least 160 translates as (- Constant MAX_PRINTED_NAME_LENGTH = {N}; -).
+	
 Include (- 
-
-#ifdef TARGET_GLULX;
-
-	[ Gobble s;
-		Glulx_PrintAnyToArray(buffer3, 0, der, s);
-		RunParagraphOn();
-	];
-
-#ifnot;
-
-	[ Mute;
-        @output_stream -1;
-        if ($10->0 & 1) {
-            @set_window 1;
-        }
-    ];
-
-    [ Unmute;
-        @output_stream 1;
-        if ($10->0 & 1) {
-            @set_window 0;
-        }
-    ];
-    
     [ Gobble s;
-		Mute();
-		der(s);
+		VM_PrintToBuffer(StorageForShortName, MAX_PRINTED_NAME_LENGTH, der, s);
 		RunParagraphOn();
-		Unmute();
 	];
-    
-#endif;
-
 -).
 
-To gobble (o - an object): (- gobble({o}); -).
+To gobble (o - an object): (- Gobble({o}); -).
 
 
 Section - Genderisation
@@ -2853,6 +2850,57 @@ To pause the/-- game:
 	say "[paragraph break]Bitte drücke die LEERTASTE, um fortzufahren.";
 	wait for the SPACE key;
 	clear the screen.
+	
+	
+Section - German Basic Help Menu (for use with Basic Help Menu by Emily Short)
+
+[ based on German Basic Help Menu by Lukas Strahner]
+
+Table of German Basic Help Options
+title	subtable	description	toggle
+"Willkommen bei [story title]"	a table-name	"Dies ist ein einfaches [story genre]-Spiel."	a rule
+"Spielanleitung"	Table of German Instruction Options	--	--
+
+Table of German Instruction Options
+title	subtable	description	toggle
+"Was sind Textadventures?"	a table-name	"[paragraph break]Das Spiel, das du gerade spielst, ist ein Textadventure. Textadventures werden auch Interactive Fiction (IF) genannt. In einem Textadventure schlüpfst du in die Rolle des Protagonisten einer Geschichte. Du gibst Anweisungen, die die den Handlungsverlauf bestimmen. Einige IF-Spiele arbeiten mit Grafiken, die meisten aber nicht: Es ist deiner Fantasie überlassen, die Bilder im Kopf zu erschaffen. Textadventures bieten dir viele Möglichkeiten: Während du in anderen Adventure-Genres auf wenige Aktivitäten beschränkt bist, (Schießen, Bewegung, Suche nach klickbaren Items) erlaubt dir IF ein tieferes, weitaus flexibleres Spielerlebnis."	a rule
+"Was bedeutet das [command prompt]-Zeichen?"	a table-name	"[paragraph break]Das '[command prompt]'-Zeichen zeigt an, dass das Spiel einen Befehl des Spielers erwartet. Ein Befehl wird üblicherweise in Form von Verben im Imperativ, möglicherweise gefolgt von Präposition und Objekt, eingegeben. Beispielsweise: SCHAU, SCHAU DEN FISCH AN, NIMM FISCH. Artikel können weggelassen werden."	a rule
+"Erste Schritte"	--	"[paragraph break]Nach dem Start des Spiels solltest du dich zunächst mit deiner Umgebung vertraut machen und herausfinden, worum es in der Geschichte geht und was dein Ziel ist. Der einführende Text einer Geschichte könnte schon erste Hinweise enthalten. Du solltest dich auch in dem Raum, in dem du dich befindest, genau umsehen. Sieh nach, wo die Ausgänge sind und welche Objekte beschrieben werden. Wenn irgendetwas davon interessant klingt, solltest du es eventuell mithilfe von UNTERSUCH (kurz U) näher untersuchen. [paragraph break]Du kannst dich auch auch selbst betrachten (U DICH/MICH) um herauszufinden, ob der Autor Hinweise über Ihren Charakter hinterlassen hat. Der Befehl INVENTAR (kurz I) verrät dir, was du bei dir trägst. [paragraph break]Sobald du dich in der Spielwelt umgesehen hast, solltest du deine weitere Umgebung erkunden. Bewege dich von Ort zu Ort und untersuche alle interessanten Objekte."	--
+"Räume und Bewegung"	--	"[paragraph break]Du hältst dich zu jeder Zeit des Spiels an einem bestimmten Ort oder in einem Raum auf. Wenn du einen Raum betrittst, wird das Spiel beschreiben, was du siehst. Diese Beschreibung enthält zwei wichtige Informationen: Dinge, mit denen du interagieren kannst (beispielsweise mitnehmen) und eine Liste von Ausgängen. Wenn du die Beschreibung noch einmal anzeigen lassen möchtest, kannst Sie einfach SCHAU oder LAGE (kurz L) eintippen. [paragraph break]Wenn du einen Ort verlassen oder einen anderen betreten möchtest, kannst du das dem Spiel mithilfe von Himmelsrichtungen, wie auf einem Kompass, mitteilen: GEHE NACH NORDEN. Der Einfachheit halber ist es möglich, auch einfach nur die Himmelsrichtungen ohne das Wort GEH zu verwenden. Du kannst also NORDEN, SÜDEN, OSTEN, WESTEN, NORDOSTEN, SÜDOSTEN, NORDWESTEN, SÜDWESTEN, RAUF und RUNTER verwenden. Für die Himmelsrichtungen gibt es zusätzlich die Kurzformen N, S, O, W, NO, SO, NW, SW, R und H. [paragraph break]An manchen Orten wird REIN und RAUS, für die es keine Abkürzung gibt, nützlich sein."	--
+"Objekte"	--	"[paragraph break]Während des Spiels wirst du auf Objekte treffen, mit denen du interagieren kannst. Du kannst tragbare Dinge mithilfe von NIMM <OBJEKT> oder HEB <OBJEKT> AUF nehmen können und, wenn du das Objekt nicht mehr brauchst, auch hinlegen kannst, z.B. mit LEG <OBJEKT> HIN. INVENTAR (abgekürzt I) zeigt alle Gegenstände an, die du bei dir trägst.  Mit I LANG oder I QUER kannst du zwischen der Anzeige des Inventars als Liste und der Anzeige als Satz wählen.[paragraph break]Normalerweise kannst du mit diesen Objekten interagieren oder sie manipulieren. Du kannst Dinge genauer anschauen, daran riechen, sie schmecken, in Behälter legen, sie eventuell aber auch öffnen oder schließen."	--
+"Das Spiel steuern"	--	"[paragraph break]Es gibt ein paar Befehle zur Steuerung des Spiels. Diese lauten: [paragraph break]SPEICHERN/SAVE speichert einen Spielstand des Spiels im momentanen Zustand. [line break]LADE/LOAD lädt einen zuvor gespeicherten Spielstand. Es können beliebig viele Spielstände angelegt werden. [line break]NEUSTART/NEU startet das Spiel neu. [line break]ENDE beendet das Spiel."	--
+"Die Spielwelt erkunden"	Table of German IF Elements	--	--
+"Wenn es einmal nicht weiter geht"	Table of German Stuckness Advice	--	--
+
+Table of German Stuckness Advice
+title	subtable	description	toggle
+"Sei neugierig"	--	"[paragraph break]Untersuche jedes Objekt und sieh dir alle Gegenstände an, die du bei dir trägst. Öffne alle Türen und geh durch sie hindurch. Durchsuche jeden geschlossenen Behälter und nutze alle Möglichkeiten, mit deiner Umgebung zu interagieren.[paragraph break]Benutze all deine Sinne: Wenn das Spiel Gerüche, Geräusche oder die Beschaffenheit von Oberflächen erwähnt, versuche, diese zu berühren, daran zu riechen oder sie zu schmecken.[paragraph break]Wenn du trotz aller Gründlichkeit nicht herausfinden kannst, was zu tun ist, versuche, Fenster zu öffnen, unter Betten zu schauen usw. Manchmal sind Objekte auch versteckt."
+"Lies genau nach"	--	"[paragraph break]Lies dir die Texte mehrfach durch und betrachte Dinge noch einmal an. Manchmal führt das zu einer Idee, an die du vorher nicht gedacht hast.[paragraph break]Die Beschreibungstexte des Spiels enthalten sehr oft Hinweise. Dinge, die sehr detailliert beschrieben werden, sind wahrscheinlich von größerer Bedeutung als die Dinge, die gemeinsam mit anderen in einer Zeile stehen. Experimentiere mit all diesen Dingen, probier aus, was geht und was nicht. Besteht eine Maschine eventuell aus verschiedenen Komponenten? Dann betrachte diese einzeln und versuche, sie sinnvoll zu manipulieren. Achte auch auf Verben, die in den Texten des Spiels verwendet werden, denn sie geben Hinweise auf besondere Aktionen.[paragraph break]Es empfiehlt sich, den ganzen Bildschirm im Blick zu behalten. Gibt es neben dem Hauptfenster noch andere? Was wird in diesen Fenstern angezeigt? Beachte die Statusleiste, wenn es eine gibt – sie könnte möglicherweise den Namen des aktuellen Raumes, deine Punktzahl, die Tageszeit im Spiel, den Gesundheitszustand der Spielfigur oder andere wichtige Informationen anzeigen. Wann und wo verändert sich die Anzeige? Warum verändert sie sich gerade dann? Wenn in der Statusleiste die Gesundheit der Spielfigur angezeigt wird, ist dies ganz sicher von Bedeutung für das Spiel."
+"Sei kreativ"	--	"[paragraph break]Formuliere deine Anweisungen ans Spiel um, wenn du nicht weiterkommst oder das Spiel die Eingabe nicht versteht. [paragraph break]Probiere es mit Variationen der Eingabe. Manchmal funktioniert eine Aktion nicht, das Spiel gibt aber ein ungewöhnliches Resultat aus. Dies ist oft ein Hinweis, dass du auf der richtigen Spur bist, auch wenn du die richtige Vorgehensweise noch nicht ganz herausgefunden hast. Beispielsweise führt das Drücken des roten Knopfes nur zu einem Knirschen aus dem Inneren der Mauer, während das Drücken des Blauen und des roten Knopfes nacheinander eine Geheimtür öffnet. [paragraph break]Du solltest auch das Genre des Spiels beachten. Krimis, Liebesromane oder Thriller haben oft ihre eigenen Aktionen und Motivationen. Wie verhält sich z.B. ein Detektiv oder eine Astronautin?"
+"Bitte um Hilfe"	--	"[paragraph break]Spiele mit jemandem zusammen. Zwei Köpfe sind oft besser als einer. Wenn das nicht funktioniert, kannst du dem Autor des Spiels eine E-Mail zu schreiben oder (noch besser) im deutschsprachigen Textdadventure-Forum unter http://forum.ifzentrale.de um Hinweise bitten."
+
+Table of German IF Elements
+title	subtable	description	toggle
+"Raum"	--	"[paragraph break]Die meisten IF Spiele sind aus Schauplätzen zusammengesetzt, die allgemein 'Räume' genannt werden. Innerhalb eines Raumes kann sich der Spieler nur selten frei bewegen. Bewegung zwischen den Räumen ist natürlich möglich, während Bewegung innerhalb eines Raumes meistens wenig sinnvoll ist. >GEHE ZU DEM TISCH ist selten eine nützliche Aktion. Manchmal ist es jedoch notwendig, wenn z.B. etwas als sehr hoch oder außerhalb der Reichweite beschrieben wird, sich auf Gegenstände zu stellen um das Blickfeld zu vergrößern und so neue Objekte zu entdecken."	--
+"Standort im Raum"	--	"[paragraph break]Eine Sache, die in Textadventures häufig sehr streng gehandhabt wird, sind die Eigenschaften und Zustände von Objekten. Befindet sich etwas in oder auf etwas anderem? Viele Rätsel haben mit Dingen zu tun, die im Besitz des Spielers sind, auf dem Boden liegen, auf einem Tisch oder in einer Schachtel liegen usw."	--
+"Aktionstypen"	--	"[paragraph break]Die meisten Aktionen, die du in der Spielwelt durchführen kannst, sind knapp und spezifisch. GEHE NACH NORDEN oder ÖFFNE TÜR sind voraussichtlich vom Autor berücksichtigt. UNTERNIMM REISE oder BAU TISCH wahrscheinlich nicht. Kommandos wie GEHE ZUM HOTEL sind grenzwertig: Manche Spiele erlauben sie, aber die meisten tun das nicht. Generell sind abstraktere, kompliziertere Aktionen in einfache Schritte zu zerlegen, damit das Spiel sie richtig verstehen kann."	--
+"Andere Figuren im Spiel"	--	"[paragraph break]Andere Figuren, also Charaktere, die nicht die Spielerfigur sind, werden auch NPCs genannt (von engl. 'non-player characters'). NPCs sind in ihrer Komplexität oft etwas eingeschränkt. Es gibt aber auch Spiele, die hauptsächlich auf Konversation mit anderen Personen im Spiel beruhen. Du solltest also ein Gefühl für die Figuren entwickeln. Wenn sie auf viele deiner Fragen antworten, selbstständig herumgehen, sich Dinge merken können oder andere anspuchsvollere Aktionen ausführen, dann ist das ein deutlicher Hinweis darauf, dass sie für die Geschichte wichtig sind. Wenn die Figuren hauptsächlich Standard-Antworten geben, sind sie wahrscheinlich nur Statisten, die zur Atmosphäre beitragen oder die Lösung zu einem Rätsel überbringen sollen. Charaktere in sehr rätselorientierten Spielen müssen oft bestochen, bedroht oder überredet werden, etwas zu tun, das der Spieler selbst nicht kann: eine Information oder ein Objekt herausgeben, etwas höher Gelegenes erreichen, dem Spieler Zutritt zu einer gesperrten Zone gewähren oder Ähnliches."	--
+
+
+Table of German Setting Options
+title	subtable	description	toggle
+"[if the current verbosity mode is verbose]Ausführliche Raumbeschreibungen[end if][if the current verbosity mode is brief]Kurze Raumbeschreibungen[end if][if the current verbosity mode is superbrief]Extra kurze Raumbeschreibungen[end if]"	--	--	switch description types rule
+"[if notify mode is on]Punktanzeige ist aktiviert[otherwise]Punktanzeige ist deaktiviert[end if]"	--	--	switch notification status rule
+
+Understand "hilf" or "helf" as asking for help.
+
+The help request rule is not listed in any rulebook.
+
+Carry out asking for help (this is the German help request rule):
+   now the current menu is the Table of German Basic Help Options;
+   carry out the displaying activity;
+   clear the screen;
+   try looking.
 
 
 Part - Translations of built-in extensions 2 - Menus (for use with Menus by Emily Short)
@@ -2911,6 +2959,14 @@ This is the move up rule:
 	if current menu selection is greater than 1, decrease current menu selection by 1;
 	reprint the current menu;
 	make no decision.
+	
+[(04.12.12) "pause the game" muss hier nochmal übersetzt werden, weil es sonst mit
+dem German Basic Help Menu nicht klappt.]
+
+To g_pause the/-- game:
+	say "[paragraph break]Bitte drücke die LEERTASTE, um fortzufahren.";
+	wait for the SPACE key;
+	clear the screen.
 
 This is the select rule:
 	choose row current menu selection in the current menu;
@@ -2932,7 +2988,7 @@ This is the select rule:
 			now the endnode flag is 0;
 			clear only the main screen;
 			say "[variable letter spacing][description entry][paragraph	 break]";
-			pause the game;
+			g_pause the game; [German, please!]
 			now the current menu title is temporary title;
 			reprint the current menu;
 		end if;
@@ -3127,6 +3183,7 @@ Global pronominal_adverb_flag = false; ! *** Gibt es ein Pronominaladverb im Sat
 Global printing_command = false;    ! Krücke, um den Changing Gender auch bei
                                     ! Pluralen zu berücksichtigen.
 
+
 Global pnn = selfobj;               ! *** previously named noun, für [ist] [hat] usw.
                                     !     ist das zuletzt in einer Textersetzung
                                     !     genannte Objekt
@@ -3268,7 +3325,7 @@ Array orig_position --> MAX_BUFFER_WORDS + WORDSIZE;
 [ PrintOriginal wordnum   buffer length i;
     buffer = OriginalAddress(wordnum);
     length = OriginalLength(wordnum);
-
+    
     for (i = 0 : i < length : i++) print (char) buffer->i;
 ];
 
@@ -4056,12 +4113,8 @@ Global number_matched;              ! How many items in it?  (0 means none)
     if (b == buffer or buffer2) {
         ! Zuerst die Umlaute herausfischen
         zs = WORDSIZE;
-        #ifdef TARGET_ZCODE;
-        ze = 2 + b->1;
-        #ifnot; ! TARGET_GLULX
-        ze = WORDSIZE + b-->0;
-        #endif; ! TARGET_
-
+        ze = VM_GetEndOfBuffer(b);
+        
         for (i = zs : i < ze : i++) {
             switch(b->i) {
                 CHAR_AE: b->i = 'a'; LTI_Insert(i+1, 'e', b); ze++;
@@ -4172,11 +4225,7 @@ Include (-
 
 [ RestoreBuffer        ze i;
 
-    #ifdef TARGET_ZCODE;
-    ze = 2 + orig_buffer->1;
-    #ifnot; ! TARGET_GLULX
-    ze = WORDSIZE + orig_buffer-->0;
-    #endif; ! TARGET_
+    ze = VM_GetEndOfBuffer(orig_buffer);
 
     for (i = 0 : i < ze : i++) buffer->i = orig_buffer->i;
 
@@ -4220,13 +4269,12 @@ Include (-
     if (wd && ((wd->#dict_par1) & 1) ~= 0) {
         swap = true;
     } else {
-        ll = LanguageVerbPreps-->0;
         olength = WordLength(we);
-        for (i = 1 : i <= ll : i++) {
+        i = LanguageVerbPreps-->0;
+        while ( --i) {
             wn = we;
             length = WordMatch(LanguageVerbPreps-->i);
-            if (length == 0) continue;
-            if (length == olength) continue;
+            if (length && length < olength) {
             
             !*** (17.03.2012) Vorangestellte Präposition merken, damit bei der
             !    impliziten Vervollständigung des Kommandos (in PrintCommand)
@@ -4263,6 +4311,7 @@ Include (-
             break;
         }
     }
+    }
     if (swap) {
         wa1 = WordAddress(ws) - buffer;
         wa2 = WordAddress(we) - buffer;
@@ -4285,6 +4334,117 @@ Include (-
     }
     return verb_word;
 ];
+
+
+#ifdef ALLOW_YODA;
+
+[ CheckVerbPrep verb prep   i vn a n hit token;
+
+!   Überprüft, ob die Präposition prep als Satzklammer für ein Satzmuster
+!   des Verbs verb vorkommt. CheckVerbPrep('nimm', 'mit') ist wahr, weil es
+!   ein Satzmuster "nimm x mit" gibt. CheckVerbPrep('rede', 'mit') ist falsch,
+!   weil 'mit' nicht alleine steht, sondern zum indirekten Objekt gehört.
+
+    if (verb == 0 || prep == 0) rfalse;             ! kein gültiges Wort
+    if ((verb->#dict_par1 & 1) == 0) rfalse;        ! kein gültiges Verb
+    
+    vn = $ff - (verb->#dict_par2);
+
+    #Ifdef TARGET_ZCODE;
+    a = (HDR_STATICMEMORY-->0)-->vn;
+    #Ifnot; ! TARGET_GLULX
+    a = #grammar_table-->(vn + 1);
+    #Endif; ! TARGET_
+    
+    n = a->0;
+    a++;
+    
+    while (n-- ) {
+        a = UnpackGrammarLine(a);
+        hit = false;
+        
+        for (i = 0 : line_token-->i ~= ENDIT_TOKEN : i++) {
+            token = line_token-->i;
+            if ((token->0 & $0F) == PREPOSITION_TT) {
+                if (token->0 & $10) {
+                    ! continuation of prep chain 'like'/'so'
+                    hit = (hit || (token + 1)-->0 == prep);
+                } else {
+                    if (hit) rtrue;
+                    hit = ((token + 1)-->0 == prep);
+                }
+            } else {
+                hit = false;
+            } 
+        }
+        if (hit) rtrue;
+    }
+
+    rfalse;
+];
+
+[ CheckYodaClause    ws we wl wa1 wa2 i;
+
+!   Wandelt Sätze wie "Aufheb Tasche" oder "Hebe auf Tasche" um in das
+!   informesisch korrekte "Heb Tasche auf", aber nur, wenn es für 'heb'
+!   ein Satzmuster gibt, das auch 'auf' als Verbklammer enthält.
+
+    wn = ws = verb_wordnum;
+    while (NextWordStopped() ~= THEN1__WD or -1 or comma_word);
+    we = wn - 2;
+    wn = ws + 1;
+    
+    if (we > ws + 1 && CheckVerbPrep(verb_word, NextWord())) {
+        i = LanguageVerbPreps-->0 + 1;
+        while ( --i) {
+            wn = ws + 1;
+            wl = WordMatch(LanguageVerbPreps-->i, true);
+            if (wl) {
+                wa1 = WordAddress(we) + WordLength(we) - buffer;
+                wa2 = WordAddress(--wn) - buffer;
+                LTI_Insert(wa1, ' ');
+                while (wl-- ) LTI_Insert(wa1, LTI_Delete(wa2));
+                VM_Tokenise(buffer, parse);
+
+                wn = verb_wordnum;
+                rtrue;
+            }
+        }
+    }
+    
+    i = LanguageVerbPreps-->0 + 1;
+    while ( --i) {
+        wn = ws;
+        wl = WordMatch(LanguageVerbPreps-->i);
+        if (wl && wl < WordLength(ws)) {
+            LTI_Insert(WordAddress(ws) + wl - buffer, ' ');
+            VM_Tokenise(buffer, parse);
+            PruneWord(ws + 1);
+            
+            wn = ws;
+            wa2 = NextWord();
+            wa1 = NextWord();
+            if (CheckVerbPrep(wa1, wa2) == 0) {
+                LTI_Delete(WordAddress(ws) + wl - buffer);
+                rfalse;
+            }
+            
+            wa1 = WordAddress(we + 1) + WordLength(we + 1) - buffer;
+            wa2 = WordAddress(ws) - buffer;
+            LTI_Insert(wa1, ' ');
+            while (wl-- ) LTI_Insert(wa1, LTI_Delete(wa2));
+            VM_Tokenise(buffer, parse);
+
+            wn = verb_wordnum;
+            rtrue;
+        }
+    }
+    
+    rfalse;
+];
+
+#endif; ! ALLOW_YODA
+
 
 Array SynonymBuffer string 24;
 
@@ -4487,6 +4647,16 @@ Array SynonymBuffer string 24;
     #endif; ! TARGET_
 ];
 
+[ VM_GetEndOfBuffer buf    ze;
+    if (buf == 0) buf = buffer;
+    #ifdef TARGET_ZCODE;
+    ze = 2 + buf->1;
+    #ifnot; ! TARGET_GLULX
+    ze = WORDSIZE + buf-->0;
+    #endif; ! TARGET_
+    return ze;
+];
+
 [ LanguageToInformese    zs ze i;
 
 !   (i)
@@ -4498,11 +4668,7 @@ Array SynonymBuffer string 24;
 !   Alle Umlaute und Eszetts in 'ae', 'oe', 'ue', 'ss' umwandeln
 
     zs = WORDSIZE;
-    #ifdef TARGET_ZCODE;
-    ze = 2 + buffer->1;
-    #ifnot; ! TARGET_GLULX
-    ze = WORDSIZE + buffer-->0;
-    #endif; ! TARGET_
+    ze = VM_GetEndOfBuffer();
 
     for (i = zs : i < ze : i++) {
 
@@ -4511,7 +4677,9 @@ Array SynonymBuffer string 24;
 	    !     und Abschneiden der Endungen in Kleinbuchstaben umgewandelt
 	    !     werden, damit groß geschriebene Umlaute und Endungen korrekt
 	    !     verarbeitet werden können. Wir erledigen das an dieser Stelle
-	    !     gleich mit.
+	    !     gleich mit. (Eigentlich sollte das schon mit VM_Tokenise()
+	    !     erledigt sein, aber aus irgendeinem Grund funktioniert das
+	    !     Umwandeln der großen Umlaute dort nicht.)
 
 	    #ifdef TARGET_GLULX;
 	    buffer->i = VM_UpperToLowerCase(buffer->i);
@@ -4525,6 +4693,9 @@ Array SynonymBuffer string 24;
                 CHAR_SS: buffer->i = 's'; LTI_Insert(i+1, 's'); ze++;
             }
         }
+        
+        ! *** (26.06.2012) Overflow in den Puffern verhindern
+        if (ze > INPUT_BUFFER_LEN) { ze = VM_GetEndOfBuffer(); break; }
     }
     VM_Tokenise(buffer, parse);
 
@@ -5420,6 +5591,12 @@ Include (-
             ausführen.]^";
         75: print " Ende ";
         76: print " oder ";
+            #ifdef ALLOW_YODA;
+            #ifndef YODA_MODE_SILENT;
+        96: 
+            print "("; PrintCommand(-1); print ")";
+            #endif;
+            #endif;
         97: print "willst @20";
         98: print "Ich verstehe das Wort ~", (PrintOriginal) wn,
                 "~ in diesem Zusammenhang nicht."; rtrue;
@@ -5803,7 +5980,7 @@ Include (-
     
     ! *** (07.12.2011) Den grammatical gender berücksichtigen.
     !     Das muss hier gemacht werden, damit bei Verwendung der Objekteigenschaft
-    !     grammatical gender die Pronomen richig gesetzt werden.
+    !     grammatical gender die Pronomen richtig gesetzt werden.
     
 	switch (obj.grammatical_gender) {
 		1: gender = male;
@@ -6456,7 +6633,8 @@ Global parsetoken_nesting = 0;
 
 [ ParseToken__ given_ttype given_tdata token_n token
     l o i j k and_parity single_object desc_wn many_flag
-    token_allows_multiple prev_indef_wanted;
+    token_allows_multiple prev_indef_wanted 
+    ;
 
 -) instead of "Parse Token" in "Parser.i6t".
 
@@ -6706,8 +6884,38 @@ Include (-
     wn--;   ! Word marker back to first not-understood word
 -) instead of "Parse Token Letter E" in "Parser.i6t".
 
+[Parser Proper: Lokale Variable yoda_rearranged
+definieren, falls Yoda-Option aktiv.]
+Include (-
+#ifdef ALLOW_YODA;
+[ Parser__parse
+	syntax line num_lines line_address i j k token l m
+	yoda_rearranged;
+
+	cobj_flag = 0;
+	parser_results-->ACTION_PRES = 0;
+	parser_results-->NO_INPS_PRES = 0;
+	parser_results-->INP1_PRES = 0;
+	parser_results-->INP2_PRES = 0;
+	meta = false;
+	yoda_rearranged = false;
+#ifnot;
+[ Parser__parse
+	syntax line num_lines line_address i j k token l m;
+
+	cobj_flag = 0;
+	parser_results-->ACTION_PRES = 0;
+	parser_results-->NO_INPS_PRES = 0;
+	parser_results-->INP1_PRES = 0;
+	parser_results-->INP2_PRES = 0;
+	meta = false;
+#endif;
+-) instead of "Parser Proper" in "Parser.i6t".
+
+
 [ Parser Letter A ]
 Include (-
+
     !!! BEGIN MO
     if (held_back_mode > 0) {
 
@@ -7173,12 +7381,33 @@ Include (-
 
                 oops_from = 0;
 
+                #ifdef ALLOW_YODA;
+                #ifndef YODA_MODE_SILENT;
+                ! Wenn Yoda-Eingaben korrigiert wurden, wird hier, wenn gewünscht, die
+                ! Korrektur ausgegeben, um Scumm-Spieler auf den rechten Pfad zu bringen.
+                ! (Oder soll das nach den Inferences ausgegeben werden?)
+                if (yoda_rearranged && actor == player) {
+                    L__M(##Miscellany, 96);
+                }
+                #endif;
+                #endif;
+                
                 ! ...explain any inferences made (using the pattern)...
+                
+                ! *** (15.05.2013) Einem Vorschlag von Mischa Magyar folgend
+                !     kann die Inference-Meldung, die das komplettierte Satzmuster
+                !     ausgibt, unterdrückt werden. Dazu kann der Autor die Use-Option
+                !
+                !          Use silent inference.
+                !
+                !     aktivieren.
 
+                #ifndef SILENT_INFERENCE;
                 if (inferfrom ~= 0) {
                     PrintInferredCommand(inferfrom);
                     ClearParagraphing();
                 }
+                #endif;
 
                 ! ...copy the action number, and the number of parameters...
 
@@ -7233,6 +7462,38 @@ Include (-
 
     ! The grammar is exhausted: every line has failed to match.
 -) instead of "Parser Letter G" in "Parser.i6t".
+
+[Parser Letter H]
+Include (-  .GiveError;
+  
+    #ifdef ALLOW_YODA;
+    if (yoda_rearranged == false && CheckYodaClause()) {
+        yoda_rearranged = true;
+        jump ReParse;
+    }
+    #endif; ! ALLOW_YODA
+
+    etype = best_etype;
+    if (actor ~= player) {
+        if (usual_grammar_after ~= 0) {
+            verb_wordnum = usual_grammar_after;
+            jump AlmostReParse;
+        }
+        wn = verb_wordnum;
+        special_word = NextWord();
+        if (special_word == comma_word) {
+            special_word = NextWord();
+            verb_wordnum++;
+        }
+        parser_results-->ACTION_PRES = ##Answer;
+        parser_results-->NO_INPS_PRES = 2;
+        parser_results-->INP1_PRES = actor;
+        parser_results-->INP2_PRES = 1; special_number1 = special_word;
+        actor = player;
+        consult_from = verb_wordnum; consult_words = num_words-consult_from+1;
+        rtrue;
+    }
+-) instead of "Parser Letter H" in "Parser.i6t".
 
 [ Parser Letter I ]
 Include (-
@@ -7905,10 +8166,28 @@ Include (-
 	return pp;
 ];
 
-[ PrintCommand from dative_flag           i k spacing_flag prep_before prep;
+[ PrintCommand 
+    from            ! erstes Token, ab dem ausgegeben wird
+                    ! kann negativ sein, um den Satz im Imperativ
+                    ! ("Hebe Stein auf") anstatt als Infinitiv-Phrase
+                    ! ("Stein aufheben") auszugeben. Wird für den
+                    ! Yoda-Modus gebraucht
+    dative_flag ! erzwingt den Dativ im nächsten Token
+    
+    i k spacing_flag prep_before prep;
+    
     printing_command = true;
     k = from;                   ! Das Verb wird als Infinitiv hintenangestellt
     if (k==0) k = 1;            ! und muss hier korrigiert werden.
+    
+    if (k < 0) { 
+        k = 1;
+    #ifdef ALLOW_YODA;
+        PrintImperativeVerb(verb_word, true);
+        spacing_flag = true;
+    #endif;
+    }
+
     
     verb_prep = CheckLastWordPreposition(verb_prep);
 			
@@ -7950,7 +8229,7 @@ Include (-
                 !     am Ende des Satzes einer Kommando-Vervollständigung unterdrückt.
                 
                 prep = VM_NumberToDictionaryAddress(i-REPARSE_CODE);
-                if  (AddressMatchesText(prep, verb_prep) == false || from == 0) {
+                if  (AddressMatchesText(prep, verb_prep) == false || from <= 0) { ! Yoda: war from == 0
                     print (UmlautAddress) prep;
                     spacing_flag = true;
                     prep_before = true;
@@ -8007,6 +8286,34 @@ Include (-
 ];
 
 -) instead of "Print Command" in "Parser.i6t".
+
+
+[13.03.2013: Eine neue YesOrNo von Martin Oehm]
+Include (-
+
+[ YesOrNo i j;
+    for (::) {
+        #Ifdef TARGET_ZCODE;
+        if (location ~= nothing && parent(player) ~= nothing) {
+            DrawStatusLine();
+        }
+        read buffer parse; 
+        j = parse->1;
+        #Ifnot; ! TARGET_GLULX;
+        KeyboardPrimitive(buffer, parse);
+        j = parse-->0;
+        #Endif; ! TARGET_
+       
+        if (j) { ! at least one word entered
+            i = parse-->1;
+            if (Is_yes_word(i)) rtrue;
+            if (Is_no_word(i)) rfalse;
+        }
+        L__M(##Quit, 1); print "> ";
+    }
+];
+
+-) instead of "Yes/No Questions" in "Parser.i6t".
 
 
 Section - Output
@@ -8649,6 +8956,36 @@ Include (-
     length = StorageForShortName-->0;
     for (i=WORDSIZE: i<length+WORDSIZE: i++) print (char) StorageForShortName->i;
 ];
+
+#ifdef ALLOW_YODA;
+[ pr__verb v;   ! Hilfsroutine für PrintImperativeVerb
+    if (LanguageVerb(v) == 0)
+        if (PrintVerb(v) == 0) print (address) v;
+];
+
+!   Gibt den Imperativ (abgeleitet aus dem Infinitiv) von v groß aus.
+[ PrintImperativeVerb 
+    v       ! Verb (dict word), 0 -> v )== verb_word
+    cap     ! Soll der Anfangsbuchstabe groß geschrieben werden?
+    
+    i length s;
+
+    if (v == 0) v = verb_word;
+    s = StorageForShortName;
+    VM_PrintToBuffer(s, 160, pr__verb, v);
+    if (cap) s->WORDSIZE = VM_LowerToUpperCase(s->WORDSIZE);
+    length = s-->0;
+    s = s + WORDSIZE;
+    if (s->(length - 1) == 'n') {
+        length--;
+        if (s->(length - 1) == 'r' or 'l' && s->(length - 2) == 'e') {
+            s->(length - 2) = s->(length - 1);
+            s->(length -1) = 'e';
+        }
+    }
+    for (i = 0: i < length: i++) print (char) s->i;
+];
+#endif;
 -) instead of "Object Names III" in "Printing.i6t".
 
 Include (-
@@ -10468,8 +10805,8 @@ Include (-
 	n = LanguageSynonyms2-->0 = LanguageSynonyms-->0;
 	for (index = 1 : index < n : index = index + 2) { 
 		word = LanguageSynonyms-->index; ! Ein String ...
-		VM_PrintToBuffer(buffer3, 24, word);
-		VM_Tokenise(buffer3, parse);
+		VM_PrintToBuffer(HLAuxBuffer2, 24, word);
+		VM_Tokenise(HLAuxBuffer2, parse);
 		word = parse-->1; ! ... und jetzt ein Wörterbuch-Eintrag (eine Vokabel)!
 		LanguageSynonyms2-->index = word;
 		LanguageSynonyms2-->(index+1) = LanguageSynonyms-->(index+1);
@@ -11586,6 +11923,54 @@ Die Standard-Fehlermeldung "So etwas kannst du hier nicht sehen." wird durch exp
 	>BETRACHTE ZETTEL BEUTEL
 	Ich verstehe das Wort "beutel" in diesem Zusammenhang nicht.
 	
+Section: Meldung zu vervollständigten Satzmustern unterdrücken
+
+	*: Use silent inference.
+	
+Wenn der Parser ein Satzmuster vervollständigt, wird normalerweise eine entsprechende Meldung in Klammern ausgegeben.
+
+	>ZÜNDE
+	(das Seil an)
+	Das ist gefährlich und wenig sinnvoll.
+
+Stören diese Meldungen den Lesefluss zu sehr, können sie mit dieser Option komplett unterdrückt werden. Allerdings sollten dann die Antworten nicht zu allgemein gehalten sein, da der Spieler nicht mehr erfährt, worauf sich der Parser bezieht:
+
+	>ZÜNDE
+	Das ist gefährlich und wenig sinnvoll.
+	
+Diese Antwort kann irreführend sein. Deshalb sollte das angesprochene Objekt in der Antwort erwähnt werden, zum Beispiel:
+
+	>ZÜNDE
+	Das Seil ist zu nass, um es anzuzünden.
+	
+	
+Section: Yoda-Sätze verstehen
+
+	*: Use leniency towards Yoda-like input.
+	
+Der Parser wird mit dieser Option angewiesen, auch leicht verdrehte Satzmuster im Yoda-Stil zu akzeptieren. Zum Beispiel wird anstatt
+
+	>HEB DIE SCHACHTEL AUF
+	
+auch Folgendes verstanden:
+
+	>AUFHEB SCHACHTEL
+	
+oder
+	
+	>HEB AUF SCHACHTEL
+	(Hebe die Schachtel auf)
+	In Ordnung.
+	
+Der Parser meldet die Korrektur des Satzbaus in Klammern direkt nach der Eingabe. Soll dieser Hinweis auf die Korrektur unterdrückt werden, muss anstelle der vorigen Use-Option die stumme Variante gewählt werden:
+
+	*: Use silent leniency towards Yoda-like input.
+	
+Die Ausgabe sieht dann wie gewohnt so aus:
+
+	>HEB AUF SCHACHTEL
+	In Ordnung.
+	
 Section: Pronomen nur für sichtbare Objekte setzen
 
 	*: Use in-scope pronoun notice.
@@ -11688,6 +12073,13 @@ Section: Die deform-Eigenschaft init benutzen
 
 Ermöglicht die Benutzung der deform-Eigenschaft init zum Initialisieren von Objekten mittels Einbindung von I6-Code.
 
+Section: Puffer für printed name vergrößern
+
+Diese Option ist als Notlösung gedacht, falls Objektnamen von mehr als 160 Zeichen Länge verwendet werden sollen. Die Maximale Länge kann bis auf 250 erhöht werden:
+
+	*: Use maximum printed name length of at least <N>.
+
+<N> sollte nicht größer als 250 und nicht kleiner als 160 sein.
 
 Chapter: Neue Standard-Aktionen, -Aktivitäten und -Kommandos
 
@@ -12104,11 +12496,41 @@ Um den Bezug zu löschen, schreibt man
 Diese Phrasen werden beispielweise in der GerX-Rule "adjust the pronominal adverb reference when removing" benutzt.
 	
 	
-Chapter: Die Extensions "Basic Screen Effects", "Locksmith", "Menus" und "Rideable Vehicles"
+Chapter: Die I7-Standard-Erweiterungen "Basic Screen Effects", "Locksmith", "Menus" und "Rideable Vehicles"
 
 Für die in I7 integrierten Erweiterungen Rideable Vehicles von Graham Nelson sowie Locksmith, Menus und Basic Screen Effects von Emily Short bringt GerX schon deutsche Übersetzungen mit. Die Installation zusätzlicher Erweiterungen ist nicht notwendig. Die Original-Extensions müssen vor der German-Extension eingebunden werden, damit die englischen Standardmeldungen und Verbendefinitionen durch deutsche Entsprechungen ersetzt werden.
 
 Das Beispiel C "John Malkovichs Toilette" demonstriert die Benutzung der Locksmith-Erweiterung.
+
+
+Chapter: Die I7-Standard-Erweiterung "Basic Help Menu"
+
+Um eine deutsche Übersetzung der in I7 enthaltenen Erweiterung "Basic Help Menu" zu nutzen, reicht es die Original-Erweiterung Basic Help Menu von Emily Short einzubinden. Weitere Extensions sind nicht nötig.
+
+Um die Liste der Optionen zu erweitern, muss die Tabelle German Basic Help Options fortgeführt werden. Um das Einstellungsmenü zu benutzen, muss die Tabelle German Setting Options in der Spalte subtable der German Basic Help Options eingetragen werden.
+
+Beispiel zur Nutzung:
+
+	Include Basic Help Menu by Emily Short. 
+
+	Table of German Basic Help Options (continued)
+	title	subtable	description
+	"Kontakt zum Autor aufnehmen"	--	"Bei Problemen beim Spielen von [story title], schreibe mir bitte unter ..."
+	"Tipps zum Spiel"	Table of Hints	--
+	"Einstellungen"	Table of German Setting Options	--
+
+	Table of Hints
+	title	subtable	description	toggle
+	"Was soll ich mit dem Müllcontainer tun?"	Table of Dumpster Hints		""	hint toggle rule 
+
+	Table of Dumpster Hints
+	hint	used
+	"Du kannst in den Container auch hineinsteigen."	a number	
+	"Dafür brauchst du doch jetzt wohl keine Hilfe mehr, oder?"
+	
+Die Regel zur Steuerung des Menüs heißt "German help request rule". Sie kann über diesen Namen, wie alle anderen Regeln auch, nachträglich vom Autor manipuliert werden.
+
+Die englischen Original-Menü-Tables stehen weiterhin unter ihren ursprünglichen Namen zur Verfügung, falls jemand das Ganze zweisprachig nutzen möchte.
 
 
 Chapter: GerX-Entwicklung
@@ -12296,6 +12718,8 @@ Example: * John Malkovichs Toilette - Eine Übersetzung des Beispiels "John Malk
 	The onyx key unlocks the oval door. It is in the Bedroom. "Auf dem Boden liegt kantig und schwarz von der Sonne beleuchtet [ein onyx key]." The printed name of the onyx key is "Onyxschlüssel[m]". Understand "Schluessel", "Schluessel aus Onyx" and "Onyxschluessel" as the onyx key.
 
 	Test me with " u badezimmertür / schließ ovale tür auf / schließ badezimmertür auf / g / gehe durch badezimmertür / nimm schlüssel / schließ badezimmertür ab / schließ badezimmertür / s / schließ badezimmertür mit dem onyxschlüssel ab / w"
+	
+	
 	
 	
 	

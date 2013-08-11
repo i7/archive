@@ -1,4 +1,4 @@
-Version 3/100623 of Dynamic Tables by Jesse McGrew begins here.
+Version 4/130712 of Dynamic Tables by Jesse McGrew begins here.
 
 "Provides a way to change the capacity of a table during the game."
 
@@ -350,19 +350,22 @@ Constant DT_CIB_ORIGDATA 1;	! address of the original (static) column data, or 0
 [ DT_NewTable nrows collist  nc i rv tib cib s bbs bba tc kov fl;
 	nc = LIST_OF_TY_GetLength(collist);
 
-	! allocate space for table header and TIB
+	! allocate space for table header
 	s = 1 + nc;			! table header (size word + column pointers)
-	s = s + DT_TIB_CIBSTART;	! # TIB header words
+	
+	rv = DT_Alloc(s); if (~~rv) rfalse;
+	rv-->0 = nc;
+	
+	! allocate space for TIB
+	s = DT_TIB_CIBSTART;		! # TIB header words
 	s = s + (nc * DT_CIBSIZE);	! # CIB words
 	s = s * WORDSIZE;		! convert words to bytes
 	bbs = (nrows + 7) / 8;		! # blank bytes for each blankable column
-	s = s + (bbs * nc);		! (we make every column blankable here)
-
-	rv = DT_Alloc(s); if (~~rv) rfalse;
-	rv-->0 = nc;
+	s = s + (bbs * nc);			! (we make every column blankable here)
+	
+	tib = DT_Alloc(s); if (~~tib) { DT_Free(rv); rfalse; }
 
 	! fill in TIB
-	tib = rv + ((1 + nc) * WORDSIZE);
 	tib-->DT_TIB_ORIGSIZE = 0;
 	cib = tib + (DT_TIB_CIBSTART * WORDSIZE);
 	bba = cib + (nc * DT_CIBSIZE * WORDSIZE);
@@ -421,12 +424,15 @@ Constant DT_CIB_ORIGDATA 1;	! address of the original (static) column data, or 0
 ];
 
 ! implements the phrase "deallocate T"
-[ DT_FreeTable tab  i;
+[ DT_FreeTable tab  i nc tib;
 	if (DT_IsFullyDynamic(tab)) {
-		for (i=1: i<=tab-->0: i++) {
+		nc = tab-->0;
+		tib = (tab-->1)-->2;
+		for (i=1: i<=nc: i++) {
 			DT_FreeColumnValues(tab, tab-->i);
 			DT_Free(tab-->i);
 		}
+		DT_Free(tib);
 		DT_Free(tab);
 		rtrue;
 	}
@@ -622,6 +628,8 @@ Section: Change Log
 Version 2 adds the "new table" and "deallocate table" features.
 
 Version 3 works with Inform 7 version 6E59.
+
+Version 4 fixes a bug where dynamically created tables couldn't be resized.
 
 Example: * Notlob - A parrot that assigns a value to everything he hears, and repeats the lines back in his preferred order.
 

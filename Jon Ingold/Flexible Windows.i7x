@@ -1,8 +1,8 @@
-Version 12/110611 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
+Version 13/130803 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
 
 "An extension for constructing multiple-window interfaces. Windows can be created and destroyed during play. Facilities for per-window character input and hyperlinks are provided."
 
-"with contributions by Erik Temple"
+"with contributions by Erik Temple and Dannii Willis"
 
 [Changed:
 6/26/10	Made the main-window a text-buffer g-window.
@@ -12,6 +12,7 @@ Version 12/110611 of Flexible Windows (for Glulx only) by Jon Ingold begins here
 7/31/10	Added documentation for manual setting of rock values.
 7/31/10	Removed out-of-date section on hyperlinking from the documentation.
 21/6/11 Added a "does window exist" check before setting background colour.
+3 Aug 2013: Performance improvements (Changed spawning to be an alias of regular containment)
 ]
 
 Include Glulx Entry Points by Emily Short.
@@ -32,7 +33,7 @@ Chapter 1 - Initialisations, windows and values
 
 Section - Definitions of properties and values
 
-A g-window is a kind of thing.
+A g-window is a kind of container. [ So be careful iterating through all containers! ]
 
 Include (-
 
@@ -132,24 +133,20 @@ To decide if rocks are currently unassigned:
 
 Section - Spawning relations
 
-Spawning relates various g-windows to various g-windows.
+[ Spawning used to be a custom relation between g-windows, but Inform doesn't produce optimised code, meaning that rearranging windows was very slow. Piggy-backing onto the containment relation allows us to get the benefit of Inform's much better optimised code for that relation, resulting in a 30 times speed improvement! And by defining a new verb, old code doesn't need to be updated. ]
 
-The verb to spawn (he spawns, they spawn, he spawned, it is spawned, he is spawning) implies the spawning relation.
+The verb to spawn (he spawns, they spawn, he spawned, it is spawned, he is spawning) implies the containment relation.
 
-The verb to be the spawner of implies the spawning relation.
+The verb to be the spawner of implies the containment relation.
 
-Ancestry relates a g-window (called X) to a g-window (called Y) when the number of steps via the spawning relation from X to Y is at least 0. The verb to be ancestral to implies the ancestry relation.
+[ There is a slight change here: previously these verbs would say that a window was ancestral to/descended from itself. I can't see when that would ever be desired however, so the change shouldn't impact anyone. ]
+The verb to be ancestral to implies the enclosure relation.
+The verb to be descended from implies the reversed enclosure relation.
 
-Descendency relates a g-window (called X) to a g-window (called Y) when the number of steps via the spawning relation from Y to X is at least zero. The verb to be descended from implies the descendency relation.
-
-Definition: a g-window is paternal if it spawns something g-present.
-Definition: a g-window is childless if it is not paternal.
+Definition: a g-window is paternal rather than childless if it spawns something g-present.
 
 To decide which g-window is the direct-parent of (g - a g-window):
-	repeat with item running through g-windows
-	begin;
-		if item spawns g, decide on item;
-	end repeat.
+	decide on the holder of g;
 
 
 Section - Test spawning relations (not for release)
@@ -172,8 +169,8 @@ tracking it to is an action applying to two visible  things.
 Understand "track [any g-window] to [any g-window]" as tracking it to.
 
 Carry out tracking it to:
-	say "no. =>: [number of steps via the spawning relation from noun to second noun].";
-	say "no. <=: [number of steps via the spawning relation from second noun to noun].";
+	say "no. =>: [number of steps via the containment relation from noun to second noun].";
+	say "no. <=: [number of steps via the containment relation from second noun to noun].";
 
 Throwing open is an action applying to one visible  thing.
 Slamming shut is an action applying to one visible  thing.
@@ -191,35 +188,30 @@ Carry out throwing open:
 Chapter 2 - Opening, closing and calibrating
 
 Section - Opening window chains
+
 [ set opening flags for necessary parents, then call open window safely routine ]
 [ which then calls back to the construct window routine given here ]
 
 To open up (g - a g-window):
-	if g is g-unpresent and the main-window is ancestral to g
-	begin;
+	if g is g-unpresent and the main-window is ancestral to g:
+		now g is g-required;
 		now every g-window ancestral to g is g-required;
 		calibrate windows;
-	end if.
 
 Section - Closing window chains
+
 [ so set deletion flags for children too, then call delete window safely routine ]
 
 To shut down (g - a g-window):
 	carry out the window-shutting activity with g.
-	[if g is g-present and g is not the main-window
-	begin;
-		now every g-window descended from g is g-unrequired;
-		calibrate windows;
-	end if;]
 
 Window-shutting something is an activity.
 
 For window-shutting a g-window (called g):
-	if g is g-present and g is not the main-window
-	begin;
+	if g is g-present and g is not the main-window:
+		now g is g-unrequired;
 		now every g-window descended from g is g-unrequired;
 		calibrate windows;
-	end if;
 
 
 Section - Calibrating the window set to match expectations
@@ -227,20 +219,16 @@ Section - Calibrating the window set to match expectations
 Definition: a g-window is a next-step if it is spawned by something g-present.
 
 To calibrate windows:
-[ open g-required ung-present windows. start with directly spawned windows.
-  close g-unrequired g-present windows. start with childless! ]
-	let h be a random g-unrequired g-present childless g-window;
-	while h is a g-window
-	begin;
-		g-destroy h;
-		let h be a random g-unrequired g-present childless g-window;
-	end while;
-	let g be a random next-step g-required g-unpresent g-window;
-	while g is a g-window
-	begin;
-		g-make g;
-		let g be a random next-step g-required g-unpresent g-window;
-	end while;
+[ open g-required g-unpresent windows. start with directly spawned windows.
+  close g-unrequired g-present windows. start with childless!
+  Try the loop multiple times to check we get them all ]
+	while the number of g-unrequired g-present childless g-windows > 0:
+		repeat with h running through g-unrequired g-present childless g-windows:
+			g-destroy h;
+	while the number of next-step g-required g-unpresent g-windows > 0:
+		repeat with h running through next-step g-required g-unpresent g-windows:
+			g-make h;
+
 
 
 Chapter 3 - I6 and Glulx Calls
@@ -941,9 +929,9 @@ Flexible Windows allows the Glulx author to construct and fill a series of multi
 
 Although Flexible Windows does not supply any rules for using graphical windows beyond the most basic, several can be found in Emily Short's Simple Graphical Window extension. The examples below demonstrate some ideas. However, Flexible Windows is not compatible with Simple Graphical Window. The Glimmr family of extensions provides extensive support for graphics in Flexible Windows.
 
-Flexible Windows requires Glulx Entry Points by Emily Short.
-
 Note that as of version 9, the method of specifying drawing rules for windows has changed. See the Window Rules section below.
+
+The latest version of this extension can be found at <https://github.com/i7/extensions>. This extension is released under the Creative Commons Attribution licence. Bug reports, feature requests or questions should be made at <https://github.com/i7/extensions/issues>.
 
 	Chapter: Constructing a Layout
 
@@ -1255,6 +1243,10 @@ Finally, it is possible to write directly to the echo stream of a window, bypass
 
 
 	Chapter: Change log
+
+Version 13 - 3/8/13
+
+	Changes how spawning works under the hood, so that the extension performs up to 30 times as fast. g-windows are now containers, so be careful not to repeat through all containers. Additionally, a window is no longer ancestral to/descended from itself.
 
 Version 9 - 27/5/10
 

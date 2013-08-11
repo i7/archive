@@ -1,4 +1,4 @@
-Version 1/120604 of Simple Unit Tests by Dannii Willis begins here.
+Version 1/130803 of Simple Unit Tests by Dannii Willis begins here.
 
 "Very simple unit tests."
 
@@ -131,13 +131,13 @@ produces
 	2 of 2 assertions failed.
 
 If you are writing an extension, we suggest you name all your test rules, and that you place your tests under a section titled:
-	(for use with Simple Unit Tests by Dannii Willis) (not for release)
+	(not for release) (for use with Simple Unit Tests by Dannii Willis)
 
 The state of the VM will be saved before and restored after the unit tests are run, so you don't need to worry about your tests changing anything permanently.
 
 Lastly, run the tests by entering the command "run the unit tests" (or just simply "unit"), or use "try running the unit tests" in your code. Happy testing!
 
-The latest version of this extension can be found at <https://github.com/i7/extensions>. This extension is released under the Creative Commons Attribution licence. Contact the author at <curiousdannii@gmail.com>
+The latest version of this extension can be found at <https://github.com/i7/extensions>. This extension is released under the Creative Commons Attribution licence. Bug reports, feature requests or questions should be made at <https://github.com/i7/extensions/issues>.
 
 Example: * Basic Unit Tests - Passing and Failing
 

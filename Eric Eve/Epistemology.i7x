@@ -1,4 +1,4 @@
-Version 6 of Epistemology by Eric Eve begins here.
+Version 7 of Epistemology by Eric Eve begins here.
 
  "Keeping track of what the player character knows and sees. Version 6 avoids phrases deprecated in version 6E59."
 
@@ -55,7 +55,7 @@ Requesting epistemic status of is an action out of world applying to one visible
 
 Understand "epistat [any thing]" as requesting epistemic status of.
 
-Report requesting epistemic status of:
+Report requesting epistemic status of (this is the report epistat rule):
   say "[noun] - [if seen]seen[otherwise]unseen[end if] / [if familiar]familiar[otherwise]unfamiliar[end if] / [if known]known[otherwise]unknown[end if]."
 
 

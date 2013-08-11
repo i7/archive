@@ -1,4 +1,4 @@
-Version 1/120218 of Benchmarking (for Glulx only) by Dannii Willis begins here.
+Version 1/130803 of Benchmarking (for Glulx only) by Dannii Willis begins here.
 
 "A general purpose benchmarking test framework that produces statistically significant results."
 
@@ -109,25 +109,25 @@ Array PowersOfTen --> 1 10 100 1000 10000 100000 1000000 10000000 100000000 1000
 	if (prec > 8)
 		prec = 8;
 	pow10 = PowersOfTen --> prec;
-
+	
 	! Knock off the sign bit first.
 	if (val & $80000000) {
 		@streamchar '-';
 		val = val & $7FFFFFFF;
 	}
-
+	
 	@jisnan val ?IsNan;
 	@jisinf val ?IsInf;
 
 	! Take as an example val=123.5, with precision=6. The desired result
 	! is "123.50000".
-
+	
 	extra0 = 0;
 	@fmod val $3F800000 frac fint; ! $3F800000 is 1.0.
 	@ftonumz fint int;
 	! This converts the integer part of the value to an integer value;
 	! in our example, 123.
-
+	
 	if (int == $7FFFFFFF) {
 		! Looks like the integer part of the value is bigger than
 		! we can store in an int variable. (It could be as large
@@ -157,7 +157,7 @@ Array PowersOfTen --> 1 10 100 1000 10000 100000 1000000 10000000 100000000 1000
 	@streamchar '.';
 
 	! Now we need to print the frac part, which is .5.
-
+	
 	@log frac sp;
 	@fdiv sp $40135D8E log10val; ! $40135D8E is log(10)
 	@numtof prec sp;
@@ -172,14 +172,14 @@ Array PowersOfTen --> 1 10 100 1000 10000 100000 1000000 10000000 100000000 1000
 	! exactly the (post-decimal-point) digits we want to print.
 
 	.DoPrint;
-
+	
 	if (idig >= pow10) {
 		! Rounding errors have left us outside the decimal range of
 		! [0.0, 1.0) where we should be. I'm not sure this is possible,
 		! actually, but we'll just adjust downward.
 		idig = pow10 - 1;
 	}
-
+	
 	@div pow10 10 pow10;
 	for (ix=0 : ix<prec : ix++) {
 		@div idig pow10 sp;
@@ -228,7 +228,7 @@ To decide which real number is (a - real number) rounded up:
 
 To decide which real number is the square root of (a - real number):
 	(- sqrt({a}) -).
-
+	
 To decide which real number is (a - real number) to the power of (b - real number):
 	(- pow({a}, {b}) -).
 
@@ -240,6 +240,8 @@ To decide whether (a - real number) is more than (b - real number):
 
 To say (a - real number):
 	(- FloatDec({a}, 2); -).
+To say (a - real number) with precision (b - a number):
+	(- FloatDec({a}, {b}); -).
 
 Section - Test cases
 
@@ -297,7 +299,7 @@ Include (-
 			+ (current_time2-->2 - current_time-->2);
 	}
 	(+ the minimum timer resolution +) = sample / 30;
-
+	
 	! The minimum time each test case must be run for to achieve a percent uncertainty of at most 1%.
 	(+ the minimum sample time +) = (+ the minimum timer resolution +) * 50;
 ];
@@ -386,8 +388,6 @@ Constant critical_value_infinity = $+1.96;
 
 [ Significance ]
 To decide whether (a - test case) and (b - test case) are statistically indistinguishable:
-	[say "[fixed letter spacing]  [variable letter spacing]Variance:[the variance of a][line break]";
-	say "[fixed letter spacing]  [variable letter spacing]T value:[the t value for a and b][line break]";]
 	if the absolute value of (the t value for a and b) is more than the critical value for (the sample size of a + the sample size of b - 2):
 		decide no;
 	decide yes;
@@ -419,7 +419,7 @@ A last initialising rule for a test case (called test case) (this is the initial
 			[ If we're too quick, then keep doubling count until we reach the resolution. ]
 			now count is count * 2;
 			time the test case running it count times;
-		[ From now on we will be treating this test case as if using the iteration multiplier constitutes running the test case just once, though we'll use the multiplier right at the end when we calculate the stats. ]
+		[ From now on we will be treating this test case as if using the iteration multiplier consistutes running the test case just once, though we'll use the multiplier right at the end when we calculate the stats. ]
 		now the iteration multiplier of the test case is count;
 
 [ Benchmark a test case by timing at least 5 samples. ]
@@ -469,7 +469,7 @@ Rule for timing a test case (called test case) (this is the running a test case 
 	now the iteration count of the test case is 0;
 	while remaining time > 0:
 		time the test case running it count times;
-		[ Check for 0 times. The iteration multiplier should stop these from occurring, but just in case... ]
+		[ Check for 0 times. The iteration multiplier should stop these from occuring, but just in case... ]
 		if the elapsed time of the test case < 1:
 			say "Error: Test time was 0!";
 			next;
@@ -482,7 +482,7 @@ Rule for timing a test case (called test case) (this is the running a test case 
 		[ Estimate how long it will take to reach the minimum sample time. ]
 		now count is
 			(remaining time as a real number divided by (
-				the elapsed time of the test case as a real number
+				the elapsed time of the test case as a real number 
 				divided by count as a real number)
 			) rounded up
 			as a number;
@@ -491,10 +491,10 @@ Rule for timing a test case (called test case) (this is the running a test case 
 			now count is 1;
 	[ Update the predicted sample count. ]
 	now the predicted sample count of the test case is
-		(the iteration count of the test case as a real number
+		(the iteration count of the test case as a real number 
 		times the minimum sample time as a real number
-		divided by the iteration time of the test case)
-		rounded up
+		divided by the iteration time of the test case) 
+		rounded up 
 		as a number;
 
 Part 2 - The interface unindexed
@@ -504,8 +504,8 @@ There is a room.
 
 [ Extra styles for the results table. ]
 Table of User Styles (continued)
-style name	justification	obliquity	indentation	first-line indentation	boldness	fixed width	relative size	glulx color
-bold-style	--	--	--	--	--	--	--	g-green
+style name	glulx color 
+bold-style	g-green
 
 [ Status line variables. ]
 The current test case is a test case that varies.
@@ -517,6 +517,12 @@ To update the status line:
 To pause briefly:
 	update the status line;
 	wait 1 ms before continuing;
+
+To show the version info:
+	(- VersionSub(); -).
+
+To say the test header:
+	say "[header type]Test results[roman type][line break]Timer resolution: [the minimum timer resolution][microseconds][paragraph break]";
 
 To say microseconds:
 	say "[unicode 181]s".
@@ -532,9 +538,37 @@ To say end command:
 To say indent:
 	say "[fixed letter spacing]  [variable letter spacing]";
 
+[ Scale the results so that tests that take a second are shown as microseconds. ]
+The scale is a real number that varies.
+The scale precision is a number that varies.
+The scale label is a text that varies.
+
+To adjust the scale for (n - a number):
+	now the scale precision is 2;
+	if n > 99999:
+		now the scale is R1232348160; [1000000]
+		now the scale label is "s";
+		if n < 1000000:
+			now the scale precision is 3;
+	otherwise if n > 99:
+		now the scale is R1148846080; [1000]
+		now the scale label is "ms";
+		if n < 1000:
+			now the scale precision is 3;
+	otherwise:
+		now the scale is R1065353216; [1]
+		now the scale label is "[microseconds]";
+
 To say (test case - a test case) results:
-	say "[indent][mean time of the test case][microseconds] [unicode 177][relative error of the test case]%[line break]";
+	let the scaled mean time be the mean time of the test case divided by the scale;
+	say "[indent][scaled mean time with precision scale precision][the scale label] [unicode 177][relative error of the test case]%[line break]";
 	say "[indent]([sample size of the test case] samples, [total count of the test case * iteration multiplier of the test case] total runs)";
+
+To reset the main window:
+	[ This first line break is to make transcripts play nicely. ]
+	say "[line break]";
+	clear the main-window;
+	say "[line break][run paragraph on]";
 
 [ The stats will show up in a side window. ]
 The menu window is a g-window.
@@ -543,7 +577,7 @@ The scale method of the menu window is g-proportional. The measurement of the me
 
 [ Show some information on each test case. ]
 To show the test case information:
-	clear the main-window;
+	reset the main window;
 	repeat with a test case running through the list of test cases:
 		say "[bold type][The test case][roman type]";
 		if the author of the test case is not "":
@@ -563,8 +597,9 @@ Section - Rules to show the benchmark framework's progress
 Before running the benchmark framework (this is the resetting the interface rule):
 	now the left hand status line is "[The current test case]";
 	now the right hand status line is "[The current phase]";
-	clear the main-window;
-	say "[line break][header type]Test results[roman type][line break]Timer resolution: [the minimum timer resolution][microseconds][paragraph break]";
+	reset the main window;
+	say the test header;
+	adjust the scale for 0;
 
 A first initialising rule (this is the set the phase to initialising rule):
 	now the current phase is "Initialising".
@@ -589,6 +624,9 @@ After benchmarking a test case (called test case) (this is the say a test case's
 		say the test case results;
 	say "[line break]";
 
+[ A use option to disable test comparisons. ]
+Use nonequivalent tests translates as (- Constant NONEQUALTESTS; -).
+
 [ Update the stats window with the results. The test cases will be sorted by ascending mean times, and those that are statistically the fastest will be coloured green. ]
 After running the benchmark framework (this is the show the final results rule):
 	let total time be a number;
@@ -596,22 +634,28 @@ After running the benchmark framework (this is the show the final results rule):
 	now the left hand status line is "";
 	now the right hand status line is "";
 	update the status line;
+	reset the main window;
 	sort sorted test cases in mean time order;
-	clear the main-window;
-	say "[line break][header type]Test results[roman type][line break]Timer resolution: [the minimum timer resolution][microseconds][paragraph break]";
+	adjust the scale for the mean time of entry 1 of sorted test cases as a number;
+	[ Reset the order if we're not comparing tests. ]
+	if the nonequivalent tests option is active:
+		now sorted test cases is the list of test cases;
+	say the test header;
 	repeat with a test case running through sorted test cases:
 		if test case is disabled:
 			say "[The test case]:[line break][indent][italic type](Disabled)[roman type][line break]";
 		otherwise:
 			increase total time by the total time of the test case;
-			if the test case and entry 1 of sorted test cases are statistically indistinguishable:
+			if the nonequivalent tests option is inactive and the test case and entry 1 of sorted test cases are statistically indistinguishable:
 				say "[bold type][The test case]:[roman type][line break]";
 			otherwise:
 				say "[The test case]:[line break]";
 			say the test case results;
 			say "[line break]";
-	let real total time be total time as a real number divided by 1000000 as a real number;
-	say "[line break]Total running time: [real total time]s[paragraph break]The fastest test case is bold and green. If more than one test case is green then they are statistically indistinguishable.[run paragraph on]";
+	let real total time be total time as a real number divided by R1232348160; [1000000]
+	say "[line break]Total running time: [real total time]s";
+	if the nonequivalent tests option is inactive:
+		say "[paragraph break]The fastest test case is bold and green. If more than one test case is green then they are statistically indistinguishable.[run paragraph on]";
 
 Section - The new order of play
 
@@ -630,8 +674,9 @@ To run the control loop:
 	let key be a number;
 	clear the menu window;
 	move focus to menu window;
+	say "[line break]";
 	say the banner text;
-	say "[paragraph break]You can:[line break][command]Enter[end command] Run the benchmark[line break][command]D[end command] Show test descriptions[line break][command]T[end command] Start a transcript[line break][command]X[end command] Exit[run paragraph on]";
+	say "[paragraph break]You can:[line break][command]Enter[end command] Run the benchmark[line break][command]D[end command] Show test descriptions[line break][command]V[end command] Show version infomation[line break][command]T[end command] Start a transcript[line break][command]X[end command] Exit[run paragraph on]";
 	move focus to main-window;
 	while 1 is 1:
 		now key is the chosen letter;
@@ -641,10 +686,13 @@ To run the control loop:
 		[ Test case info on D ]
 		if key is 68 or key is 100:
 			show the test case information;
+		[ Version on V ]
+		if key is 86 or key is 118:
+			reset the main window;
+			show the version info;
 		[ Transcript on T ]
 		if key is 84 or key is 116:
-			say "[line break]";
-			clear the main-window;
+			reset the main window;
 			try switching the story transcript on;
 		[ Exit on X or Escape ]
 		if key is -8 or key is 88 or key is 120:
@@ -657,7 +705,7 @@ A last when play begins rule (this is the benchmark framework is taking over rul
 
 Benchmarking ends here.
 
----- DOCUMENTATION ----
+---- DOCUMENTATION ---- 
 
 Section: Introduction
 
@@ -667,13 +715,13 @@ Benchmarking provides a general purpose benchmarking test framework which produc
 
 2. Interpreter authors can use Benchmarking to compare their interpreter with others, as well as to compare interpreter updates to see whether they have a performance benefit or deficit.
 
+The most accurate results will be obtained with a release build, as Inform's debug code will slow down some algorithms considerably, so be aware that simply using the Go! button will give different results than a release build would. (And if you want to run the tests with Inform's built-in interpreter on Windows you will need to install the 2012 6G60 re-release, as the original 6G60 release did not have all the necessarily functionality.)
+
 Benchmarking is based on the Javascript library Benchmark.js. http://benchmarkjs.com
 
 Benchmarking depends on Real-Time Delays by Erik Temple and Flexible Windows by Jon Ingold.
 
-Unfortunately Inform 7's built in interpreter may not be modern enough to run this (this is the case at least for Windows prior to the 2012 re-release of 6G60). Please use the output.ulx file from the Build folder in another interpreter.
-
-The latest version of this extension can always be found at http://curiousdannii.github.com/if/. To contact the author please email curiousdannii@gmail.com.
+The latest version of this extension can be found at <https://github.com/i7/extensions>. This extension is released under the Creative Commons Attribution licence. Bug reports, feature requests or questions should be made at <https://github.com/i7/extensions/issues>.
 
 Section: Writing test cases
 
@@ -684,7 +732,11 @@ A test case should be added for each task or algorithm you wish to test. Each te
 		...
 	The run phrase of my test case is running my test case.
 
-If you are comparing algorithms for the same task it is important that they all do actually do the same thing. This extension does not and cannot compare whether test case algorithms are equivalent, so you should first test your algorithms thoroughly. It is also important that test cases run the same each time through, so if your test case changes the world state in some way you must reset what it changes as part of your run phrase.
+If you are comparing algorithms for the same task it is important that they all do actually do the same thing. This extension does not and cannot compare whether test case algorithms are equivalent, so you should first test your algorithms thoroughly. If you are not comparing equivalent algorithms, use this option to prevent the final test comparisons:
+
+	Use nonequivalent tests.
+
+It is also important that test cases run the same each time through, so if your test case changes the world state in some way you must reset what it changes as part of your run phrase.
 
 Test cases are a kind of thing, so like all things they can have descriptions. They can also be given an author, as shown in the example.
 
@@ -699,12 +751,18 @@ Benchmarking is currently only designed for testing Glulx functionality, and it 
 
 Section: Change log
 
-Version 1/120218: Initial (non-beta) release
+Version 1/120610:
+	Added a version action
+	Added a nonequivalent tests use option
+	The final results are now scaled
+
+Version 1/120218:
+	Initial (non-beta) release
 
 Example: * Text matching - Avoiding slow Regular Expressions.
 
 	*: "Text matching"
-
+	
 	Include Benchmarking by Dannii Willis.
 
 	Search text is a text variable. Search text is "pineapple".

@@ -1,11 +1,11 @@
-Version 3/130624 of German by Team GerX begins here.
+Version 3/131221 of German by Team GerX begins here.
 
 "GerX: An extension to make German the language of play, written by Banbury,
 Christian Blümke and Michael Baltes. Designed for I7 releases 6G60 and 6F95."
 
 "based on deform release 6/11 by Martin Oehm"
 
-[v3.37]
+[v3.38]
 
 Part - I7 additions and replacements
 
@@ -66,8 +66,7 @@ Use list buffer size of at least 20 translates as (- Constant LIST_BUFFER_SIZE =
 
 Use explicit error messages translates as (- Constant EXPLICIT_ERROR_MESSAGES; -).
 
-Use capitalized Du translates as (- #IfNDef CAPITAL_YOU; Constant CAPITAL_YOU; #EndIf; -).
-Use capitalised Du translates as (- #IfNDef CAPITAL_YOU; Constant CAPITAL_YOU; #EndIf; -).
+Use capitalised Du translates as (- Constant CAPITAL_YOU; -).
 
 Use debug messages translates as (- Constant DEBUG_MESSAGES; -).
 
@@ -86,6 +85,8 @@ Use leniency towards Yoda-like input translates as (- #ifndef ALLOW_YODA; Consta
 Use silent leniency towards Yoda-like input translates as (- #ifndef ALLOW_YODA; Constant ALLOW_YODA; #endif; Constant YODA_MODE_SILENT; -).
 
 Use silent inference translates as (- Constant SILENT_INFERENCE; -).
+
+Use capitalised room description headings translates as (- Constant CAPITALISED_ROOM_HEADINGS; -).
 
 
 Section - Values - The four German cases
@@ -416,8 +417,8 @@ The specification of direction is "Represents a direction of movement, such
 as northeast or down. They always occur in opposite, matched pairs: northeast
 and southwest, for instance; down and up."
 
-A direction can be privately-named or publically-named. A direction is usually
-publically-named.
+A direction can be privately-named or publically-named. [A direction is usually
+publically-named.]
 A direction can be marked for listing or unmarked for listing. A direction is
 usually unmarked for listing.
 
@@ -575,7 +576,7 @@ Understand the command "x" as something new.
 Understand the command "watch" as something new.
 Understand the command "describe" as something new.
 Understand the command "check" as something new.
-Understand the command "examine" as something new.
+[Understand the command "examine" as something new.]
 Understand the command "read" as something new.
 Understand the command "yes" as something new.
 Understand the command "y" as something new.
@@ -623,7 +624,7 @@ Understand the command "murder" as something new.
 [Understand the command "kill" as something new.]
 Understand the command "punch" as something new.
 Understand the command "thump" as something new.
-Understand the command "wait" as something new.
+[Understand the command "wait" as something new.]
 [Understand the command "z" as something new.]
 Understand the command "answer" as something new.
 Understand the command "say" as something new.
@@ -1418,11 +1419,17 @@ Understand "bind [something] mit [dativ] [something]" as tying it to.
 Understand "zuend [something] an" as burning.
 Understand "zuend [something] mit [dativ] [something preferably held] an" as burning it with.
 Understand "zuend mit [dativ] [something preferably held] [something] an" as burning it with (with nouns reversed).
-Understand the command "entzuend" and "entflamm" and "verbrenn" as "zuend".
+
+Understand "entzuend [something] mit [dativ] [something preferably held]" as burning it with.
+Understand "entzuend mit [dativ] [something preferably held] [something]" as burning it with.
+Understand "entzuend [something]" as burning.
+Understand the command "entflamm" and "verbrenn" as "entzuend".
 
 Understand "brenn [something] an/ab/nieder" as burning.
 Understand "brenn [something] mit [dativ] [something preferably held] an/ab/nieder" as burning it with.
 Understand "brenn mit [dativ] [something preferably held] [something] an/ab/nieder" as burning it with (with nouns reversed).
+Understand "brenn [something] mit [dativ] [something preferably held]" as burning it with.
+Understand "brenn mit [dativ] [something preferably held] [something]" as burning it with (with nouns reversed). 
 
 Understand "trink [something]" as drinking.
 Understand "trink [something] aus/leer" as drinking.
@@ -1544,6 +1551,7 @@ Section - Saying - The universal suffix for all inflected adjectives
 
 
 To say ^: (- print "@00"; -).
+
 
 
 Section - Saying - Suffixes (Verbs)
@@ -1759,6 +1767,38 @@ This is the German announce items from multiple object lists rule:
 
 
 [ Raumbeschreibungen anpassen ]
+
+[20.07.2013: room description heading rule ersetzt;
+Bei UNDO konnte es vorkommen, dass der Raumname in einem
+falschen Kasus angegeben wurde.]
+
+The German room description heading rule is listed instead of
+the room description heading rule in the carry out looking rulebook.
+
+To issue the/-- capitalised room description for the/-- (O - an object):
+	(- RunCapitalised(WithoutArt, {O}, Nom); -).
+
+Carry out looking (this is the German room description heading rule):
+	say bold type;
+	if the visibility level count is 0:
+		begin the printing the name of a dark room activity;
+		if handling the printing the name of a dark room activity,
+			issue miscellaneous library message number 71;
+		end the printing the name of a dark room activity;
+	otherwise if the visibility ceiling is the location:
+		if the capitalised room description headings option is active:
+			issue capitalised room description for visibility ceiling;
+		otherwise:
+			say "[visibility ceiling with nominative]";
+	otherwise:
+		say "[Der visibility ceiling]";
+	say roman type;
+	let intermediate level be the visibility-holder of the actor;
+	repeat with intermediate level count running from 2 to the visibility level count:
+		issue library message looking action number 8 for the intermediate level;
+		let the intermediate level be the visibility-holder of the intermediate level;
+	say line break;
+	say run paragraph on with special look spacing.
 
 
 The German set pronouns from items in room descriptions rule is listed instead of
@@ -2230,7 +2270,7 @@ when the item is part of a person [and the item is proper-named]
 					-- sächlich: say "[deines]";
 			-- dative:
 				if the gender of the item is:
-					-- Mehrzahl: say "[deiner]";
+					-- Mehrzahl: say "[deinen]";
 					-- männlich: say "[deinem]";
 					-- weiblich: say "[deiner]";
 					-- sächlich: say "[deinem]";
@@ -7880,6 +7920,7 @@ Include (-
 
 [ Is_again_word w;
     if (w=='nochmal') rtrue;
+    if (w=='again') rtrue; !*** (26.08.2013) Einige Interpreter ersetzen "g" implizit durch "again"
     if (w=='wieder') rtrue;
     if (w=='nm') rtrue;
     if (w=='wdh') rtrue;
@@ -8167,7 +8208,7 @@ Include (-
 ];
 
 [ PrintCommand 
-    from            ! erstes Token, ab dem ausgegeben wird
+    from            ! erstes Token, ab dem ausgegeben wird,
                     ! kann negativ sein, um den Satz im Imperativ
                     ! ("Hebe Stein auf") anstatt als Infinitiv-Phrase
                     ! ("Stein aufheben") auszugeben. Wird für den
@@ -8955,6 +8996,7 @@ Include (-
     StorageForShortName->WORDSIZE = VM_LowerToUpperCase(StorageForShortName->WORDSIZE);
     length = StorageForShortName-->0;
     for (i=WORDSIZE: i<length+WORDSIZE: i++) print (char) StorageForShortName->i;
+    return length;
 ];
 
 #ifdef ALLOW_YODA;
@@ -9017,6 +9059,36 @@ Global caps_mode = false;
     print (object) obj;
 ];
 -) instead of "Standard Name Printing Rule" in "Printing.i6t".
+
+[20.07.2013: Bei UNDO gab es teilweise Probleme mit dem Kasus des
+Raumnamens. In SL_Location() wurde das Kasus nicht auf Nominativ gesetzt,
+was jetzt geändert ist.] 
+Include (-
+[ SL_Score_Moves;
+	if (not_yet_in_play) return;
+	#ifdef NO_SCORING; print sline2; #ifnot; print sline1, "/", sline2; #endif;
+];
+
+[ SL_Location;
+	if (not_yet_in_play) return;
+	if (location == thedark) {
+		BeginActivity(PRINTING_NAME_OF_DARK_ROOM_ACT);
+		if (ForActivity(PRINTING_NAME_OF_DARK_ROOM_ACT) == false)
+ 			L__M(##Miscellany, 71);
+		EndActivity(PRINTING_NAME_OF_DARK_ROOM_ACT);
+	} else {
+		FindVisibilityLevels();
+		if (visibility_ceiling == location) {
+		#ifdef CAPITALISED_ROOM_HEADINGS;
+			RunCapitalised(WithoutArt, visibility_ceiling, Nom);
+		#ifnot;
+			WithoutArt(visibility_ceiling, Nom);
+		#endif;
+		}
+		else print (GDer) visibility_ceiling;
+	}
+];
+-) instead of "Status Line Utilities" in "Printing.i6t".
 
 Include (-
 ! *** Eine deutsche Default-Headline (Original-Code von Martin Oehm)
@@ -10304,7 +10376,7 @@ Array LibcheckIgnoreVerbs table
 !     auf 'e' oder 'en' enden. Diese werden beim Verben-Libcheck ignoriert,
 !     damit nur die vom Autor neu hinzugefügten Verben geprüft werden.
 
-    'baumle'     'beschnueffle' 'durchstoeber' 'ende'    'entriegle'
+    'baumle'     'beschnueffle' 'durchstoeber' 'ende'    'entriegle' 'examine'
     'fuerwoerter' 'jodle'       'klettre'
     'konsultier' 'lage'         'meldungen'    'nee'     'noe'   'oeffne'
     'pronomen'   'pruegle'      'punkte'       'restore' 'save'  'scheibenkleister'
@@ -10556,7 +10628,6 @@ Array LibcheckIgnoreVerbs table
 			if (o has female) n++;
 			if (o has neuter) n++;
 			if (o has pluralname) n++;
-			!!!print "{n = ", n, "}";
 		}
 		else n = 1;
 
@@ -10902,15 +10973,15 @@ Die Einschränkungen für das Definieren von Vokabeln wie "Baeume" sind leider n
 
 Mit der Testfunktion LIBCHECK kann man prüfen, ob versehentlich Vokabeln mit Umlauten oder Endungen definiert wurden (s. Kap. 5.13: "Überprüfen der Vokabel- und Genusdefinitionen").
 
-Intern werden nur die ersten 9 Zeichen einer Vokabel verarbeitet. Dies ist ein Relikt aus speicherarmen Zeiten und kann bei langen Wörtern zu Problemen führen. Zwei Möglichkeiten, wie man lange Vokabeln behandeln kann, sind beschrieben in Section 7.1: Wortköpfe und -schwänze (Compound Heads und Compound Tails) von langen Wörtern abtrennen.
+Intern werden nur die ersten 9 Zeichen einer Vokabel verarbeitet. Dies ist ein Relikt aus speicherarmen Zeiten und kann bei langen Wörtern zu Problemen führen. Zwei Möglichkeiten, wie man lange Vokabeln behandeln kann, sind beschrieben in Section 9.1: Wortköpfe und -schwänze (Compound Heads und Compound Tails) von langen Wörtern abtrennen.
 
 
 Section: Hauptwörter und Adjektive (Synonyme für Objekte)
 
-Nomen und Adjektive sollten immer ohne Endungen angegeben werden. Umlaute und "ß" werden umschrieben. Groß- und Kleinschreibung können bei der Definition von Vokabeln beliebig verwendet werden.
+Nomen und Adjektive sollten immer ohne Endungen angegeben werden. Umlaute und "ß" werden umschrieben. Groß- und Kleinschreibung können bei der Definition von Vokabeln beliebig verwendet werden; sie werden bei der Erzeugung des Wörterbuches sämtlich in Kleinbuchstaben übersetzt.
 
-	Understand "Reisepass" and "Fuehrerschein" as Dokumente.
-	Understand "gruen" as the Kobold.
+	Understand "Reisepass" and "Fuehrerschein" as the documents.
+	Understand "gruen" as the Green Goblin.
 
 Section: Verben (Kommandos) und Satzmuster
 
@@ -11289,7 +11360,7 @@ Für jedes per Understand-Anweisung definierte Objektsynonym kann das Genus des 
 Häufig kommt es vor, dass Objekte Synonyme bekommen, die ein anderes Geschlecht als das Objekt (genauer: der printed name des Objekts) haben.
 
 	The anorak is a wearable thing in the dressing room. The printed name of the anorak is "Anorak[-s][m]".
-	The description is "Eine richtig dicke Winterjacke." Understand "Jacke" and "Winterjacke" as the Anorak.
+	The description is "Eine richtig dicke Winterjacke." Understand "Anorak", "Jacke" and "Winterjacke" as the Anorak.
 
 Was passiert nun, wenn der Spieler den Anorak lieber "Jacke" nennt, und diese mit Pronomen ansprechen möchte?
 
@@ -11362,7 +11433,7 @@ Dinge, die der Spielerfigur gehören, können bei der Ausgabe mit unbestimmtem A
 
 	"Du siehst hier deine Brieftasche."
 
-Achtung: Der special indefintie article YOURS wird *nicht* für die Ausgabe mit bestimmtem Artikel verwendet. Soll der Name eines Objekts in jedem Fall mit "dein" ausgegeben werden, muss man in die Ausgabe des angezeigten Objektnamens eingreifen und ein flektierendes "dein" voranstellen:
+Achtung: Der special indefinite article YOURS wird *nicht* für die Ausgabe mit bestimmtem Artikel verwendet. Soll der Name eines Objekts in jedem Fall mit "dein" ausgegeben werden, muss man in die Ausgabe des angezeigten Objektnamens eingreifen und ein flektierendes "dein" voranstellen:
 
 	Maria is a woman.
 
@@ -11419,15 +11490,15 @@ Nun fehlt noch das deutsche Vokabular, um die Nasen entsprechend ihrer Besitzer 
 
 Nun werden "deine Nase", "Bennos Nase", "Nase des Polizisten" und so weiter als die entsprechenden Nasen erkannt.
 
-Der Workaround hängt an Eigennamen standarmäßig ein 's' an, würde also bei Namen, die auf S auslauten (Klaus, Max, Moritz) "Klauss Gesicht", "Moritzs Nase" und "Maxs Kopf" schreiben, was keine korrekten Genitive sind. Für Personen, die einen Namen haben, der auf ein gesprochenes S endet, muss folgende Eigenschaft angegeben werden:
+Der Workaround hängt an Eigennamen standardmäßig ein 's' an, würde also bei Namen, die auf S auslauten (Klaus, Max, Moritz) "Klauss Gesicht", "Moritzs Nase" und "Maxs Kopf" schreiben, was keine korrekten Genitive sind. Für Personen, die einen Namen haben, der auf ein gesprochenes S endet, muss folgende Eigenschaft angegeben werden:
 
 	Klaus is s-terminated.
 	
 Danach wird korrekt "Klaus' Gesicht", "Moritz' Nase" und "Max' Kopf" geschrieben. Falls sich der Name im Laufe des Spiels ändern und nicht mehr auf S enden sollte, kann man die Eigenschaft ganz einfach wieder wegnehmen.
 
-Leider wird der Genitiv mit Apostroph nicht automatisch verstanden. Es empfiehlt sich also, den Namen mit Apostroph als zusätzliche Vokabel für das entsprechende Körperteil anzugeben.
+Leider wird der Genitiv mit Apostroph nicht automatisch verstanden. Es empfiehlt sich also, den Namen mit Apostroph als zusätzliche Vokabel für den entsprechenden Besitzer des Körperteils anzugeben. Es ist nicht ratsam, den Namen mit Apostroph als Synonym für das Körperteil zu definieren, da es bei der Existenz mehrerer Körperteile zu Ambiguitäten kommen kann, d.h. der Parser weiß eventuell nicht, ob mit der Spielereingabe "max'" die Nase, ein Auge oder sonst ein definiertes Körperteil gemeint ist. 
 
-	Understand "Max'" as Max's Nase. Understand "Moritz'" as Moritz's Nase. Understand "Klaus'" as Klaus's Nase.
+	Understand "Max'" as Max. Understand "Moritz'" as Moritz. Understand "Klaus'" as Klaus.
 
 
 Chapter: Ausdrücke zur flexiblen Textausgabe
@@ -11871,6 +11942,12 @@ Diese Phrase ignoriert eine aktivierte "Use non-nested lists"-Option und gibt di
 
 Chapter: Neue Use-Optionen (Use options)
 
+Section: Großschreibung von Raumnamen in Kopf- und Statuszeile erzwingen
+
+	*: Use capitalised room description headings.
+	
+Unabhängig vom printed name des Raumes wird der Raumname in der Überschrift der Raumbeschreibung und in der Statuszeile immer mit großem Anfangsbuchstaben geschrieben. Bei angezeigten Raumnamen wie z.B. "klein[^] Küche[f]" ist das schöner, als die Überschrift mit einem Kleinbuchstaben beginnen zu lassen. 
+
 Section: Tiefere Einrückung und Aufzählungszeichen beim Inventar
 
 	*: Use inventory indent.
@@ -12241,7 +12318,9 @@ Jetzt lassen sich Streichholz und Streichhölzer folgendermaßen definieren:
 	The pack of matches is a container. The printed name is "Packung[f] Streichhölzer" .Understand "streich-" and "hoelzer" as the pack.
 	The match is a thing. The printed name is "Streichholz[-es][n]". Understand "streich-" and "holz" as the match.
 
-Wichtig ist der Trennstrich am Ende der Wortkopf-Vokabel. Analog zum Abschneiden der Köpfe kann man die Wörter auch vom Ende her abschneiden lassen.
+Wichtig ist der Trennstrich am Ende der Wortkopf-Vokabel.
+
+Analog zum Abschneiden der Köpfe kann man die Wörter auch vom Ende her abschneiden lassen.
 
 	Table of compound tails (continued)
 	Tail    	n
@@ -12299,6 +12378,8 @@ Die englischen Richtungsabkürzungen E (East), NE (Northeast), SE (Southeast), D
 			reject the player's command.
 
 Das up object muss auf I6-Ebene von "u_obj" in irgendetwas Anderes umbenannt werden (hier: up_object), damit das I6-Implicit-Up-Token "u" nicht mehr als "up" versteht. Je nachdem, ob explizite oder allgemeine Parser-Fehlermeldungen verwendet werden, wird eine entsprechende Nachricht ausgegeben und die Spielereingabe abgewiesen.
+
+Dieses Beispiel unterbindet zwar die Benutzung der englischen Abkürzungen, verhindert aber auch, dass man die Abkürzungen für eigene Zwecke definieren kann, da sie schon vor dem eigentlichen Parsen abgefangen werden.
 
 
 Chapter: Spezielle Grammatik-Token (Understand tokens)

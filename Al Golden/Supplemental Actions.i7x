@@ -1,4 +1,4 @@
-Version 33 of Supplemental Actions by Al Golden begins here.
+Version 34 of Supplemental Actions by Al Golden begins here.
 
 "This extension adds 12 separated actions, 10 expanded actions, and 22 new actions.
 It also allows an NPC to be given something, and the player to ask for items carried or worn by the NPC."
@@ -8,6 +8,15 @@ use authorial modesty.
 use MAX_ACTIONS of 900.
 
 To say verbword: (- print (address) verb_word; -).
+
+a thing is either emptyable or unemptyable.
+a thing is usually unemptyable.
+
+a thing is either broken or unbroken.
+a thing is usually unbroken.
+
+a thing is either folded or unfolded.
+a thing is usually unfolded.
 
 a thing is either climbable or unclimbable.
 a thing is usually unclimbable.
@@ -703,6 +712,18 @@ before emptying something which is not a container
 (this is the can't empty a non-container rule):
 say "Since [the noun] isn't a container, you can't empty it." instead.
 
+before emptying an emptyable thing
+(this is the first unemptyable rule):
+say "You can't empty [the noun]." instead.
+
+before emptying an emptyable thing onto a second noun
+(this is the second unemptyable rule):
+say "You can't empty [the noun] onto [the second noun]." instead.
+
+before emptying an emptyable thing into a second noun
+(this is the third unemptyable rule):
+say "You can't empty [the noun] into [the second noun]." instead.
+
 before emptying an empty container
 (this is the can't empty an empty container rule):
 say "[The noun] has nothing in it to empty." instead.
@@ -745,7 +766,7 @@ say "Since [the second noun] isn't a supporter, it can't hold anything." instead
 before emptying an unempty container onto a second noun
 (this is the second noun is a supporter rule):
 if the second noun is  a supporter,
-say "You empty the [list of things in the noun] onto [the second noun]";
+say "You empty the [list of things in the noun] onto [the second noun].";
 now everything in the noun is on the second noun instead.
 		
 before emptying something from an unempty container 
@@ -766,7 +787,7 @@ say "You [verbword] [the noun] into [the second noun].";
 check inserting something into a closed container:
 say "[The second noun] isn't open!" instead.
 	
-before emptying an open unempty container
+before emptying an open unempty emptyable container
 (this is the second emptying an unempty container rule):
 say "You [verbword] [the list of things in the noun] out onto the ground.";
 now the noun is empty;
@@ -893,9 +914,6 @@ say "You can't [verbword] [the noun] with [the second noun].".
 
 
 Part 20 - Folding/Unfolding (new)
-
-a thing is either folded or unfolded.
-a thing is usually unfolded.
 
 folding is an action applying to one thing.
 understand "fold [something]" as folding.
@@ -1384,6 +1402,12 @@ report lieing in something
 say "You can lie in [the noun].".
 
 understand the command "sit" as something new.
+
+sitting is an action applying to nothing.
+understand "sit" or "sit down" as sitting.
+
+report sitting:
+say "You can't sit.";
 
 sitting on is an action applying to one thing.
 understand "sit on [something]" as sitting on.
@@ -1984,6 +2008,10 @@ report throwing something into something
 (this is the throwing something into something rule) :
 say "You can't [verbword] [the noun] into [the second noun].".
 
+report throwing something onto something
+(this is the throwing something onto something rule) :
+say "You can't [verbword] [the noun] onto [the second noun].".
+
 report throwing something off a second noun
 (this is the throwing something off something rule) ::
 say "You can't [verbword] [the noun] off [the second noun].". 
@@ -2007,9 +2035,6 @@ say "You can't [verbword] [the noun]through [the second noun].".
 report throwing something out of a second noun
 (this is the throwing something out of something rule) ::
 say "You can't [verbword] [the noun] out of [the second noun]."
-
-
-
 
 Part 44 - Checking Separated from Look
 
@@ -2232,6 +2257,8 @@ Questions and comments to: radical1@evcohs.com
 
 Section 4 : New Properties Required
 
+For the emptying function add this line: the (NOUN) is emptyable.
+
 For the climbing function add this line: the (NOUN) is climbable.
 
 For the inflating function add this line: the (NOUN) inflatable.
@@ -2248,6 +2275,8 @@ Note: Version 29 removes the (NOUN) IS BLOWABLE function. It didn't make
 much sense really and can be custom programmed by the author.
 
 Section 5 : New Commands (Actions)
+
+Version 34  added a property to containers for emptying. EMPTYABLE and UNEMPTYABLE.
 
 Version 33 adds a few new synoyms to the SHOUT command.
 
@@ -2461,15 +2490,12 @@ Example: * "Silliness" - a short game showing the extension features.
 	instead of wiping something with something:
 	say "You [verbword] [the noun] with [the second noun]."
 
-	a thing is either broken or whole.
-	a thing is usually whole.
-
-	instead of breaking a whole thing:
+	instead of breaking a unbroken thing:
 	now the noun is broken;
 	let verbword be word number 1 in the player's command;
 	say "You [verbword] [the noun].".
 
-	instead of breaking a whole thing with a second noun:
+	instead of breaking a unbroken thing with a second noun:
 	now the noun is broken;
 	let verbword be word number 1 in the player's command;
 	say "You [verbword] [the noun] with [the second noun].".
@@ -2487,19 +2513,19 @@ Example: * "Silliness" - a short game showing the extension features.
 	say "You can't feed [the noun] with [the second noun]."
 
 	instead of fixing a broken thing:
-	now the noun is whole;
+	now the noun is unbroken;
 	let verbword be word number 1 in the player's command;
 	say "You [verbword] [the noun].".
 
 	instead of fixing a broken thing with a second noun:
-	now the noun is whole;
+	now the noun is unbroken;
 	let verbword be word number 1 in the player's command;
 	say "You [verbword] [the noun] with [the second noun].".
 
-	instead of fixing a whole thing:
+	instead of fixing a unbroken thing:
 	say "But [the noun] isn't broken!".
 
-	instead of fixing a whole thing with a second noun:
+	instead of fixing a unbroken thing with a second noun:
 	say "But [the noun] isn't broken!".
 
 	instead of walking or crawling or running:
@@ -2693,44 +2719,44 @@ Example: * "Silliness" - a short game showing the extension features.
 	"You caught this at a White Sox-Yankees game.".
 	understand "ball" as the baseball.
 
-	instead of throwing the baseball through an open whole window 
+	instead of throwing the baseball through an open unbroken window 
 	when the player is in Idyllic:
 	now the baseball is in Kitchen;
 	say "You throw the ball through the open window. The ball lands in the kitchen.".
 	
-	instead of throwing the baseball through a closed whole window 
+	instead of throwing the baseball through a closed unbroken window 
 	when the player is in Idyllic:
 	now the window is open;
 	now the window is broken;
 	now the baseball is in Kitchen;
 	say "You throw the ball through the closed window, breaking it. The ball lands in the kitchen.".
 
-	instead of throwing the baseball through an open whole window 
+	instead of throwing the baseball through an open unbroken window 
 	when the player is in Kitchen:
 	now the baseball is in Idyllic;
 	say "You throw the ball through the open window. The ball lands back outside.";
 	
-	instead of throwing the baseball through a closed whole window 
+	instead of throwing the baseball through a closed unbroken window 
 	when the player is in Kitchen:
 	now the window is open;
 	now the window is broken;
 	now the baseball is in Idyllic;
 	say "You throw the ball through the closed window, breaking it. The ball lands back outside.";
 
-	instead of throwing the baseball out of an open whole window when the player is in Kitchen:
+	instead of throwing the baseball out of an open unbroken window when the player is in Kitchen:
 	now the baseball is in Idyllic;
 	say "You throw the ball out of the open window. The ball lands back outside.";
 
-	instead of throwing the baseball out of a closed whole window when the player is in Kitchen:
+	instead of throwing the baseball out of a closed unbroken window when the player is in Kitchen:
 	now the window is open;
 	now the window is broken;
 	now the baseball is in Idyllic;
 	say "You throw the ball out of the closed window, breaking it. The ball lands back outside.";
 
-	instead of throwing the baseball out of an open whole window when the player is in Idyllic:
+	instead of throwing the baseball out of an open unbroken window when the player is in Idyllic:
 	say "You're not in the Kitchen.";
 
-	instead of throwing the baseball out of a closed whole window when the player is in Idyllic:
+	instead of throwing the baseball out of a closed unbroken window when the player is in Idyllic:
 	say "You're not in the Kitchen.";
 		
 	a machinegun is in Idyllic.
@@ -3297,7 +3323,7 @@ Example: * "Silliness" - a short game showing the extension features.
 	say "The chlorine would poison you to death!"
 
 	a closed openable enterable container called a trashcan is in Idyllic.
-	the trashcan is fillable.
+	the trashcan is fillable and emptyable.
 	understand "barrel" or "can" or "trash" as the trashcan.
 
 	before filling a closed trashcan:
@@ -3387,7 +3413,7 @@ Example: * "Silliness" - a short game showing the extension features.
 	the window is closed, openable, scenery, and climbable.
 
 	instead of breaking the window:
-		if the window is whole:
+		if the window is unbroken:
 			now the window is broken;
 			now the window is open;
 			say "You [verbword] the window and the glass disappears into smithereens.";
@@ -3425,13 +3451,13 @@ Example: * "Silliness" - a short game showing the extension features.
 	instead of closing a broken window:
 	say "How can you close a window with glass in it?".
 
-	instead of examining a closed whole window:
+	instead of examining a closed unbroken window:
 	say "The window is closed.".
 
 	Instead of examining a broken window:
 	say "The window is totally broken and no glass remains." 
 
-	instead of examining an open whole window:
+	instead of examining an open unbroken window:
 	say "The window is open.".
 
 	instead of looking north: say "You look to the north.".
@@ -3466,7 +3492,7 @@ Example: * "Silliness" - a short game showing the extension features.
 	instead of climbing through the window when the player is in Kitchen,
 	try climbing out the window.
 
-	report climbing in a whole closed window:
+	report climbing in a unbroken closed window:
 	say "The window is closed.";
 	
 	report climbing out the window when the window is closed:
@@ -3554,18 +3580,27 @@ Example: * "Silliness" - a short game showing the extension features.
 	instead of going down when the player is in TreeTop,
 	try climbing down the tree.
 
-	TreeTop is a room. "From here you can see vast 
-	distances far beyond.[paragraph break]Below you, you see [a list of not scenery things in Idyllic].".
+	TreeTop is a room. "From here you can see vast distances far beyond.
+	[paragraph break]Below you, you see [a list of not scenery things in Idyllic].".
 
 	after deciding the scope of yourself when yourself is in TreeTop:
 	place Idyllic in Scope.
 
-	before multidropping when yourself is in TreeTop:
-		if the player is carrying nothing:
-			say "You aren't carrying anything." instead;
-		otherwise:
+	before going down in TreeTop:
+	say "You climb down the tree.";
+
+	after reading a command when yourself is in TreeTop:
+		if the player's command includes "down" or the player's command includes "climb down":
+			say "You climb down the tree.";
+			now yourself is in Idyllic;
+			stop;
+		else if the player's command matches "drop all":
 			say "You drop [the list of things carried by yourself] down on the ground.";
-			now everything carried by yourself is in Idyllic instead.
+			now everything carried by yourself is in Idyllic;
+			stop;
+		else if the player is carrying nothing:
+			say "You aren't carrying anything.";
+			stop.
 
 	a man called the lifeguard is in Idyllic.
 	understand "guard" or "man" as the lifeguard.

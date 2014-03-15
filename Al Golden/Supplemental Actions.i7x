@@ -3,8 +3,6 @@ Version 34 of Supplemental Actions by Al Golden begins here.
 "This extension adds 12 separated actions, 10 expanded actions, and 22 new actions.
 It also allows an NPC to be given something, and the player to ask for items carried or worn by the NPC."
 
-use authorial modesty.
-
 use MAX_ACTIONS of 900.
 
 To say verbword: (- print (address) verb_word; -).

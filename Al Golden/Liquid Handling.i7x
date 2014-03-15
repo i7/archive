@@ -1,8 +1,8 @@
-Version 7 of Liquid Handling by Al Golden begins here.
+Version 8 of Liquid Handling by Al Golden begins here.
 
 "A device for the handling of liquids"
 
-Include Version 26 of Supplemental Actions by Al Golden.
+Include Version 34 of Supplemental Actions by Al Golden.
 
 a thing is either wet,dry, or sticky.                [*aka viscous] 
 a thing is either either soaked or unsoaked. [*for absorbents]
@@ -15,6 +15,9 @@ a thing is either mixed or unmixed.
 a thing is either mopped or unmopped.
 a thing is usually unmopped.
 
+a thing is either safe or dangerous.
+a thing is usually safe.
+
 a thing is usually unsoaked. 
 a thing is usually unabsorbent. 
 a thing is usually dry. 
@@ -25,12 +28,12 @@ a thing is usually unfloating.
 a thing is usually undrinkable.
 
 a liquid is a kind of thing. 
-a liquid is either safe or poisonous.
+a liquid is usually safe.
 a liquid is usually wet.
 a liquid is usually undrinkable.
-a liquid is usually safe.
 
-a liquid is usually unmopped.
+a liquid is either poisonous or non-poisonous.
+a liquid is usually non-poisonous. 
 
 a powder is a kind of thing. 
 a powder is usually dry.
@@ -63,7 +66,7 @@ report emptying an open container into a bc:
 say "[The second noun] is incapable of handing the contents of [the noun]".
 
 report emptying a closed container into a bc:
-say "[The noun isn't open, and besides that,[the second noun] is incapable of 
+say "[The noun] isn't open, and besides that,[the second noun] is incapable of 
 handing the contents of [the noun]".
 
 instead of opening a mixture,
@@ -397,7 +400,7 @@ This extension is for handling of liquids:
 Basically mixing,drinking,and transfering from 
 one container to another container or a location.
 
-It now requires Version 26 of Supplemental Actions also by myself.
+It now requires Version 34 of Supplemental Actions also by myself.
 
 INSTRUCTIONS:
 

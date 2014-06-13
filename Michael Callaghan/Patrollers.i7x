@@ -1,4 +1,4 @@
-Version 11 of Patrollers by Michael Callaghan begins here.
+Version 12 of Patrollers by Michael Callaghan begins here.
 
 "Allows a non player character to follow routes defined by rooms, directions, random journeys, the player's location or to a destination."
 
@@ -23,7 +23,7 @@ MovementType is a kind of Value.  The MovementTypes are RoomLed, DirectionLed, F
 [RoomLed		The Patroller's route is set out in a table of rooms to visit.
 DirectionLed		The Patroller's route is set out in a table of directions to follow.
 Following		The Patroller follows the best route to the player.
-Aimless			The Patroller's route is random.
+Aimless		The Patroller's route is random.
 Targeted		The Patroller follows the best route to a destination.]
 
 A Patroller has a MovementType.  A Patroller is usually RoomLed.
@@ -33,9 +33,9 @@ Section 1.4 - Define the types of route that a Patroller can follow
 Route is a kind of value.  The Routes are OneWay, TwoWay, TwoWayRepeated and Circular.
 
 [OneWay		The Patroller goes from A to B then stops.
-TwoWay			The Patroller goes from A to B then B to A and stops.
+TwoWay		The Patroller goes from A to B then B to A and stops.
 TwoWayRepeated		The Patroller goes from A to B then B to A repeatedly.
-Circular			The Patroller goes from A to B to A repeatedly.]
+Circular		The Patroller goes from A to B to A repeatedly.]
 
 A Patroller has a Route. A Patroller is usually OneWay.
 
@@ -120,7 +120,12 @@ Reporting is a Reporting Status that varies.  Reporting is usually Individual.
 Arrival List is a list of Patrollers that varies.
 Departure List is a list of Patrollers that varies.
 
-Section 1.17 - Flag to trap  best route returning nothing as a value
+Section 1.17 - Verbs required for responses
+
+To depart is a verb.
+To come is a verb.
+
+Section 1.18 - Flag to trap  best route returning nothing as a value
 
 RouteAvailable is a truth state that varies.
 
@@ -151,9 +156,9 @@ Every turn (this is the carry out patrolling rule):
 				carry out the Patrolling activity with the Bod;
 	if Reporting is Collective:
 		if the number of entries in the arrival list is not 0:
-			report arrivals;
+			say "[Arrival list] [arrive]." (A);
 		if the number of entries in the departure list is not 0:
-			report departures.
+			say "[Departure list] [depart]." (B).
 
 Chapter 3 - Define rules move moving patrollers
 
@@ -269,24 +274,24 @@ Before Patrolling something (called the Bod) (this is the try opening doors for 
 					now the Obstacle is open;
 					now the Obstacle is unlocked;
 					if the CurrentRoom is the location of the player and Reporting is Individual:
-						report seen unlocking and opening of the obstacle by the Bod;
+						say "[The Bod] [unlock] and [open] [the obstacle]." (A);
 					if the NextRoom is the location of the player and Reporting is Individual:
-						report unseen unlocking and opening of the obstacle;
+						say "[We] [hear] the sound of someone unlocking and opening [the Obstacle]." (B);
 				if the OpeningCapability of the Bod is WithKey:
 					if the Bod encloses the matching key of the Obstacle:
 						now the Obstacle is open;
 						now the Obstacle is unlocked;
 						if the CurrentRoom is the location of the player and Reporting is Individual:
-							report seen unlocking and opening of the obstacle by the Bod;
+							say "[text of  try opening doors for patrollers rule response (A)]";
 						if the NextRoom is the location of the player and Reporting is Individual:
-							report unseen unlocking and opening of the obstacle;
+							say "[text of  try opening doors for patrollers rule response (B)]";
 			otherwise if the Obstacle is unlocked:
 				if the OpeningCapability of the Bod is not None:
 					now the Obstacle is open;
 					if the CurrentRoom is the location of the player and Reporting is Individual:
-						report seen opening of the obstacle by the Bod;
+						say "[The Bod] [open] [the obstacle]." (C);
 					if the NextRoom is the location of the player and Reporting is Individual:
-						report unseen opening of the obstacle.
+						say "[We] [hear] the sound of someone opening [the Obstacle]." (D).
 
 Section 3.3 - Carry out moving the Patroller
 
@@ -300,17 +305,17 @@ For Patrolling something (called the Bod) (this is the move patrollers rule):
 					add the Bod to the Arrival List;
 				if Reporting is Individual:
 					if the Way is up:
-						report arrival of the Bod up from the CurrentRoom;
+						say "[The Bod] [come] up from [the CurrentRoom]." (A);
 					otherwise:
 						if the Way is down:
-							report arrival of the Bod down from the CurrentRoom;
+							say "[The Bod] [come] down from [the CurrentRoom]." (B);
 						otherwise:
-							report arrival of the Bod coming the opposite of the Way from the CurrentRoom;
+							say "[The Bod] [arrive] [opposite of way] from [the CurrentRoom]." (C);
 			if the location of the Player is the CurrentRoom:
 				if Reporting is Collective:
 					add the Bod to the Departure List;
 				if Reporting is Individual:
-					report departure of the Bod going the Way to the NextRoom.
+					say "[The Bod] [go] [way] to [the NextRoom]." (D).
 
 Section 3.4 - After moving the Patroller
 
@@ -366,36 +371,21 @@ After Patrolling something (called the Bod) (this is the reclose doors for patro
 						now the Obstacle is closed;
 						now the Obstacle is locked;
 						if the CurrentRoom is the location of the player and Reporting is Individual:
-							report closing and locking of the obstacle by the Bod;
+							say  "[The Bod] [close] and [lock] [the Obstacle]." (A);
 						if the NextRoom is the location of the player and Reporting is Individual:
-							report closing and locking of the obstacle by the Bod;
+							say "[text of  reclose doors for patrollers rule response (A)]";
 					if ObstacleClosed is true and ObstacleLocked is false:
 						now the Obstacle is closed;
 						if the CurrentRoom is the location of the player and Reporting is Individual:
-							report closing of the obstacle by the Bod;
+							say  "[The Bod] [close] [the Obstacle]." (B);
 						if the NextRoom is the location of the player and Reporting is Individual:
-							report closing of the obstacle by the Bod.
+							say "[text of  reclose doors for patrollers rule response (B)]";.
 
 After Patrolling something (called the Bod) (this is the reached destination for targeted patrollers rule):
 	if the Bod is a Targeted Patroller and the location of the Bod is the Destination of the Bod:
 		now the Bod is Off Patrol.
 
-Section 3.5 - Reporting door rules
-
-To report seen opening of (item - a door) by (Bod - a patroller):
-	say "[The Bod] opens [the item]."
-To report seen unlocking and opening of (item - a door) by (Bod - a patroller):
-	say "[The Bod] unlocks and opens [the item]."
-To report unseen opening of (item - a door):
-	say "You hear the sound of someone opening [the item]."
-To report unseen unlocking and opening of (item - a door):
-	say "You hear the sound of someone unlocking and opening [the item]."
-To report closing of (item - a door) by (Bod - a patroller):
-	say  "[The Bod] closes [the item]."
-To report closing and locking of (item - a door) by (Bod - a patroller):
-	say "[The Bod] closes and locks [the item]."
-
-Section 3.6 - Reporting movement rules
+Section 3.5 - Reporting movement rules
 
 [Disable the standard reporting rule for the arrival and departure of non-player characters whilst the patrolling activity is in progress.]
 
@@ -404,23 +394,6 @@ Report an actor going (this is the new describe room gone into rule):
 		abide by the describe room gone into rule.
 		
 The new describe room gone into rule is listed instead of the describe room gone into rule in the report going rulebook.
-
-[Arrival rules used when the player is in the room when a patroller arrives.]
-
-To report arrival of (Bod - a patroller) up from (place - a room):
-	say "[The Bod] arrives from below."
-To report arrival of (Bod - a patroller) down from (place - a room):
-	say "[The Bod] arrives from above."
-To report arrival of (Bod - a patroller) coming (way - a direction) from (place - a room):
-	say "[The Bod] arrives from [the way]."
-To report departure of (Bod - a patroller) going (way - a direction) to (place - a room):
-	say "[The Bod] goes [way]."
-
-To report arrivals:
-	say "[Arrival List] arrive[if the number of entries in the arrival list is 1]s[end if]."
-
-To report departures:
-	say "[Departure List] depart[if the number of entries in the departure list is 1]s[end if]."
 
 Section 3.7 - Activation rules
 
@@ -493,6 +466,10 @@ Patrollers is an extension that enables us to define routes for a non-player cha
 
 Chapter: What's new
 
+Section: Version 12
+
+- Updated to use adaptive text and responses for version 6L02 and above.
+
 Section: Version 11
 
 - Fixes  a bug that crashed Patrollers where the best route function returned nothing as its value.
@@ -525,8 +502,6 @@ Section: Version 6
 
 Section: Version 5
 
-Version 5 of the Patrollers extension:
-
 - Improves the before rule for aimless patrollers so that adjacent rooms through a door have an equal chance of being selected to those with a direct connection.
 
 - Solves a bug that prevented TwoWayRepeated patrollers retracing their routes.
@@ -543,15 +518,15 @@ Version 5 requires release 5J39 of Inform 7.
 
 Section: Version 4 
 
-Version 4 of the Patrollers extension solves a bug that prevented aimless patrollers going through doors.
+- Solves a bug that prevented aimless patrollers going through doors.
 
 Section: Version 3
 
-Version 3 of the Patrollers extension has been modified to be compatible with version 5G67 and beyond.
+- Modified to be compatible with version 5G67 and beyond.
 
 Section: Version 2
 
-Version 2 of the Patrollers extension adds the following capabilities:
+Adds the following capabilities:
 
 - To define the probability that a patroller will move on any turn.
 
@@ -603,7 +578,7 @@ We can specify whether a patroller moves every turn, every other turn, etc, by s
 
 A patroller will always try to move on the first turn when the patroller is On Patrol.
 
-if we set the Turn Frequency to a number below 1, error checking routines will reset the Turn Frequency to 1 to prevent division by zero errors at runtime.  
+If we set the Turn Frequency to a number below 1, error checking routines will reset the Turn Frequency to 1 to prevent division by zero errors at runtime.  
 
 Chapter: Defining a Patroller's route
 
@@ -611,7 +586,7 @@ Section: Introduction
 
 We can specify the type of route that the patroller will follow.  The possibilities are:
 
-Section:  RoomLed
+Section: RoomLed
 
 The patroller's route is defined by a table of rooms that the patroller visits.  if we use a RoomLed patroller we have to define a RoomTable.  The first room in the table must be the initial location of the patroller.  The extension does not check whether the first room is the initial location of the patroller nor does it check whether a valid route can be established between each of the rooms in the table.
 
@@ -662,7 +637,7 @@ Chapter: Defining how may times a Patroller follows a route
 
 Section: Introduction
 
-if a patroller has a route table that defines the rooms the patroller visits or the directions that the patroller follows, we should also define how many times the patroller will follow the route.  The possibilities are:
+If a patroller has a route table that defines the rooms the patroller visits or the directions that the patroller follows, we should also define how many times the patroller will follow the route.  The possibilities are:
 
 Section: OneWay
 
@@ -794,7 +769,7 @@ The patroller will close any doors that s/he has opened,  if the Patroller unloc
 	The parent is a patroller.  The parent is aimless.
 	The OpeningCapability of the parent is UnlockedOnly.  The ReclosingCapability of the parent is Reinstate.
 
-Chapter: Text output
+Chapter:Text output
 
 Section: Reporting kinds
 
@@ -809,49 +784,39 @@ See "January Sales" for an example using both reporting kinds.
 
 Section: Moving the patroller - Individual Reporting
 
-The arrival and departure of patrollers individually is handled by five reporting phrases.  We can use our own phrases to replace the built in reporting rules.
+The arrival and departure of patrollers individually is handled by five reporting reponses.  We can use our own phrases to replace the built in responses.
 
-To report arrival of (Bod - a patroller) up from (place - a room): say "[The Bod] arrives from below.[line break]"
+	Move patrollers rule response (A): "[The Bod] [come] up from [the CurrentRoom]."
+	Move patrollers rule response (B): "[The Bod] [come] down from [the CurrentRoom]."
+	Move patrollers rule response (C): "[The Bod] [arrive] [opposite of way] from [the CurrentRoom]."
+	Move patrollers rule response (D): "[The Bod] [go] [way] to [the NextRoom]."
 
-To report arrival of (Bod - a patroller) down from (place - a room): say "[The Bod] arrives from above.[line break]"
-
-To report arrival of (Bod - a patroller) coming (way - a direction) from (place - a room): say "[The Bod] arrives from [the way].[line break]"
-
-To report departure of (Bod - a patroller) going (way - a direction) to (place - a room): say "[The Bod] goes [way].[line break]"
-
-To change any of these, we create our own "To report..." rule using the same syntax as the above phrases and vary the text in the say statements to suit our tastes.   See "January Sales" for an example of varying the built in phrases.
+To change any of these, we create our own response using the same syntax as the above phrases and vary the text in the say statements to suit our tastes.   See "January Sales" for an example of varying the built in phrases.
 
 Section: Moving the patroller - Collective Reporting:
 
-The arrival and departure of patrollers collectively is handled by two reporting phrases.   We can use our own phrases to replace the built in reporting rules.
+The arrival and departure of patrollers collectively is handled by two responses.   We can use our own phrases to replace the built in reporting rules.
 
-To report arrivals: 	say "[Arrival List] arrive[if the number of entries in the arrival list is 1]s[end if]."
+	Carry out patrolling rule response (A): "[Arrival list] [arrive]."
+	Carry out patrolling rule response (B): "[Departure list] [depart]."
 
-To report departures: say "[Departure List] depart[if the number of entries in the departure list is 1]s[end if]."
-
-To change any of these, we create our own "To report..." rule using the same syntax as the above phrases and vary the text in the say statements to suit our tastes.
+To change any of these, we create our own responses.
 
 Section: Opening and closing of doors
 
-There are six reporting phrases within the patrollers extension that report the opening and closing of doors by patrollers.  These phrases are used only where we use Individual reporting, not Collective reporting.
+There are six responses within the patrollers extension that report the opening and closing of doors by patrollers.  These phrases are used only where we use Individual reporting, not Collective reporting.
 
-We can use our own phrases to replace the built in reporting rules.
+We can use our own responses to replace the built in responses.
 
-The built in phrases are:
+	Try opening doors for patrollers rule response (A): "[The Bod] [unlock] and [open] [the obstacle]."
+	Try opening doors for patrollers rule response (B): "[We] [hear] the sound of someone unlocking and opening [the Obstacle]."
+	Try opening doors for patrollers rule response (C): "[The Bod] [open] [the obstacle]."
+	Try opening doors for patrollers rule response (D): "[We] [hear] the sound of someone opening [the Obstacle]."
+	
+	Reclose doors for patrollers rule response (A): "[The Bod] [close] and [lock] [the Obstacle]."
+	Reclose doors for patrollers rule response (B): "[The Bod] [close] [the Obstacle]."
 
-To report seen opening of (item - a door) by (Bod - a patroller): say "[The Bod] opens [the item].[line break]".
-
-To report seen unlocking and opening of (item - a door) by (Bod - a patroller): say "[The Bod] unlocks and opens [the item].[line break]".
-
-To report unseen opening of (item - a door): say "You hear the sound of someone opening [the item].[line break]".
-
-To report unseen unlocking and opening of (item - a door): say "You hear the sound of someone unlocking and opening [the item].[line break]".
-
-To report closing of (item - a door) by (Bod - a patroller): say  "[The Bod] closes [the item].[line break]".
-
-To report closing and locking of (item - a door) by (Bod - a patroller): say "[The Bod] closes and locks [the item].[line break]".
-
-To change any of these, we create our own "To report..." rule using the same syntax as the above phrases and vary the text in the say statements to suit our tastes.  See "The Butler" for an example of varying the built in phrases.
+See "The Butler" for an example of varying the built in response.
 
 Chapter: Limiting a patroller's movement
 
@@ -1042,11 +1007,7 @@ Example: * The Butler - A short example to show door opening by a patroller.
 		now the butler carries the hip flask;
 		activate the Butler.
 
-	To report seen unlocking and opening of (item - a door) by (Bod - a patroller):
-		if the Bod is the butler:
-			say "The butler glides over to the library door and with a deft wrist movement unlocks and opens it.";
-		otherwise:
-			say "[The Bod] unlocks and opens [the item]."
+	The try opening doors for patrollers rule response (A) is "The butler moves as if on castors over to the library door, takes out his key and unlocks it."
 
 	Test me with "open door / get book / x bookcase / get flask / x cord / pull cord / give flask to butler / n / e".
 
@@ -1083,11 +1044,7 @@ Example: ** January Sales - A short example to show patrollers moving on differe
 		activate Beth;
 		activate Charlie.
 
-	To report departure of (Bod - a patroller) going (way - a direction) to (place - a room):
-		if the map region of the place is Fitting Rooms:
-			say "[The Bod] goes [way] to [place] to try on [one of]a satin evening dress[or]a cashmere shawl[or]a pair of Lycra running shorts[or]a pair of high heel boots[at random].";
-		otherwise:
-			say "[The Bod] goes [way] to [place]."
+	The move patrollers rule response (D) is "[The Bod] [go] [way] to [NextRoom] to try on [one of]a satin evening dress[or]a cashmere shawl[or]a pair of Lycra running shorts[or]a pair of high heel boots[at random]."
 
 	Instead of going west from the Sale Hall when the Glass Doors are open:
 		say "You cannot leave the store whilst the sales are on."

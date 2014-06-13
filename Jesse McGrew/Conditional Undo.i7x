@@ -1,4 +1,4 @@
-Version 3/080626 of Conditional Undo by Jesse McGrew begins here.
+Version 4/140510 of Conditional Undo by Jesse McGrew begins here.
 
 "Allows fine-grained control over whether to allow commands to be undone."
 
@@ -8,16 +8,17 @@ The for deciding whether to allow undo rules have default no outcome.
 
 The prevent undo flag is a truth state which varies.
 
-To prevent undo: change the prevent undo flag to true.
-To do not prevent undo: change the prevent undo flag to false.
+To prevent undo: now the prevent undo flag is true.
+To do not prevent undo: now the prevent undo flag is false.
 
 To decide whether undo is prevented: decide on the prevent undo flag.
 
 Deciding whether the action prevents undo is an activity.
 The for deciding whether the action prevents undo rules have outcomes it does not (failure) and it does (success).
+The for deciding whether the action prevents undo rules have default no outcome.
 
 After reading a command (this is the reset the prevent undo flag rule):
-	change the prevent undo flag to false.
+	now the prevent undo flag is false.
 
 Every turn (this is the decide whether the action prevents undo rule):
 	begin the deciding whether the action prevents undo activity;
@@ -26,9 +27,11 @@ Every turn (this is the decide whether the action prevents undo rule):
 		if the rule failed, do not prevent undo;
 	end the deciding whether the action prevents undo activity. 
 
+The Conditional Undo decision rule translates into I6 as "AllowUndo" with
+	"That action cannot be undone.[paragraph break]" (A).
+
 Include (-
 Constant ALLOWUNDO_ACT = (+deciding whether to allow undo+);
-Constant CANTUNDO_MSG = "That action cannot be undone.^^";
 
 [ AllowUndo flag;
 	BeginActivity(ALLOWUNDO_ACT);
@@ -37,7 +40,7 @@ Constant CANTUNDO_MSG = "That action cannot be undone.^^";
 	if (ForActivity(ALLOWUNDO_ACT))
 		flag = RulebookSucceeded();
 	if (flag == 0 && ~~say__p)
-		print (string) CANTUNDO_MSG;
+		AllowUndoM('A');
 	EndActivity(ALLOWUNDO_ACT);
 	return flag;
 ];
@@ -45,12 +48,12 @@ Constant CANTUNDO_MSG = "That action cannot be undone.^^";
 
 Include (-
 [ Perform_Undo;
-	#ifdef PREVENT_UNDO; L__M(##Miscellany, 70); return; #endif;
-	if (turns == 1) { L__M(##Miscellany, 11); return; }
-	if (undo_flag == 0) { L__M(##Miscellany, 6); return; }
-	if (undo_flag == 1) { L__M(##Miscellany, 7); return; }
+	#ifdef PREVENT_UNDO; IMMEDIATELY_UNDO_RM('A'); new_line; return; #endif;
+	if (IterationsOfTurnSequence == 0) { IMMEDIATELY_UNDO_RM('B'); new_line; return; }
+	if (undo_flag == 0) { IMMEDIATELY_UNDO_RM('C'); new_line; return; }
+	if (undo_flag == 1) { IMMEDIATELY_UNDO_RM('D'); new_line; return; }
 	if (~~AllowUndo()) return;
-	if (VM_Undo() == 0) L__M(##Miscellany, 7);
+	if (VM_Undo() == 0) { IMMEDIATELY_UNDO_RM('A'); new_line; }
 ];
 -) instead of "Perform Undo" in "OutOfWorld.i6t".
 
@@ -95,3 +98,5 @@ CHANGE LOG
 Version 2 added Glulx support.
 
 Version 3 updates the extension to work under (and require) I7 build 5T18.
+
+Version 4 updates the extension to work under (and require) I7 build 6L02, and fixes a bug where a "deciding whether the action prevents undo" rule that made no decision would incorrectly prevent undo.

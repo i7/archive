@@ -1,4 +1,4 @@
-Version 4 of Questions by Michael Callaghan begins here.
+Version 5 of Questions  (for Glulx only) by Michael Callaghan begins here.
 
 "An extension to allow us to suspend normal parser input to receive and respond to answers to questions."
 
@@ -14,8 +14,11 @@ Current answer is indexed text that varies.
 
 Section 2 - Default command line prompts for asking questions
 
-Closed number prompt is text that varies.  Closed number prompt is "Please enter a number >".
+Closed number prompt is text that varies.  Closed number prompt is "Please enter a whole number >".
 Open number prompt is text that varies.  Open number prompt is ">".
+
+Closed real number prompt is text that varies.  Closed real number prompt is "Please enter a number >".
+Open real number prompt is text that varies.  Open real number prompt is ">".
 
 Closed menu prompt is text that varies.  Closed menu prompt is "Please select a number between 1 and [number of entries in current question menu] >".
 Open menu prompt is text that varies.  Open menu prompt is ">".
@@ -35,7 +38,7 @@ Closed question mode is a truth state that varies.
 
 Section 4 - Phrase used to ask questions in closed mode
 
-To ask a closed question, in number mode, in menu mode, in yes/no mode, in gender mode or in text mode:
+To ask a closed question, in number mode, in real number mode, in menu mode, in yes/no mode, in gender mode or in text mode:
 	now closed question mode is true;
 	now saved prompt is the command prompt;
 	if in number mode:
@@ -44,6 +47,12 @@ To ask a closed question, in number mode, in menu mode, in yes/no mode, in gende
 		otherwise:
 			now the command prompt is the current prompt;
 		now number question mode is true;
+	if in real number mode:
+		if current prompt is "":
+			now the command prompt is the closed real number prompt;
+		otherwise:
+			now the command prompt is the current prompt;
+		now real number question mode is true;
 	if in menu mode:
 		if current prompt is "":
 			now the command prompt is the closed menu prompt;
@@ -76,7 +85,7 @@ To ask a closed question, in number mode, in menu mode, in yes/no mode, in gende
 
 Section 5 - Phrase used to ask questions in open mode
 
-To ask an open question, in number mode, in menu mode, in yes/no mode, in gender mode or in text mode:
+To ask an open question, in number mode, in real number mode, in menu mode, in yes/no mode, in gender mode or in text mode:
 	now closed question mode is false;
 	now saved prompt is the command prompt;
 	if in number mode:
@@ -85,6 +94,12 @@ To ask an open question, in number mode, in menu mode, in yes/no mode, in gender
 		otherwise:
 			now the command prompt is the current prompt;
 		now number question mode is true;
+	if in real number mode:
+		if current prompt is "":
+			now the command prompt is the open real number prompt;
+		otherwise:
+			now the command prompt is the current prompt;
+		now real number question mode is true;
 	if in menu mode:
 		if current prompt is "":
 			now the command prompt is the open menu prompt;
@@ -165,7 +180,57 @@ To deactivate number question mode:
 	now the Current Prompt is "";
 	now number question mode is false.
 
-Chapter 3 - Questions that require an answer from a menu
+Chapter 3 - Questions that require a real number answer
+
+Section 1 - Flag to set real number question mode
+
+Real number question mode is a truth state that varies.
+
+Section 2 - Action for real number questions
+
+Real number questioning is an action applying to one real number.
+
+Understand "[real number]" as real number questioning when real number question mode is true.
+Understand "say [real number]" as real number questioning when real number question mode is true.
+
+Section 3 - Rules for real number questions
+
+Real number question rules is a rulebook.
+
+The real number question rules have outcomes exit (success), retry (failure) and parse (failure).
+
+The first real number question rule (this is the invalid real number reply rule):
+	if the player's command does not match "[real number]":
+		if closed question mode is true:
+			retry;
+		if closed question mode is false:
+			parse.
+
+The last real number question rule (this is the default real number question rule):
+	exit.
+
+Section 4 - Processing real number questions
+
+After reading a command when real number question mode is true:
+	follow the real number question rules;
+	if the outcome of the rulebook is the exit outcome:
+		deactivate real number question mode;
+		follow the every turn rules;
+		follow the advance time rule;
+		reject the player's command;
+	if the outcome of the rulebook is the retry outcome:
+		reject the player's command;
+	if the outcome of the rulebook is the parse outcome:
+		deactivate number question mode.
+
+Section 5 - To deactivate real number question mode
+
+To deactivate real number question mode:
+	now the Command Prompt is the saved prompt;
+	now the Current Prompt is "";
+	now real number question mode is false.
+
+Chapter 4 - Questions that require an answer from a menu
 
 Section 1 - Flag to set menu question mode
 
@@ -219,7 +284,7 @@ To deactivate menu question mode:
 	now the Current Prompt is "";
 	now menu question mode is false.
 
-Chapter 4 - Questions that require a yes/no answer
+Chapter 5 - Questions that require a yes/no answer
 
 Section 1 - Flag to set yes/no question mode
 
@@ -275,7 +340,7 @@ To deactivate yes-no question mode:
 	now the Command Prompt is the saved prompt;
 	now yes/no question mode is false.
 
-Chapter 5 - Questions that require a gender answer
+Chapter 6 - Questions that require a gender answer
 
 Section 1 - Flag to set gender question mode
 
@@ -333,7 +398,7 @@ To deactivate gender question mode:
 	now the Current Prompt is "";
 	now gender question mode is false.
 
-Chapter 6 - Questions that require a text answer
+Chapter 7 - Questions that require a text answer
 
 Section 1 - Flag to set text question mode
 
@@ -386,101 +451,14 @@ To deactivate text question mode:
 	now the Current Prompt is "";
 	now text question mode is false.
 
-Chapter 7 - Real number question mode (for use with Fixed Point Maths by Michael Callaghan)
-
-Section 1 - Default command line prompts for real numbers
-
-Closed real number prompt is text that varies.  Closed real number prompt is "Please enter a number >".
-Open real number prompt is text that varies.  Open real number prompt is ">".
-
-Section 2 - Phrase to ask a real number question in closed mode
-
-To ask a closed question in real number mode:
-	now closed question mode is true;
-	now saved prompt is the command prompt;
-	if current prompt is "":
-		now the command prompt is the closed real number prompt;
-	otherwise:
-		now the command prompt is the current prompt;
-	now real number question mode is true;
-	if current question is not "":
-		say "[current question][line break]".
-
-Section 3 - Phrase to ask a real number question in open mode
-
-To ask an open question in real number mode:
-	now closed question mode is false;
-	now saved prompt is the command prompt;
-	if current prompt is "":
-		now the command prompt is the open real number prompt;
-	otherwise:
-		now the command prompt is the current prompt;
-	now real number question mode is true;
-	if current question is not "":
-		say "[current question][line break]".
-
-Section 4 - Flag for real number question mode
-
-Real number question mode is a truth state that varies.
-
-Section 5 - Action for real number questions
-
-Real number questioning is an action applying to one real number.
-
-Understand "[real number]" as real number questioning when real number question mode is true.
-Understand "say [real number]" as real number questioning when real number question mode is true.
-
-Section 6 - Answer form for real numbers
-
-Current number is a real number that varies.
-
-Section 7 - Rules for real number questions
-
-Real number question rules is a rulebook.
-
-The real number question rules have outcomes exit (success), retry (failure) and parse (failure).
-
-The first real number question rule (this is the invalid real number reply rule):
-	let T be indexed text;
-	let T be the player's command;
-	replace the regular expression "^say " in T with "", case insensitively;
-	now the current number is the number derived from T;
-	if invalid conversion is true:
-		if closed question mode is true:
-			retry;
-		if closed question mode is false:
-			parse.
-
-The last real number question rule (this is the default real number question rule):
-	exit.
-
-Section 7 - Processing real number questions
-
-After reading a command when real number question mode is true:
-	follow the real number question rules;
-	if the outcome of the rulebook is the exit outcome:
-		deactivate real number question mode;
-		follow the every turn rules;
-		follow the advance time rule;
-		reject the player's command;
-	if the outcome of the rulebook is the retry outcome:
-		reject the player's command;
-	if the outcome of the rulebook is the parse outcome:
-		deactivate real number question mode.
-
-Section 8 - To deactivate real number question mode
-
-To deactivate real number question mode:
-	now the Command Prompt is the saved prompt;
-	now the Current Prompt is "";
-	now real number question mode is false.
-
 Chapter 8 - To decide if we are in question mode
 
 Section 1 - Basic decision (for use without Fixed Point Maths by Michael Callaghan)
 
 To decide if we are asking a question:
 	if number question mode is true:
+		decide yes;
+	if real number question mode is true:
 		decide yes;
 	if menu question mode is true:
 		decide yes;
@@ -549,6 +527,13 @@ Version 4
 
 Deprecated phases have been removed from the extension and the examples.
 
+Version 5
+
+- Updated for version 6L02 and above.
+- Links to fixed point maths removed.
+- Real numbers are questions are supported.
+- Requires Glulx.
+
 Chapter: Types of questions
 
 Section: Overview
@@ -557,6 +542,8 @@ The extension allow us to ask questions that require different types of answers.
 
 - Questions that require a number as an answer.
 
+- Questions that require a real number as an answer.
+
 - Questions that require an item from a menu to be chosen.
 
 - Questions that require a Yes or No answer.
@@ -564,12 +551,6 @@ The extension allow us to ask questions that require different types of answers.
 - Questions that require a gender selection (Male, Female or Neuter).
 
 - Questions that require a text answer.
-
-- Questions that require a real number answer.  For use in conjunction with the Fixed Point Maths extension by Michael Callaghan.
-
-Section: Using this extension with fixed point maths
-
-In order to use this extension with the fixed point maths extension, the fixed point maths extension must be included in our game before we include this extension.
 
 Section: Open and closed questions
 
@@ -616,6 +597,8 @@ Section: Asking the question in closed question mode
 To ask the question in closed mode, we use the following forms for closed questions:
 
 	ask a closed question, in number mode;
+	
+	ask a closed question, in real number mode;
 
 	ask a closed question, in menu mode;
 
@@ -625,15 +608,13 @@ To ask the question in closed mode, we use the following forms for closed questi
 
 	ask a closed question, in text mode;
 
-	ask a closed question in real number mode;
-
-Note the slightly different syntax, omitting the comma, for real number mode.
-
 Section: Asking the question in open question mode
 
 To ask the question in open mode, we use the following forms for open questions:
 
 	ask an open question, in number mode;
+	
+	ask an open question, in real number mode;
 
 	ask an open question, in menu mode;
 
@@ -643,19 +624,19 @@ To ask the question in open mode, we use the following forms for open questions:
 
 	ask an open question, in text mode;
 
-	ask an open question in real number mode;
-
-Note the slightly different syntax, omitting the comma, for real number mode.
-
 Chapter: Setting the command prompt for questions
 
 Section: Overview
 
 When a question is asked, we can change the command prompt to indicate to the player that a question is being asked.  By default, the extension sets a series of default prompts.  These are specific to the type of question being asked; they are:
 
-	Closed number prompt: "Please enter a number >".
+	Closed number prompt: "Please enter a whole number >".
 
 	Open number prompt:  ">".
+	
+	Closed real number prompt: "Please enter a number >".
+
+	Open real number prompt:  ">".
 
 	Closed menu prompt: "Please select a number between 1 and [number of entries in current question menu] >".
 
@@ -672,11 +653,6 @@ When a question is asked, we can change the command prompt to indicate to the pl
 	Closed text prompt: "Please enter your answer >".
 
 	Open text prompt ">".
-
-	Closed real number prompt: "Please enter a number >".
-
-	Open real number prompt:  ">".
-
 
 Section: Changing the question prompt
 
@@ -711,6 +687,8 @@ Each type of question has its own rulebook.  These are:
 
 Number questions: The number question rules.
 
+Real number questions: The real number question rules.
+
 Menu questions: The menu question rules.
 
 Yes/No questions: The yes/no question rules.
@@ -718,8 +696,6 @@ Yes/No questions: The yes/no question rules.
 Gender questions: The gender questions rules.
 
 Text questions: The text question rules.
-
-Real number questions: The real number question rules.
 
 Section: Rulebook outcomes
 
@@ -777,6 +753,16 @@ The first rule, called 'the invalid number reply rule', operates where the playe
 
 The last rule, called 'the default number question rule', has the outcome exit.
 
+Section: Rules for real number questions
+
+We test the answer to a real number question using the phrase 'the number understood'.
+
+There are two default rules for processing answers to real number questions.
+
+The first rule, called 'the invalid real number reply rule', operates where the player enters an answer to a real number question that is not a real number.  If the question is a closed number question, the outcome is retry.  If the question is an open question, the outcome is parse.
+
+The last rule, called 'the default real number question rule', has the outcome exit.
+
 Section: Rules for menu questions
 
 We test the answer to menu questions using the phrase 'the number understood'.  The value should be between 1 and the number of items in the menu.
@@ -820,16 +806,6 @@ The first rule, called the 'remove punctuation from text questions rule' determi
 
 The last rule is called the 'default text rule'.  If the question was a closed text question, the outcome is retry.  If the question was an open text question, the outcome is parse.
 
-Section: Rules for real number questions
-
-We test the answer to a real number question using the variable "current number".
-
-There are two default rules for processing answers to real number questions.
-
-The first rule, called 'the invalid real number reply rule', operates where the player enters an answer to a real number question that is not a real number.  If the question is a closed real number question, the outcome is retry.  If the question is an open real number question, the outcome is parse.
-
-The last rule, called 'the default real number question rule', has the outcome exit.
-
 Chapter: Determining whether or not we are asking a question
 
 If we need to determine whether or not we are currently asking a question, for example as a test in another rulebook, we can do so by using the phrase 'If we are asking a question'.  This will decide Yes if an open or closed question is being asked.
@@ -840,16 +816,16 @@ Example: * Open Sesame - A short example to show the question rules with an init
 
 	Include questions by Michael Callaghan.
 
-	Canyon is a room.  "You are at the far end of a canyon.  A recent rock fall behind you prevents all further hopes of escape.  A large boulder to the east emits a faint green light."
+	Canyon is a room. "You are at the far end of a canyon.  A recent rock fall behind you prevents all further hopes of escape.  A large boulder to the east emits a faint green light."
 
-	A large boulder is a door.  The large boulder is locked and closed.
+	A large boulder is a door. The large boulder is locked and closed.
 
-	The large boulder is scenery.  The description is "Inscribed in runic letters on the face of the boulder are the words 'Solve Oriel[']s Myth to find your way forward.'"
+	The large boulder is scenery. The description is "Inscribed in runic letters on the face of the boulder are the words 'Solve Oriel[']s Myth to find your way forward.'"
 
-	Instead of doing anything other than examining the large boulder:
+	Instead of doing anything other than examining with the large boulder:
 		say "There is an aura of magic about the large boulder that prevents you doing this."
 
-	Small cave is a room.  "A flight of steps leads down into the darkness."
+	Small cave is a room. "A flight of steps leads down into the darkness."
 
 	The large boulder is east of the canyon and west of the small cave.
 
@@ -876,14 +852,14 @@ Example: * Open Sesame - A short example to show the question rules with an init
 			otherwise:
 				parse.
 
-	Room of requirements is a room.  Room of requirements is down from the small cave.  The description is "The room smells musty.[If unvisited]  An alien presence invades your mind and deep in your bones you hear a voice echo 'Welcome brave soul.  You have passed the first hurdle.  Before you proceed, you must answer the following questions.'"
+	Room of requirements is a room. Room of requirements is down from the small cave. The description is "The room smells musty.[If unvisited]  An alien presence invades your mind and deep in your bones you hear a voice echo 'Welcome brave soul.  You have passed the first hurdle.  Before you proceed, you must answer the following questions.'"
 
-	Instead of doing anything in the room of requirements when gathering is happening:
+	Instead of doing anything when gathering is happening and stage is not complete:
 		say "You are under a strange compulsion and unable to move."
 
-	Data is a kind of value.  The data are name, age, sex, character, finalise and complete.
+	Data is a kind of value. The data are name, age, sex, character, finalise, seed and complete.
 
-	Gathering is a scene.  Gathering begins when the location is the room of requirements.
+	Gathering is a scene. Gathering begins when the location is the room of requirements.
 	Gathering ends when stage is complete.
 	Stage is data that varies.
 
@@ -904,17 +880,21 @@ Example: * Open Sesame - A short example to show the question rules with an init
 			ask a closed question, in gender mode;
 		if stage is character:
 			now current question is "Which of the following is your preferred character type:";
-			now current question menu is {"Wizard", "Warrior", "Sage", "Healer"};
+			now current question menu is { "Wizard", "Warrior", "Sage", "Healer" };
 			ask a closed question, in menu mode;
 		if stage is finalise:
 			say "You have chosen:[line break]Name: [player's name][line break]Age: [Player's age][line break]Sex: [Player's sex][line break]Character:  [Player's character][paragraph break]";
 			now current question is "Are you happy with your responses?";
-			ask a closed question, in yes/no mode.
+			ask a closed question, in yes/no mode;
+		if stage is seed:
+			now current question is "Enter a seed number between 0 and 1:";
+			ask a closed question, in real number mode.
 
 	The player's name is indexed text that varies.
 	The player's age is a number that varies.
 	The player's sex is a gender that varies.
 	The player's character is text that varies.
+	The player's strength is a number that varies.
 
 	A text question rule (this is the gather name rule):
 		if gathering is happening and stage is name:
@@ -958,16 +938,42 @@ Example: * Open Sesame - A short example to show the question rules with an init
 	A yes/no question rule (this is the confirm answers rule):
 		if gathering is happening and stage is finalise:
 			if the decision understood is Yes:
-				say "Thank you.  Venture into the unknown brave [the player's character][line break]";
-				now stage is complete;
+				say "Thank you.";
+				now stage is seed;
 				exit;
 			otherwise:
 				say "OK.  Let's start again, shall we[line break]";
 				now stage is name;
 				exit.
+				
+	A real number question rule (this is the seed rule):
+		if gathering is happening and stage is seed:
+			if the real number understood is 0.0:
+				say "The number must be more than 0";
+				retry;
+			if the real number understood < 0.0:
+				say "The number must be more than 0";
+				retry;
+			if the real number understood is 1.0:
+				say "The number must be less than 1.";
+				retry;
+			if the real number understood > 1.0:
+				say "The number must be less than 1.";
+				retry;
+			let seed be the real number understood;
+			repeat with counter running from 1 to a random number from 5 to 10:
+				now seed is seed times 997;
+				now seed is seed minus floor of seed;
+			now seed is seed times 100;
+			now seed is floor of seed;
+			now player's strength is seed to the nearest whole number;
+			say "Your strength has been set to [player's strength].";
+			now stage is complete;
+			say "Venture into the unknown brave [player's character].";
+			exit.
 
-	Test me with "x boulder / push boulder/ say Emily Short / e / d / Peter / 34 / M / 3 / Y".
-
+	Test me with "x boulder / push boulder/ say Emily Short / e / d / Peter / 34 / M / 3 / Y / 0.23448".
+	
 Example: * Quiz Night - A short example to show creating a multiple choice quiz.
 
 	*: "Quiz Night" by Michael Callaghan

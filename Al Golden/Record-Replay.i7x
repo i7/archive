@@ -1,6 +1,9 @@
-Version 2 of Record-Replay by Al Golden begins here.
+Version 3 of Record-Replay by Al Golden begins here.
 
-"This is now a stand-alone extension where it was originally part of the Debugging extension."
+"This is now a stand-alone extension where it was originally part of the Debugging extension. It does not
+work on any compiler prior to 6L02."
+
+use authorial modesty.
 
 Include (- 
 Verb meta 'recording' *          -> CommandsOn 
@@ -14,13 +17,13 @@ Verb meta 'replay'     *       -> CommandsRead;
 [ CommandsOnSub;
     @output_stream 4;
     xcommsdir = 1;
-    "[Command recording on.]";
+    "[Command recording on.]^^";
 ];
 
 [ CommandsOffSub;
     if (xcommsdir == 1) @output_stream -4;
     xcommsdir = 0;
-    "[Command recording off.]";
+    "[Command recording off.] ^^";
 ];
 
 [ CommandsReadSub;
@@ -43,12 +46,12 @@ Verb meta 'replay'     *       -> CommandsRead;
     ! stream_open_file
     gg_commandstr = glk($0042, fref, $01, GG_COMMANDWSTR_ROCK);
     glk($0063, fref); ! fileref_destroy
-    if (gg_commandstr == 0) return L__M(##CommandsOn, 4);
-    "[Command recording on.]";
+    if (gg_commandstr == 0) return 4;
+    "[Command recording on.]^^ ";
 ];
 
 [ CommandsOffSub;
-    if (gg_commandstr == 0) "[Command recording already off.]";
+    if (gg_commandstr == 0) "[Command recording is already off.]";
     if (gg_command_reading) "[Command replay complete.]";
     glk($0044, gg_commandstr, 0); ! stream_close
     gg_commandstr = 0;
@@ -68,7 +71,7 @@ Verb meta 'replay'     *       -> CommandsRead;
     ! stream_open_file
     gg_commandstr = glk($0042, fref, $02, GG_COMMANDRSTR_ROCK);
     glk($0063, fref); ! fileref_destroy
-    if (gg_commandstr == 0) return L__M(##CommandsRead, 4);
+    if (gg_commandstr == 0) return 4;
     "[Command replay complete.]";
 ];
 

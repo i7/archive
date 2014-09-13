@@ -1,4 +1,4 @@
-Problem-Solving Characters (for Glulx only) by Ron Newcomb begins here.
+Version 2 of Problem-Solving Characters (for Glulx only) by Ron Newcomb begins here.
 
 "This extension enables the characters to sensibly circumvent obstacles to their desired actions.  Intended for works in which the non-player characters perform game actions just like the player-character, but cannot be strictly scripted because of a changing gameworld."
 
@@ -49,7 +49,7 @@ First after not an actor doing something (this is the update plans on failure ru
 	if a successful attempt (called the solution) fulfills this attempt:
 		if the reason the action failed is not the meddling check rule of this attempt,
 			now this attempt is partly successful;
-	Consider the when hindered by rules for the reason the action failed;
+	Follow the when hindered by rules for the reason the action failed;
 	if the outcome of the rulebook is the pretend it worked outcome:
 		now this attempt is successful;
 	otherwise if no attempts fulfill this attempt:
@@ -218,7 +218,7 @@ Section - (for use without Editable Stored Actions by Ron Newcomb) - unindexed
 
 [ This phrase is safe to use by your game.  It's only unindexed to avoid cluttering the index. ]
 To change/now the actor part of (act - a stored action) is (actor - a person):
-	(- BlkValueWrite({-pointer-to:act}, 3, {actor}); -)
+	(- BlkValueWrite({-by-reference:act}, 3, {actor}); -)
 
 Section - create new attempts - unindexed
 
@@ -375,7 +375,7 @@ When hindered by the can't search closed opaque containers rule: if the noun is 
 When hindered by the can't lock what's open rule: we could try closing the noun.
 [When hindered by the can't eat clothing without removing it first rule: [implicitly done]]
 When hindered by the can't enter something carried rule: we could try dropping the noun.
-When hindered by the can't put onto something being carried rule: we could try dropping the second noun; we could try putting the noun on the second noun.
+[When hindered by the can't put onto something being carried rule: we could try dropping the second noun; we could try putting the noun on the second noun.]
 When hindered by the can't drop clothes being worn rule: we could try taking off the noun.
 When hindered by the can't put clothes being worn rule:  we could try taking off the noun.
 When hindered by the can't insert clothes being worn rule:  we could try taking off the noun.
@@ -600,7 +600,7 @@ Example: * Baked Potato - Careful, it's hot.
 
 	Bob's Kitchen is room.
 
-	Bob is a man in Bob's kitchen. A microwave is a closed openable transparent container here.
+	Bob is a man in Bob's kitchen. A microwave is a closed openable transparent container in Bob's Kitchen.
 
 	A potato is in the microwave. A thing can be hot. The potato is hot.
 
